@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equações do 1.º grau | Matemática 7–9</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .platform-nav {
+            width: 90%;
+            max-width: 800px;
+            margin: 18px auto 0;
+            box-sizing: border-box;
+        }
+        .platform-nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #315ee7;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .platform-nav a:hover { text-decoration: underline; }
+        .container {
+            width: 90%;
+            max-width: 800px; /* Largura ideal expandida para acomodar as frações lado a lado */
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            flex: 1;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background: white;
+        }
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        button {
+            width: 100%;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-gerar { background-color: #3498db; }
+        .btn-gerar:hover { background-color: #2980b9; }
+        .btn-solucao { background-color: #e67e22; display: none; flex: 1; min-width: 150px; }
+        .btn-solucao:hover { background-color: #d35400; }
+        .btn-passos { background-color: #2ecc71; display: none; flex: 1; min-width: 150px; }
+        .btn-passos:hover { background-color: #27ae60; }
+        
+        .btn-teoria {
+            background-color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .btn-teoria:hover { background-color: #95a5a6; }
+
+        .teoria-box {
+            background-color: #fcfcfc;
+            border: 1px dashed #bdc3c7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+        }
+        .teoria-box ol {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        .teoria-box li {
+            margin-bottom: 8px;
+        }
+         
+        .resultado-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+            display: none;
+        }
+        .equacao-container {
+            font-size: 24px;
+            text-align: center;
+            color: #2c3e50;
+            margin: 15px 0;
+            min-height: 45px;
+            overflow-x: auto; /* Garante que equações longas não quebrem o layout em ecrãs pequenos */
+            padding: 10px 0;
+        }
+        .passos-box, .solucao-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            display: none;
+        }
+        .passo-item {
+            margin-bottom: 15px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .passo-eq {
+            text-align: center;
+            margin: 8px 0;
+            font-size: 19px;
+            color: #c0392b;
+            overflow-x: auto; /* Proteção horizontal para resoluções menores */
+            padding: 5px 0;
+        }
+        .alerta-mat {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Equações do 1.º grau</h2>
+    
+    <button class="btn-teoria" onclick="toggleTeoria()">Regras de Resolução (Teoria)</button>
+    <div id="teoriaBox" class="teoria-box">
+        <strong>Como resolver uma equação do 1.º grau passo a passo:</strong>
+        <ol>
+            <li><strong>Desembaraçar de Parênteses:</strong> Se a equação contiver parênteses, deves eliminá-los aplicando a propriedade distributiva (multiplicar o termo de fora por todos os de dentro, tendo muita atenção à regra dos sinais).</li>
+            <li><strong>Reduzir ao mesmo denominador:</strong> Caso existam frações, encontra o mínimo múltiplo comum (mmc) entre todos os denominadores e multiplica os respetivos numeradores.</li>
+            <li><strong>Eliminar denominadores:</strong> Quando todos os termos da equação partilharem o mesmo denominador, podes suprimi-lo e trabalhar apenas com os numeradores protegidos.</li>
+            <li><strong>Agrupar os termos:</strong> Transpõe os termos com incógnita ($x$) para um dos membros (geralmente o 1.º membro) e os termos independentes (números) para o outro, invertendo o sinal dos termos que mudam de membro.</li>
+            <li><strong>Isolar a incógnita:</strong> Reduz os termos semelhantes e divide o termo independente pelo coeficiente do $x$ para encontrar a solução final (simplificando a fração se possível).</li>
+        </ol>
+    </div>
+     
+    <div class="form-group">
+        <label for="dificuldade">Nível de Dificuldade:</label>
+        <select id="dificuldade">
+            <option value="1">Principiante (7º ano)</option>
+            <option value="2">Intermédio (8º ano)</option>
+            <option value="3">Especialista (8º e 9º ano)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Configurações Adicionais:</label>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="parenteses"> Incluir Parênteses
+            </label>
+        </div>
+    </div>
+
+    <button class="btn-gerar" onclick="gerarEquacao()">Gerar Nova Equação</button>
+
+    <div id="resultado" class="resultado-box">
+        <label>Equação gerada:</label>
+        <div id="equacaoTexto" class="equacao-container"></div>
+         
+        <div class="btn-container">
+            <button id="btnSolucao" class="btn-solucao" onclick="toggleSolucao()">Ver Apenas Solução</button>
+            <button id="btnPassos" class="btn-passos" onclick="togglePassos()">Ver Passos da Resolução</button>
+        </div>
+         
+        <div id="solucaoBox" class="solucao-box"></div>
+        <div id="passosBox" class="passos-box"></div>
+    </div>
+</div>
+
+<footer>
+    © 2026 — Powered by Nuno Araújo · versão V1.2
+</footer>
+
+<script>
+let dadosResolucao = {};
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function gcd(a, b) {
+    return b === 0 ? Math.abs(a) : gcd(b, a % b);
+}
+
+function lcm(a, b) {
+    if (a === 0 || b === 0) return 0;
+    return Math.abs(a * b) / gcd(a, b);
+}
+
+function formatSinal(num) {
+    return num >= 0 ? `+ ${num}` : `- ${Math.abs(num)}`;
+}
+
+function formatSinalX(num) {
+    if (num === 1) return "+ x";
+    if (num === -1) return "- x";
+    return num >= 0 ? `+ ${num}x` : `- ${Math.abs(num)}x`;
+}
+
+function formatFraçãoTermoInicial(k, m) {
+    if (k === 1) return `(x ${formatSinal(m)})`;
+    if (k === -1) return `-(x ${formatSinal(m)})`;
+    return `${k}(x ${formatSinal(m)})`;
+}
+
+function simplificarFracaoLatex(num, den) {
+    if (den === 0) return num === 0 ? "\\text{Equação Possível Indeterminada}" : "\\text{Equação Impossível}";
+    let g = gcd(num, den);
+    num /= g;
+    den /= g;
+    if (den < 0) {
+        num = -num;
+        den = -den;
+    }
+    if (den === 1) return `${num}`;
+    return `\\frac{${num}}{${den}}`;
+}
+
+function toggleTeoria() {
+    const tBox = document.getElementById('teoriaBox');
+    tBox.style.display = tBox.style.display === 'block' ? 'none' : 'block';
+}
+
+function gerarEquacao() {
+    const dif = parseInt(document.getElementById('dificuldade').value);
+    const comParenteses = document.getElementById('parenteses').checked;
+
+    document.getElementById('passosBox').style.display = 'none';
+    document.getElementById('solucaoBox').style.display = 'none';
+    document.getElementById('btnPassos').innerText = "Ver Passos da Resolução";
+    document.getElementById('btnSolucao').innerText = "Ver Apenas Solução";
+
+    let textoLatex = "";
+    dadosResolucao = { passos: [], solucaoTexto: "", tipo: "normal" };
+
+    // ==========================================
+    // --- NÍVEL 1: PRINCIPIANTE ----------------
+    // ==========================================
+    if (dif === 1) {
+        let a = getRandomInt(-5, 7); while(a === 0) a = getRandomInt(-5, 7);
+        let c = getRandomInt(-5, 7);
+        let b = getRandomInt(-12, 12);
+        let d = getRandomInt(-12, 12);
+
+        if (comParenteses) {
+            let k = getRandomInt(2, 4) * (Math.random() < 0.5 ? 1 : -1); 
+            let m = getRandomInt(1, 4);
+            let ladoParenteses = getRandomInt(1, 2);
+
+            if (ladoParenteses === 1) {
+                textoLatex = `${k === 1 ? '' : k === -1 ? '-' : k}(x ${formatSinal(m)}) ${formatSinal(b)} = ${c === 0 ? '' : c === 1 ? 'x' : c === -1 ? '-x' : c + 'x'} ${formatSinal(d)}`.replace("=  ", "= ");
+                
+                let constEsq = (k * m) + b;
+                let termoX = k - c;
+                let termoConst = d - constEsq;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar de Parênteses:</strong>", eq: `${k}x ${formatSinal(k*m)} ${formatSinal(b)} = ${c}x ${formatSinal(d)}` });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar constantes no primeiro membro:</strong>", eq: `${k}x ${formatSinal(constEsq)} = ${c}x ${formatSinal(d)}` });
+                dadosResolucao.passos.push({ desc: "<strong>Incógnitas no 1.º membro, constantes no 2.º membro:</strong>", eq: `${k}x ${formatSinal(-c)}x = ${d} ${formatSinal(-constEsq)}` });
+                analisarTermosFinais(termoX, termoConst);
+            } else {
+                textoLatex = `${a === 1 ? 'x' : a === -1 ? '-x' : a + 'x'} ${formatSinal(b)} = ${k === 1 ? '' : k === -1 ? '-' : k}(x ${formatSinal(m)}) ${formatSinal(d)}`;
+                
+                let constDir = (k * m) + d;
+                let termoX = a - k;
+                let termoConst = constDir - b;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar de Parênteses:</strong>", eq: `${a}x ${formatSinal(b)} = ${k}x ${formatSinal(k*m)} ${formatSinal(d)}` });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar constantes no segundo membro:</strong>", eq: `${a}x ${formatSinal(b)} = ${k}x ${formatSinal(constDir)}` });
+                dadosResolucao.passos.push({ desc: "<strong>Incógnitas no 1.º membro, constantes no 2.º membro:</strong>", eq: `${a}x ${formatSinal(-k)}x = ${constDir} ${formatSinal(-b)}` });
+                analisarTermosFinais(termoX, termoConst);
+            }
+        } else {
+            textoLatex = `${a === 1 ? 'x' : a === -1 ? '-x' : a + 'x'} ${formatSinal(b)} = ${c === 0 ? '' : c === 1 ? 'x' : c === -1 ? '-x' : c + 'x'} ${formatSinal(d)}`.replace("=  ", "= ");
+            let termoX = a - c;
+            let termoConst = d - b;
+            
+            dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+            dadosResolucao.passos.push({ desc: "<strong>Termos com incógnita à esquerda, números à direita:</strong>", eq: `${a}x ${formatSinal(-c)}x = ${d} ${formatSinal(-b)}` });
+            analisarTermosFinais(termoX, termoConst);
+        }
+    }
+    
+    // ==========================================
+    // --- NÍVEL 2: INTERMÉDIO ------------------
+    // ==========================================
+    else if (dif === 2) {
+        let den1 = getRandomInt(2, 3);
+        let den2 = getRandomInt(4, 5);
+        let mmc = lcm(den1, den2);
+        let m1 = mmc / den1;
+        let m2 = mmc / den2;
+
+        let a1 = getRandomInt(1, 3);
+        let b1 = getRandomInt(-4, 5); while(b1 === 0) b1 = getRandomInt(-4, 5);
+        let a2 = getRandomInt(1, 2);
+        let termoLivre = getRandomInt(-3, 4); while(termoLivre === 0) termoLivre = getRandomInt(-3, 4);
+
+        let inverterMembros = Math.random() < 0.5;
+
+        if (!comParenteses) {
+            if (!inverterMembros) {
+                textoLatex = `\\frac{${a1}x ${formatSinal(b1)}}{${den1}} ${formatSinal(termoLivre)} = \\frac{${a2 === 1 ? 'x' : a2 + 'x'}}{${den2}}`;
+                let eqMms = `\\frac{${m1}(${a1}x ${formatSinal(b1)})}{${mmc}} ${termoLivre >= 0 ? '+' : '-'} \\frac{${Math.abs(termoLivre * mmc)}}{${mmc}} = \\frac{${m2 * a2}x}{${mmc}}`;
+                let eqSemDen = `${m1 * a1}x ${formatSinal(m1 * b1)} ${formatSinal(termoLivre * mmc)} = ${m2 * a2}x`;
+                let constMembro = (m1 * b1) + (termoLivre * mmc);
+                let termoX = (m1 * a1) - (m2 * a2);
+                let termoConst = -constMembro;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${m1 * a1}x ${formatSinal(-m2 * a2)}x = ${formatSinal(-constMembro)}` });
+                analisarTermosFinais(termoX, termoConst);
+            } else {
+                textoLatex = `\\frac{${a2 === 1 ? 'x' : a2 + 'x'}}{${den2}} = \\frac{${a1}x ${formatSinal(b1)}}{${den1}} ${formatSinal(termoLivre)}`;
+                let eqMms = `\\frac{${m2 * a2}x}{${mmc}} = \\frac{${m1}(${a1}x ${formatSinal(b1)})}{${mmc}} ${termoLivre >= 0 ? '+' : '-'} \\frac{${Math.abs(termoLivre * mmc)}}{${mmc}}`;
+                let eqSemDen = `${m2 * a2}x = ${m1 * a1}x ${formatSinal(m1 * b1)} ${formatSinal(termoLivre * mmc)}`;
+                let constMembro = (m1 * b1) + (termoLivre * mmc);
+                let termoX = (m2 * a2) - (m1 * a1);
+                let termoConst = constMembro;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${m2 * a2}x ${formatSinal(-m1 * a1)}x = ${formatSinal(constMembro)}` });
+                analisarTermosFinais(termoX, termoConst);
+            }
+        } else {
+            let k = getRandomInt(2, 3);
+            let m = getRandomInt(1, 3);
+            
+            if (!inverterMembros) {
+                textoLatex = `\\frac{${k}(x ${formatSinal(m)}) ${formatSinal(b1)}}{${den1}} ${formatSinal(termoLivre)} = \\frac{${a2 === 1 ? 'x' : a2 + 'x'}}{${den2}}`;
+                let eqSemParenteses = `\\frac{${k}x ${formatSinal(k*m)} ${formatSinal(b1)}}{${den1}} ${formatSinal(termoLivre)} = \\frac{${a2 === 1 ? 'x' : a2 + 'x'}}{${den2}}`;
+                let numConstEsq = (k * m) + b1;
+                let eqMms = `\\frac{${m1}(${k}x ${formatSinal(numConstEsq)})}{${mmc}} ${termoLivre >= 0 ? '+' : '-'} \\frac{${Math.abs(termoLivre * mmc)}}{${mmc}} = \\frac{${m2 * a2}x}{${mmc}}`;
+                let eqSemDen = `${m1 * k}x ${formatSinal(m1 * numConstEsq)} ${formatSinal(termoLivre * mmc)} = ${m2 * a2}x`;
+                let constFinalEsq = (m1 * numConstEsq) + (termoLivre * mmc);
+                let termoX = (m1 * k) - (m2 * a2);
+                let termoConst = -constFinalEsq;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar de Parênteses:</strong>", eq: eqSemParenteses });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${m1 * k}x ${formatSinal(-m2 * a2)}x = ${formatSinal(-constFinalEsq)}` });
+                analisarTermosFinais(termoX, termoConst);
+            } else {
+                textoLatex = `\\frac{${a2 === 1 ? 'x' : a2 + 'x'}}{${den2}} = \\frac{${k}(x ${formatSinal(m)}) ${formatSinal(b1)}}{${den1}} ${formatSinal(termoLivre)}`;
+                let eqSemParenteses = `\\frac{${a2 === 1 ? 'x' : a2 + 'x'}}{${den2}} = \\frac{${k}x ${formatSinal(k*m)} ${formatSinal(b1)}}{${den1}} ${formatSinal(termoLivre)}`;
+                let numConstDir = (k * m) + b1;
+                let eqMms = `\\frac{${m2 * a2}x}{${mmc}} = \\frac{${m1}(${k}x ${formatSinal(numConstDir)})}{${mmc}} ${termoLivre >= 0 ? '+' : '-'} \\frac{${Math.abs(termoLivre * mmc)}}{${mmc}}`;
+                let eqSemDen = `${m2 * a2}x = ${m1 * k}x ${formatSinal(m1 * numConstDir)} ${formatSinal(termoLivre * mmc)}`;
+                let constFinalDir = (m1 * numConstDir) + (termoLivre * mmc);
+                let termoX = (m2 * a2) - (m1 * k);
+                let termoConst = constFinalDir;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar de Parênteses:</strong>", eq: eqSemParenteses });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${m2 * a2}x ${formatSinal(-m1 * k)}x = ${formatSinal(constFinalDir)}` });
+                analisarTermosFinais(termoX, termoConst);
+            }
+        }
+    }
+    
+    // ==========================================
+    // --- NÍVEL 3: ESPECIALISTA ----------------
+    // ==========================================
+    else if (dif === 3) {
+        let den1 = getRandomInt(2, 3);
+        let den2 = getRandomInt(4, 5);
+        let mmc = lcm(den1, den2);
+        let m1 = mmc / den1;
+        let m2 = mmc / den2;
+
+        let termoInteiro = getRandomInt(3, 6);
+        let a1 = getRandomInt(1, 3);
+        let b1 = getRandomInt(2, 5);
+        let a2 = getRandomInt(1, 2);
+        let b2 = getRandomInt(-4, 4); while(b2 === 0) b2 = getRandomInt(-4, 4);
+
+        let inverterMembros = Math.random() < 0.5;
+
+        if (!comParenteses) {
+            if (!inverterMembros) {
+                textoLatex = `${termoInteiro} - \\frac{${a1}x ${formatSinal(b1)}}{${den1}} = \\frac{${a2 === 1 ? 'x' : a2 + 'x'} ${formatSinal(b2)}}{${den2}}`;
+                let eqMms = `\\frac{${termoInteiro * mmc}}{${mmc}} - \\frac{${m1}(${a1}x ${formatSinal(b1)})}{${mmc}} = \\frac{${m2}(${a2}x ${formatSinal(b2)})}{${mmc}}`;
+                let eqSemDen = `${termoInteiro * mmc} - (${m1 * a1}x ${formatSinal(m1 * b1)}) = ${m2 * a2}x ${formatSinal(m2 * b2)}`;
+                let eqInvertida = `${termoInteiro * mmc} - ${m1 * a1}x ${formatSinal(-m1 * b1)} = ${m2 * a2}x ${formatSinal(m2 * b2)}`;
+                let constEsq = (termoInteiro * mmc) - (m1 * b1);
+                let termoX = -(m1 * a1) - (m2 * a2);
+                let termoConst = (m2 * b2) - constEsq;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar Parênteses:</strong>", eq: eqInvertida });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `-${m1 * a1}x ${formatSinal(-m2 * a2)}x = ${m2 * b2} ${formatSinal(-constEsq)}` });
+                analisarTermosFinais(termoX, termoConst);
+            } else {
+                textoLatex = `\\frac{${a2 === 1 ? 'x' : a2 + 'x'} ${formatSinal(b2)}}{${den2}} = ${termoInteiro} - \\frac{${a1}x ${formatSinal(b1)}}{${den1}}`;
+                let eqMms = `\\frac{${m2}(${a2}x ${formatSinal(b2)})}{${mmc}} = \\frac{${termoInteiro * mmc}}{${mmc}} - \\frac{${m1}(${a1}x ${formatSinal(b1)})}{${mmc}}`;
+                let eqSemDen = `${m2 * a2}x ${formatSinal(m2 * b2)} = ${termoInteiro * mmc} - (${m1 * a1}x ${formatSinal(m1 * b1)})`;
+                let eqInvertida = `${m2 * a2}x ${formatSinal(m2 * b2)} = ${termoInteiro * mmc} - ${m1 * a1}x ${formatSinal(-m1 * b1)}`;
+                let constDir = (termoInteiro * mmc) - (m1 * b1);
+                let termoX = (m2 * a2) - (-(m1 * a1));
+                let termoConst = constDir - (m2 * b2);
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar Parênteses:</strong>", eq: eqInvertida });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${m2 * a2}x ${formatSinal(m1 * a1)}x = ${constDir} ${formatSinal(-m2 * b2)}` });
+                analisarTermosFinais(termoX, termoConst);
+            }
+        } else {
+            let k = getRandomInt(2, 3) * (Math.random() < 0.5 ? 1 : -1);
+            let m = getRandomInt(1, 2);
+            let strBlocoParenteses = formatFraçãoTermoInicial(k, m);
+            let termoX_interno = k;
+            let termoConst_interno = (k * m) + b1;
+
+            if (!inverterMembros) {
+                textoLatex = `${termoInteiro} - \\frac{${strBlocoParenteses} ${formatSinal(b1)}}{${den1}} = \\frac{${a2 === 1 ? 'x' : a2 + 'x'} ${formatSinal(b2)}}{${den2}}`;
+                let eqExpandida = `${termoInteiro} - \\frac{${termoX_interno}x ${formatSinal(termoConst_interno)}}{${den1}} = \\frac{${a2 === 1 ? 'x' : a2 + 'x'} ${formatSinal(b2)}}{${den2}}`;
+                let eqMms = `\\frac{${termoInteiro * mmc}}{${mmc}} - \\frac{${m1}(${termoX_interno}x ${formatSinal(termoConst_interno)})}{${mmc}} = \\frac{${m2}(${a2}x ${formatSinal(b2)})}{${mmc}}`;
+                let eqSemDen = `${termoInteiro * mmc} - (${m1 * termoX_interno}x ${formatSinal(m1 * termoConst_interno)}) = ${m2 * a2}x ${formatSinal(m2 * b2)}`;
+                let eqInvertida = `${termoInteiro * mmc} - ${m1 * termoX_interno}x ${formatSinal(-m1 * termoConst_interno)} = ${m2 * a2}x ${formatSinal(m2 * b2)}`;
+                let constEsq = (termoInteiro * mmc) - (m1 * termoConst_interno);
+                let termoX = -(m1 * termoX_interno) - (m2 * a2);
+                let termoConst = (m2 * b2) - constEsq;
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar de Parênteses:</strong>", eq: eqExpandida });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar Parênteses:</strong>", eq: eqInvertida });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${termoX}x = ${m2 * b2} ${formatSinal(-constEsq)}` });
+                analisarTermosFinais(termoX, termoConst);
+            } else {
+                let mioloNumerador = `${termoX_interno}x ${formatSinal(termoConst_interno)}`.replace(/^\+ /, '');
+                let numMultiplicadoX = m1 * termoX_interno;
+                let numMultiplicadoConst = m1 * termoConst_interno;
+
+                textoLatex = `\\frac{${a2 === 1 ? 'x' : a2 + 'x'} ${formatSinal(b2)}}{${den2}} = ${termoInteiro} - \\frac{${strBlocoParenteses} ${formatSinal(b1)}}{${den1}}`;
+                let eqExpandida = `\\frac{${a2 === 1 ? 'x' : a2 + 'x'} ${formatSinal(b2)}}{${den2}} = ${termoInteiro} - \\frac{${mioloNumerador}}{${den1}}`;
+                let eqMms = `\\frac{${m2}(${a2}x ${formatSinal(b2)})}{${mmc}} = \\frac{${termoInteiro * mmc}}{${mmc}} - \\frac{${m1}(${mioloNumerador})}{${mmc}}`;
+                let eqSemDen = `${m2 * a2}x ${formatSinal(m2 * b2)} = ${termoInteiro * mmc} - (${numMultiplicadoX >= 0 ? numMultiplicadoX + 'x' : '- ' + Math.abs(numMultiplicadoX) + 'x'} ${formatSinal(numMultiplicadoConst)})`;
+                let eqInvertida = `${m2 * a2}x ${formatSinal(m2 * b2)} = ${termoInteiro * mmc} ${numMultiplicadoX >= 0 ? '-' : '+'} ${Math.abs(numMultiplicadoX)}x ${formatSinal(-numMultiplicadoConst)}`;
+                
+                let constDir = (termoInteiro * mmc) - numMultiplicadoConst;
+                let termoX = (m2 * a2) - (-numMultiplicadoX);
+                let termoConst = constDir - (m2 * b2);
+
+                dadosResolucao.passos.push({ desc: "<strong>Equação Inicial:</strong>", eq: textoLatex });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar de Parênteses:</strong>", eq: eqExpandida });
+                dadosResolucao.passos.push({ desc: `<strong>Reduzir ao mesmo denominador comum $${mmc}$:</strong>`, eq: eqMms });
+                dadosResolucao.passos.push({ desc: "<strong>Eliminar denominadores:</strong>", eq: eqSemDen });
+                dadosResolucao.passos.push({ desc: "<strong>Desembaraçar Parênteses:</strong>", eq: eqInvertida });
+                dadosResolucao.passos.push({ desc: "<strong>Agrupar termos semelhantes:</strong>", eq: `${termoX}x = ${constDir} ${formatSinal(-m2 * b2)}` });
+                analisarTermosFinais(termoX, termoConst);
+            }
+        }
+    }
+
+    const eqDiv = document.getElementById('equacaoTexto');
+    eqDiv.innerHTML = `$$ ${textoLatex} $$`;
+
+    MathJax.typesetPromise([eqDiv]).then(() => {
+        document.getElementById('resultado').style.display = 'block';
+        document.getElementById('btnPassos').style.display = 'block';
+        document.getElementById('btnSolucao').style.display = 'block';
+    });
+}
+
+function analisarTermosFinais(termoX, termoConst) {
+    dadosResolucao.passos.push({ desc: "<strong>Reduzir os termos em ambos os membros:</strong>", eq: `${termoX}x = ${termoConst}` });
+    
+    if (termoX === 0) {
+        if (termoConst === 0) {
+            dadosResolucao.tipo = "indeterminada";
+            dadosResolucao.conjuntoSolucao = "\\mathbb{R}";
+            dadosResolucao.solucaoTexto = "<span class='alerta-mat'>Equação Possível Indeterminada</span>";
+            dadosResolucao.passos.push({ desc: "<strong>Conclusão:</strong> Como obtivemos a igualdade $0x = 0$:", eq: "0x = 0 \\implies \\text{Equação Possível Indeterminada}" });
+        } else {
+            dadosResolucao.tipo = "impossivel";
+            dadosResolucao.conjuntoSolucao = "\\varnothing";
+            dadosResolucao.solucaoTexto = "<span class='alerta-mat'>Equação Impossível</span>";
+            dadosResolucao.passos.push({ desc: `<strong>Conclusão:</strong> Como obtivemos a igualdade $0x = ${termoConst}$ (o que é impossível visto que $0$ nunca poderá ser igual a um número diferente de zero):`, eq: `0x = ${termoConst} \\implies \\text{Equação Impossível}` });
+        }
+    } else {
+        dadosResolucao.tipo = "normal";
+        let fracaoLatex = simplificarFracaoLatex(termoConst, termoX);
+        dadosResolucao.conjuntoSolucao = `\\left\\{${fracaoLatex}\\right\\}`;
+        dadosResolucao.solucaoTexto = `A solução exata da equação é: $$ x = ${fracaoLatex} $$`;
+        dadosResolucao.passos.push({ desc: "<strong>Isolar a incógnita:</strong> Passar o coeficiente de $x$ a dividir:", eq: `x = \\frac{${termoConst}}{${termoX}}` });
+        dadosResolucao.passos.push({ desc: "<strong>Solução Final:</strong>", eq: `x = ${fracaoLatex}` });
+    }
+}
+
+function toggleSolucao() {
+    const solBox = document.getElementById('solucaoBox');
+    if (solBox.style.display === 'block') {
+        solBox.style.display = 'none';
+        document.getElementById('btnSolucao').innerText = "Ver Apenas Solução";
+    } else {
+        solBox.innerHTML = `<h4>Solução Direta:</h4><p>${dadosResolucao.solucaoTexto}</p>`;
+        MathJax.typesetPromise([solBox]);
+        solBox.style.display = 'block';
+        document.getElementById('btnSolucao').innerText = "Esconder Solução";
+    }
+}
+
+function togglePassos() {
+    const pasosBox = document.getElementById('passosBox');
+    if (pasosBox.style.display === 'block') {
+        pasosBox.style.display = 'none';
+        document.getElementById('btnPassos').innerText = "Ver Passos da Resolução";
+    } else {
+        construirPassosUI();
+        pasosBox.style.display = 'block';
+        document.getElementById('btnPassos').innerText = "Esconder Passos";
+    }
+}
+
+function construirPassosUI() {
+    let html = "<h4>Resolução:</h4>";
+    dadosResolucao.passos.forEach((p, index) => {
+        const equivalente = index === 0 ? "" : "\\Leftrightarrow{}";
+        html += `<div class="passo-item">${p.desc}<div class="passo-eq">$$ ${equivalente}${p.eq} $$</div></div>`;
+    });
+    html += `<div class="passo-item"><strong>Conjunto-solução:</strong><div class="passo-eq">$$ S = ${dadosResolucao.conjuntoSolucao} $$</div></div>`;
+    const pasosBox = document.getElementById('passosBox');
+    pasosBox.innerHTML = html;
+    MathJax.typesetPromise([pasosBox]);
+}
+</script>
+
+<script src="voltar.js"></script></body>
+</html>
