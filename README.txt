@@ -1,10 +1,10 @@
-MATHLAB 7–9 — VERSÃO DE TESTE V0.1 — UPLOAD SIMPLES PARA GITHUB
+MATHLAB 7–9 — VERSÃO DE TESTE V0.2 — UPLOAD SIMPLES PARA GITHUB
 © 2026 — Nuno Araújo
 
 COMO TESTAR
 
 1. Descompacta o ZIP completo.
-2. Seleciona os nove ficheiros que estão dentro da pasta extraída.
+2. Seleciona todos os ficheiros que estão dentro da pasta extraída.
 3. Carrega-os diretamente na raiz do repositório mathlab-7-9.
 4. O ficheiro index.html deve ficar no mesmo nível dos restantes ficheiros.
 
@@ -13,12 +13,13 @@ corretamente a escrita matemática.
 
 MÓDULOS INCLUÍDOS
 
-- Números Inteiros — 7.º ano — V1.1
+- Números Inteiros — 7.º ano — V1.2
 - Números Racionais — 7.º e 8.º anos — V1.2
-- Potências — 7.º e 8.º anos — V1.2
-- Notação Científica — 7.º e 8.º anos — V1.1
+- Potências — 7.º e 8.º anos — V1.3
+- Notação Científica — 7.º e 8.º anos — V1.2
+- Dízimas — 8.º ano — V1.1
 - Equações do 1.º grau — 7.º, 8.º e 9.º anos — V1.2
-- Inequações do 1.º grau — 9.º ano — V1.1
+- Inequações do 1.º grau — 9.º ano — V1.2
 
 O módulo de Expressões Numéricas não foi incluído porque se encontra em revisão.
 
@@ -26,3 +27,14 @@ PUBLICAÇÃO NO GITHUB PAGES
 
 Este pacote foi preparado sem subpastas para facilitar o carregamento através
 do navegador. Não é necessário Google Apps Script para publicar a plataforma.
+
+ALTERAÇÕES V0.2
+
+- seleção de ano agora oculta os módulos que não pertencem ao ano escolhido;
+- novo cabeçalho com apresentação e contacto do autor;
+- novo módulo de Dízimas;
+- problemas deixam de apresentar antecipadamente a expressão de resolução;
+- corrigida a escrita de percentagens em Notação Científica;
+- período das dízimas apresentado entre parênteses;
+- Inequações de nível especialista com estruturas mais variadas;
+- mantido o botão "Voltar à MathLab" em todos os módulos.

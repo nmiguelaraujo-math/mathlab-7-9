@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gerador de Notação Científica — V1.2</title>
+  <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root{--navy:#14213d;--blue:#2563eb;--sky:#eaf2ff;--green:#087443;--red:#c4322b;--line:#d8e1ee;--muted:#5d6b80;--bg:#f5f7fb}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--navy);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+    header{padding:24px 18px;background:linear-gradient(130deg,#123363,#2463de);color:#fff}header>div,main,footer{max-width:980px;margin:auto}
+    h1{font-size:clamp(1.55rem,4.5vw,2.35rem);line-height:1.2;margin:0}.subtitle{margin:7px 0 0;opacity:.92}.version{display:inline-block;margin-top:11px;border:1px solid #ffffff75;border-radius:999px;padding:2px 10px;font-size:.82rem}
+    main{padding:18px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 3px 14px #17345a0d}
+    .controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}label{display:block;font-weight:750;margin-bottom:5px}select,button{width:100%;font:inherit;color:var(--navy);background:#fff;border:1px solid #b8c5d7;border-radius:10px;padding:10px 11px}
+    button{cursor:pointer;font-weight:750}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.actions{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-top:15px}
+    .note{margin-top:10px;color:var(--muted);font-size:.9rem}.tag{display:inline-block;background:var(--sky);color:#174ea6;font-size:.83rem;font-weight:750;border-radius:999px;padding:3px 10px;margin:0 5px 6px 0}
+    #prompt{font-weight:750;margin-top:10px}#statement{min-height:105px;display:grid;place-items:center;text-align:center;font-size:clamp(1.18rem,4vw,1.75rem);padding:13px;overflow-x:auto}#statement.hidden{display:none}
+    .choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:680px;margin:0 auto 10px}.choice{display:flex;gap:9px;align-items:center;text-align:left;font-weight:600}.letter{display:grid;place-items:center;min-width:28px;height:28px;border-radius:50%;background:var(--sky);color:#174ea6}
+    .panel{display:none;border-top:1px solid var(--line);padding-top:15px;margin-top:15px}.panel.show{display:block}.answer{color:var(--green);font-size:1.2rem;text-align:center;overflow-x:auto}.step{border-left:4px solid #8eb5fb;background:#f7faff;border-radius:0 9px 9px 0;padding:10px 12px;margin:9px 0}.math{text-align:center;font-size:1.15rem;overflow-x:auto}.reason{color:var(--muted);font-size:.92rem;margin-top:5px}
+    .rules li{margin:8px 0}.danger{color:var(--red)}footer{text-align:center;color:#687588;padding:8px 18px 28px}
+    @media(max-width:760px){main{padding:12px}.card{padding:14px}.controls{grid-template-columns:1fr 1fr}.actions{grid-template-columns:1fr 1fr}.primary{grid-column:1/-1}.choices{grid-template-columns:1fr}}
+    @media(max-width:470px){.controls{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><div><h1>Notação Científica</h1><p class="subtitle">Números muito grandes e muito próximos de zero</p><span class="version">Versão 1.2</span></div></header>
+<main>
+  <section class="card">
+    <div class="controls">
+      <div><label for="year">Ano</label><select id="year"><option value="7">7.º ano</option><option value="8">8.º ano</option></select></div>
+      <div><label for="level">Nível</label><select id="level"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div>
+      <div><label for="category">Treino</label><select id="category"><option value="mixed">Treino misto</option><option value="convert">Converter</option><option value="compare">Comparar e ordenar</option><option value="calculate">Calcular</option><option value="problem">Problemas</option></select></div>
+      <div id="modeWrap"><label for="mode">Âmbito</label><select id="mode"><option value="essential">Curricular essencial</option><option value="extended">Treino alargado</option></select></div>
+    </div>
+    <div class="note" id="modeNote"></div>
+    <div class="actions"><button id="new" class="primary">Novo exercício</button><button id="answerBtn">Solução</button><button id="stepsBtn">Resolução</button><button id="rulesBtn">Regras</button></div>
+  </section>
+  <section class="card">
+    <div id="tags"></div><div id="prompt"></div><div id="statement"></div><div id="choices" class="choices"></div>
+    <div id="answerPanel" class="panel"><h2>Solução</h2><div id="answer" class="answer"></div></div>
+    <div id="stepsPanel" class="panel"><h2>Resolução passo a passo</h2><div id="steps"></div></div>
+    <div id="rulesPanel" class="panel rules"><h2>Regras essenciais</h2><div id="rules"></div></div>
+  </section>
+</main>
+<footer>© 2026 — Nuno Araújo</footer>
+<script>
+(() => {
+  'use strict';
+  const $=s=>document.querySelector(s), ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, pick=a=>a[ri(0,a.length-1)];
+  const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=ri(0,i);[b[i],b[j]]=[b[j],b[i]]}return b};
+  const comma=s=>String(s).replace('.',','), trim=s=>{let t=String(s);if(t.includes('.'))t=t.replace(/0+$/,'').replace(/\.$/,'');return t};
+  function coefficient(level){
+    if(level===1)return ri(1,9);
+    if(level===2)return ri(11,99)/10;
+    return pick([ri(101,999)/100,ri(11,99)/10,ri(1,9)]);
+  }
+  function fmt(n,max=6){const x=Math.abs(n)<1e-12?0:n;return comma(trim(x.toFixed(max)))}
+  function norm(c,e){if(c===0)return {c:0,e:0};while(Math.abs(c)>=10){c/=10;e++}while(Math.abs(c)<1){c*=10;e--}return {c:+c.toPrecision(12),e}}
+  const sci=(c,e)=>`${fmt(c)}\\times10^{${e}}`;
+  function plain(c,e){
+    const raw=trim(Number(c).toFixed(6)),neg=raw.startsWith('-'),s=neg?raw.slice(1):raw,[i,f='']=s.split('.'),digits=(i+f).replace(/^0+/,'')||'0',point=i.length+e;
+    let out;if(point<=0)out='0,'+'0'.repeat(-point)+digits;else if(point>=digits.length)out=digits+'0'.repeat(point-digits.length);else out=digits.slice(0,point)+','+digits.slice(point);
+    if(out.includes(','))out=out.replace(/0+$/,'').replace(/,$/,'');
+    return (neg?'-':'')+out;
+  }
+  function E(prompt,statement,answer,steps,choices=null,correct=null,family=''){return {prompt,statement,answer,steps,choices,correct,family}}
+  const S=(math,reason='')=>({math,reason});
+  function exponent(year,level){if(year===7)return ri(level===1?2:1,level===3?12:8);const pool=level===1?[-6,-5,-4,-3,-2,2,3,4,5,6]:level===2?[-12,-10,-8,-7,-5,-3,-1,0,2,4,7,9]:[-18,-15,-12,-9,-6,-3,-1,0,3,6,10,14,18];return pick(pool)}
+  function decimalToSci(year,level){const c=coefficient(level),e=exponent(year,level),p=plain(c,e);return E('Escreve o número em notação científica.',p,sci(c,e),[S(p),S(sci(c,e),`Desloca-se a vírgula até ficar apenas um algarismo não nulo à sua esquerda. O expoente indica ${e>=0?'quantas casas a vírgula se deslocou para a esquerda':'quantas casas se deslocou para a direita'}.`)],null,null,'decimal-sci')}
+  function sciToDecimal(year,level){const c=coefficient(level),e=exponent(year,level);return E('Escreve o número na forma decimal.',sci(c,e),plain(c,e),[S(sci(c,e)),S(plain(c,e),e>=0?`Desloca-se a vírgula ${e} casa${e===1?'':'s'} para a direita.`:`Desloca-se a vírgula ${-e} casa${e===-1?'':'s'} para a esquerda.`)],null,null,'sci-decimal')}
+  function normalise(year,level){let c=pick([ri(12,98),ri(11,99)/100,ri(100,900)/10]),e=exponent(year,level);if(year===7&&c<1)c=ri(12,98);const n=norm(c,e);return E('Escreve corretamente em notação científica.',sci(c,e),sci(n.c,n.e),[S(sci(c,e)),S(sci(n.c,n.e),'O primeiro fator deve ser maior ou igual a 1 e menor do que 10; compensa-se a deslocação da vírgula alterando o expoente.')],null,null,'normalizar')}
+  function missingExponent(year,level){const c=coefficient(level),e=exponent(year,level),p=plain(c,e);return E('Determina o expoente em falta.',`${p}=${fmt(c)}\\times10^{\\square}`,String(e),[S(`${p}=${fmt(c)}\\times10^{\\square}`),S(`${p}=${sci(c,e)}`,'Conta-se o número de casas deslocadas pela vírgula.'),S(`\\square=${e}`)],null,null,'expoente-falta')}
+  function identify(year,level){const c=coefficient(Math.max(2,level)),e=exponent(year,level),n=norm(c*10,e-1),good=sci(c,e),equiv=sci(c*10,e-1),bad=sci(c,e+1),other=sci(norm(c/10,e).c,norm(c/10,e).e);let opts=shuffle([good,equiv,bad,other]);const correct=opts.indexOf(good);return E('Qual das opções representa o número indicado e está corretamente escrita em notação científica?',plain(c,e),good,[S(plain(c,e)),S(good,'Apenas esta opção representa o número e tem o primeiro fator no intervalo [1,10[.')],opts,correct,'identificar')}
+  function convert(year,level){return pick(level===1?[decimalToSci,sciToDecimal,missingExponent]:level===2?[decimalToSci,sciToDecimal,normalise,missingExponent,identify]:[decimalToSci,sciToDecimal,normalise,missingExponent,identify])(year,level)}
+  function comparePair(year,level){let e1=exponent(year,level),e2=exponent(year,level),c1=coefficient(level),c2=coefficient(level);if(e1===e2&&c1===c2)c2=norm(c2+1,e2).c;const log1=Math.log10(c1)+e1,log2=Math.log10(c2)+e2,rel=log1>log2?'>':'<';return E('Substitui o espaço pelo sinal < ou >.',`${sci(c1,e1)}\\quad\\square\\quad${sci(c2,e2)}`,rel,[S(`${sci(c1,e1)}\\quad\\square\\quad${sci(c2,e2)}`),S(e1===e2?`${fmt(c1)}${rel}${fmt(c2)}`:`10^{${e1}}${e1>e2?'>':'<'}10^{${e2}}`,e1===e2?'Os expoentes são iguais; comparam-se os primeiros fatores.':'Comparam-se primeiro os expoentes das potências de base 10.'),S(`${sci(c1,e1)}${rel}${sci(c2,e2)}`)],null,null,'comparar')}
+  function orderSet(year,level){const count=level===1?3:level===2?4:5,arr=[];while(arr.length<count){const x={c:coefficient(level),e:exponent(year,level)};if(!arr.some(y=>Math.abs(Math.log10(y.c)+y.e-Math.log10(x.c)-x.e)<1e-10))arr.push(x)}const sorted=[...arr].sort((a,b)=>Math.log10(a.c)+a.e-Math.log10(b.c)-b.e);return E('Ordena os números por ordem crescente.',arr.map(x=>sci(x.c,x.e)).join(',\\quad'),sorted.map(x=>sci(x.c,x.e)).join('<'),[S(arr.map(x=>sci(x.c,x.e)).join(',\\quad')),S(sorted.map(x=>sci(x.c,x.e)).join('<'),'Ordenam-se primeiro os expoentes; quando são iguais, comparam-se os primeiros fatores.')],null,null,'ordenar')}
+  function between(year,level){let c=coefficient(level);if(Number.isInteger(c))c+=pick([.2,.4,.5,.7]);const e=exponent(year,level),low=Math.floor(c),high=Math.ceil(c);return E('Indica um número que se encontra entre os dois limites.',`${sci(low,e)}<\\square<${sci(high,e)}`,sci(c,e),[S(`${sci(low,e)}<${sci(c,e)}<${sci(high,e)}`,'Como os expoentes são iguais, basta comparar os primeiros fatores.')],null,null,'enquadrar')}
+  function compare(year,level){return pick(level===1?[comparePair,comparePair,orderSet]:level===2?[comparePair,orderSet,between]:[comparePair,orderSet,between,orderSet])(year,level)}
+  function essentialCalc(year,level){const c=coefficient(level);let e=exponent(year,level);const kind=pick(level===1?['double','half','triple']:['double','half','triple','percent']);let factor,label;if(kind==='double'){factor=2;label='o dobro'}else if(kind==='triple'){factor=3;label='o triplo'}else if(kind==='half'){factor=.5;label='a metade'}else{factor=pick([.1,.2,.25,.05]);label=`${fmt(factor*100)}%`};while(year===7&&norm(c*factor,e).e<1)e++;const n=norm(c*factor,e);return E(`Calcula ${label} do número e apresenta o resultado em notação científica.`,sci(c,e),sci(n.c,n.e),[S(kind==='percent'?`${fmt(factor*100)}\\%\\times${sci(c,e)}`:`${fmt(factor)}\\times${sci(c,e)}`),S(`${fmt(c*factor)}\\times10^{${e}}`,'Calcula-se o fator pedido.'),...(Math.abs(c*factor)>=1&&Math.abs(c*factor)<10?[]:[S(sci(n.c,n.e),'O resultado é normalizado.')])],null,null,kind)}
+  function multiplyCalc(year,level){const c1=coefficient(level),c2=coefficient(level),e1=exponent(year,level),e2=exponent(year,level),n=norm(c1*c2,e1+e2);return E('Calcula e apresenta o resultado em notação científica.',`(${sci(c1,e1)})\\times(${sci(c2,e2)})`,sci(n.c,n.e),[S(`(${sci(c1,e1)})\\times(${sci(c2,e2)})`),S(`${fmt(c1*c2)}\\times10^{${e1+e2}}`,'Multiplicam-se os primeiros fatores e adicionam-se os expoentes.'),S(sci(n.c,n.e),'Normaliza-se o resultado, se necessário.')],null,null,'multiplicar')}
+  function divideCalc(year,level){const c2=pick([1,2,4,5]),q=pick([1.2,1.5,2.5,3,4.5,6]),c1=c2*q,e1=exponent(year,level),e2=exponent(year,level),n=norm(c1/c2,e1-e2);return E('Calcula e apresenta o resultado em notação científica.',`\\frac{${sci(c1,e1)}}{${sci(c2,e2)}}`,sci(n.c,n.e),[S(`\\frac{${sci(c1,e1)}}{${sci(c2,e2)}}`),S(`${fmt(c1/c2)}\\times10^{${e1-e2}}`,'Dividem-se os primeiros fatores e subtraem-se os expoentes.'),S(sci(n.c,n.e),'Normaliza-se o resultado, se necessário.')],null,null,'dividir')}
+  function addCalc(year,level){const e=exponent(year,level),c1=coefficient(level),c2=coefficient(level),shift=pick([0,1,2]),e2=e-shift,converted=c2/10**shift,n=norm(c1+converted,e);return E('Calcula e apresenta o resultado em notação científica.',`${sci(c1,e)}+${sci(c2,e2)}`,sci(n.c,n.e),[S(`${sci(c1,e)}+${sci(c2,e2)}`),...(shift?[S(`${sci(c1,e)}+${fmt(converted)}\\times10^{${e}}`,'Escrevem-se os dois números com a mesma potência de base 10.')]:[]),S(`${fmt(c1+converted)}\\times10^{${e}}`,'Adicionam-se os primeiros fatores.'),S(sci(n.c,n.e),'Normaliza-se o resultado, se necessário.')],null,null,'adicionar')}
+  function calculate(year,level,mode){if(mode==='essential'||level===1)return essentialCalc(year,level);return pick(level===2?[essentialCalc,multiplyCalc,divideCalc]:[essentialCalc,multiplyCalc,divideCalc,addCalc,addCalc])(year,level)}
+  const contexts7=[
+    ['A distância aproximada de um planeta ao Sol é','km','distância'],['Uma plataforma recebeu','visualizações','visualizações'],['Uma região tem uma área aproximada de','m²','área'],['Um arquivo contém','bytes','dados'],['Uma população de microrganismos atingiu','células','células']
+  ];
+  const contexts8=[
+    ['O comprimento aproximado de uma bactéria é','m','comprimento'],['A massa de uma partícula é aproximadamente','g','massa'],['A espessura de uma membrana é','m','espessura'],['A probabilidade estimada de um acontecimento é','','probabilidade'],['O diâmetro de um vírus é aproximadamente','mm','diâmetro']
+  ];
+  function problem(year,level,mode){const [intro,unit]=pick(year===7?contexts7:contexts8),c=coefficient(Math.max(2,level)),e=exponent(year,level),kind=pick(level===1?['read','double']:level===2?['half','percent','compare']:['percent','compare','scale']);
+    if(kind==='read')return E(`${intro} ${plain(c,e)} ${unit}. Escreve esta medida em notação científica.`,`${plain(c,e)}\\;${unit}`,`${sci(c,e)}\\;${unit}`,[S(`${plain(c,e)}\\;${unit}`),S(`${sci(c,e)}\\;${unit}`,'Desloca-se a vírgula e regista-se o número de casas no expoente.')],null,null,'problema-conversão');
+    if(kind==='compare'){const factor=pick([2,5,10,100]),n=norm(c*factor,e);return E(`${intro} \\(${sci(c,e)}\\) ${unit}. Uma segunda grandeza é ${factor} vezes maior. Determina-a em notação científica.`,`${factor}\\times(${sci(c,e)})`,`${sci(n.c,n.e)}\\;${unit}`,[S(`${factor}\\times(${sci(c,e)})`),S(`${fmt(c*factor)}\\times10^{${e}}`),S(`${sci(n.c,n.e)}\\;${unit}`,'Normaliza-se o resultado.')],null,null,'problema-escala')}
+    if(kind==='scale'){const factor=pick([10,100,1000]);let adjusted=e;while(year===7&&norm(c/factor,adjusted).e<1)adjusted++;const n=norm(c/factor,adjusted);return E(`${intro} \\(${sci(c,adjusted)}\\) ${unit}. Outra grandeza mede a ${factor}ª parte desse valor. Determina-a.`,`\\frac{${sci(c,adjusted)}}{${factor}}`,`${sci(n.c,n.e)}\\;${unit}`,[S(`\\frac{${sci(c,adjusted)}}{${factor}}`),S(`${sci(n.c,n.e)}\\;${unit}`,'Dividir por uma potência de 10 diminui o expoente.')],null,null,'problema-escala')}
+    const factor=kind==='half'?.5:pick([.1,.2,.25,.05]),label=kind==='half'?'metade':`${fmt(factor*100)}%`;let adjusted=e;while(year===7&&norm(c*factor,adjusted).e<1)adjusted++;const n=norm(c*factor,adjusted);return E(`${intro} \\(${sci(c,adjusted)}\\) ${unit}. Determina ${label} desse valor.`,`${fmt(factor)}\\times(${sci(c,adjusted)})`,`${sci(n.c,n.e)}\\;${unit}`,[S(`${fmt(factor)}\\times(${sci(c,adjusted)})`),S(`${fmt(c*factor)}\\times10^{${adjusted}}`),S(`${sci(n.c,n.e)}\\;${unit}`,'Apresenta-se o resultado normalizado.')],null,null,'problema-percentagem')
+  }
+  const names={convert:'Converter',compare:'Comparar e ordenar',calculate:'Calcular',problem:'Problemas'};
+  function make(){const year=+$('#year').value,level=+$('#level').value,mode=$('#mode').value;let category=$('#category').value;if(category==='mixed')category=pick(['convert','convert','compare','calculate','problem']);const e=category==='convert'?convert(year,level):category==='compare'?compare(year,level):category==='calculate'?calculate(year,level,mode):problem(year,level,mode);return {...e,year,level,mode,category}}
+  const rules={7:`<ul><li>Um número em notação científica escreve-se \(a\\times10^n\), com \(1\\leq a<10\).</li><li>No 7.º ano, o expoente é um inteiro positivo.</li><li>Para números grandes, desloca-se a vírgula para a esquerda; o número de casas dá o expoente.</li><li>Com expoentes diferentes, compara-se primeiro a potência de base 10.</li></ul>`,8:`<ul><li>Um número positivo em notação científica escreve-se \(a\\times10^n\), com \(1\\leq a<10\) e \(n\\in\\mathbb Z\).</li><li>Um expoente negativo representa um número entre 0 e 1.</li><li>O resultado deve ficar normalizado: o primeiro fator pertence a \([1,10[\).</li><li>No modo curricular, as operações limitam-se a casos simples; o treino alargado inclui operações gerais.</li></ul>`};
+  let current;
+  function typeset(){if(window.MathJax?.typesetPromise)window.MathJax.typesetPromise()}
+  function updateMode(){const y=+$('#year').value;$('#mode').disabled=y===7;if(y===7)$('#mode').value='essential';$('#modeNote').textContent=y===7?'7.º ano: expoentes inteiros positivos e operações simples.':$('#mode').value==='essential'?'8.º ano — curricular essencial: dobro, triplo, metade e percentagens simples.':'8.º ano — treino alargado: inclui também multiplicação, divisão, adição e subtração.'}
+  function draw(){updateMode();current=make();document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));$('#tags').innerHTML=`<span class="tag">${current.year}.º ano</span><span class="tag">${['','Principiante','Intermédio','Especialista'][current.level]}</span><span class="tag">${names[current.category]}</span>${current.year===8?`<span class="tag">${current.mode==='essential'?'Curricular essencial':'Treino alargado'}</span>`:''}`;$('#prompt').innerHTML=current.prompt;const isProblem=current.family.startsWith('problema-');$('#statement').classList.toggle('hidden',isProblem);$('#statement').innerHTML=isProblem?'':`\\[${current.statement}\\]`;$('#answer').innerHTML=`\\[${current.answer}\\]`;$('#choices').innerHTML=current.choices?current.choices.map((o,i)=>`<div class="choice"><span class="letter">${String.fromCharCode(65+i)}</span><span>\\(${o}\\)</span></div>`).join(''):'';$('#steps').innerHTML=current.steps.map(s=>`<div class="step"><div class="math">\\[${s.math}\\]</div>${s.reason?`<div class="reason">${s.reason}</div>`:''}</div>`).join('');$('#rules').innerHTML=rules[current.year];typeset()}
+  function toggle(id){$(id).classList.toggle('show');typeset()}
+  $('#new').onclick=draw;$('#answerBtn').onclick=()=>toggle('#answerPanel');$('#stepsBtn').onclick=()=>toggle('#stepsPanel');$('#rulesBtn').onclick=()=>toggle('#rulesPanel');['#year','#level','#category','#mode'].forEach(id=>$(id).onchange=draw);
+  window.__nc={make,convert,compare,calculate,problem,norm,plain,sci};draw();
+})();
+</script>
+<script src="voltar.js"></script></body>
+</html>
