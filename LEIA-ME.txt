@@ -1,0 +1,25 @@
+MATHLAB 7–9 — VERSÃO DE TESTE V0.5
+
+ATUALIZAÇÃO
+  - Integração do GoatCounter na página principal e em todos os nove módulos.
+  - Estatísticas privadas, sem contador visível para os alunos.
+  - Cada ficheiro HTML é contabilizado separadamente no painel.
+  - Mantém o módulo Operações com números reais V1.1.
+
+PUBLICAÇÃO NO GITHUB
+  1. Abrir o repositório MathLab.
+  2. Escolher Add file > Upload files.
+  3. Carregar TODOS os ficheiros desta pasta.
+  4. Confirmar a substituição dos ficheiros com o mesmo nome.
+  5. Fazer o commit com a mensagem:
+       Integrar estatísticas GoatCounter — MathLab V0.5
+
+PAINEL DE ESTATÍSTICAS
+  https://mathlabnuno.goatcounter.com
+
+NOTAS
+  - Os dados só começam a ser recolhidos depois desta versão estar publicada.
+  - Bloqueadores de publicidade podem impedir algumas contagens.
+  - Não foi acrescentado qualquer contador visível ao site.
+
+© 2026 — Nuno Araújo
