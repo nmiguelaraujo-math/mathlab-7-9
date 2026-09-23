@@ -1,0 +1,27 @@
+MATHLAB 7–9 — VERSÃO DE TESTE V1.1
+
+ATUALIZAÇÃO
+  - Atualização do módulo Números racionais para a versão V1.3.
+  - Multiplicações e divisões construídas para simplificação cruzada.
+  - Expressões com várias operações baseadas em estratégia e não em cálculos extensos.
+  - Denominadores compatíveis nas adições e subtrações.
+  - Valores intermédios e resultados controlados para trabalho sem calculadora.
+  - Mantém as estatísticas privadas do GoatCounter, sem contador visível.
+
+PUBLICAÇÃO NO GITHUB
+  1. Abrir o repositório MathLab.
+  2. Escolher Add file > Upload files.
+  3. Carregar TODOS os ficheiros desta pasta.
+  4. Confirmar a substituição dos ficheiros com o mesmo nome.
+  5. Fazer o commit com a mensagem:
+       Melhorar estratégias no módulo Números racionais — MathLab V1.1
+
+PAINEL DE ESTATÍSTICAS
+  https://mathlabnuno.goatcounter.com
+
+NOTAS
+  - Os dados só começam a ser recolhidos depois desta versão estar publicada.
+  - Bloqueadores de publicidade podem impedir algumas contagens.
+  - Não foi acrescentado qualquer contador visível ao site.
+
+© 2026 — Nuno Araújo
