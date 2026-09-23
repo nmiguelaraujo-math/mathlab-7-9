@@ -1,4 +1,4 @@
-MATHLAB 7–9 — VERSÃO DE TESTE V0.9
+MATHLAB 7–9 — VERSÃO DE TESTE V1.0
 
 ATUALIZAÇÃO
   - Integração do GoatCounter na página principal e em todos os nove módulos.
@@ -12,7 +12,7 @@ PUBLICAÇÃO NO GITHUB
   3. Carregar TODOS os ficheiros desta pasta.
   4. Confirmar a substituição dos ficheiros com o mesmo nome.
   5. Fazer o commit com a mensagem:
-       Integrar estatísticas GoatCounter — MathLab V0.9
+       Integrar estatísticas GoatCounter — MathLab V1.0
 
 PAINEL DE ESTATÍSTICAS
   https://mathlabnuno.goatcounter.com
