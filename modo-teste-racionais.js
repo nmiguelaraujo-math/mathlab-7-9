@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s),ri=(a,b)=>Math.floor(Math.random()*(b-a+1))
 const shuffle=a=>{const b=[...a];for(let i=b.length-1;i;i--){const j=ri(0,i);[b[i],b[j]]=[b[j],b[i]]}return b};
 const {Q,add,sub,mul,div,tex}=api,neg=q=>Q(-q.n,q.d),val=q=>q.n/q.d,eq=(a,b)=>a.n===b.n&&a.d===b.d;
 const par=q=>q.n<0?`\\left(${tex(q)}\\right)`:tex(q),fmt=n=>String(+Number(n).toFixed(8)).replace('.',','),esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const levelName=['','Principiante','Intermédio','Especialista'],storeKey='mathlab-racionais-teste-v1';
+const levelName=['','Principiante','Intermédio','Especialista'],storeKey='mathlab-racionais-teste-v2';
 let state=null;
 
 function typeset(){if(window.MathJax?.typesetPromise)window.MathJax.typesetPromise()}
@@ -124,9 +124,18 @@ function problemQuestion(year,level){
  const price=pick(level===1?[40,60,80]:level===2?[80,120,160]:[120,180,240]),rate=pick(level===1?[10,25,50]:level===2?[15,20,25]:[12.5,20,30]),discount=Math.random()<.55,expected=price*(discount?(1-rate/100):(1+rate/100));return inputQuestion('numeric',`Um artigo custava ${price} €. O preço sofreu ${discount?'um desconto':'um aumento'} de ${fmt(rate)}%. Qual é o novo preço, em euros?`,'',expected,fmt(expected),[`${fmt(100+(discount?-rate:rate))}\\%\\text{ de }${price}`,`${fmt((100+(discount?-rate:rate))/100)}\\times${price}=${fmt(expected)}`],discount?'Problema de desconto':'Problema de aumento percentual')
 }
 
-function buildTest(year,level){
- const generators=[equivalentQuestion,trueFalseQuestion,completeQuestion,signQuestion,orderQuestion,representationQuestion,membershipQuestion,numericQuestion,operationQuestion,problemQuestion];
- return shuffle(generators.map((g,i)=>({...g(year,level),id:`RAC-${year}-${level}-${Date.now().toString(36)}-${i}`})));
+const generatorRegistry={
+ equivalent:equivalentQuestion,properties:trueFalseQuestion,complete:completeQuestion,compare:signQuestion,
+ order:orderQuestion,representation:representationQuestion,membership:membershipQuestion,
+ numeric:numericQuestion,operation:operationQuestion,problem:problemQuestion
+};
+const generatorKeys=Object.keys(generatorRegistry);
+function generatedQuestion(key,year,level,i=0){return{...generatorRegistry[key](year,level),generator:key,id:`RAC-${year}-${level}-${Date.now().toString(36)}-${key}-${i}-${Math.random().toString(36).slice(2,7)}`}}
+function buildTest(year,level){return shuffle(generatorKeys.map((key,i)=>generatedQuestion(key,year,level,i)))}
+function buildErrorTraining(year,level,failedKeys){
+ const keys=failedKeys.filter(key=>generatorRegistry[key]);
+ if(!keys.length)return[];
+ return shuffle(Array.from({length:10},(_,i)=>generatedQuestion(keys[i%keys.length],year,level,i)));
 }
 
 function showMode(mode){const test=mode==='test';$('#freeMode').classList.toggle('hidden-mode',test);$('#testMode').classList.toggle('hidden-mode',!test);$('#freeModeBtn').classList.toggle('active',!test);$('#testModeBtn').classList.toggle('active',test);if(test)refreshResume()}
@@ -135,26 +144,32 @@ function load(){try{return JSON.parse(localStorage.getItem(storeKey)||'null')}ca
 function clearSaved(){try{localStorage.removeItem(storeKey)}catch{}}
 function refreshResume(){const saved=load();$('#resumeTest').classList.toggle('hidden-mode',!(saved&&saved.active&&!saved.finished))}
 function resetTestViews(){['#testRunner','#testResult','#testReview'].forEach(id=>$(id).classList.add('hidden-mode'));$('#testSetup').classList.remove('hidden-mode')}
-function startTest(year=+$('#testYear').value,level=+$('#testLevel').value){state={active:true,finished:false,year,level,index:0,questions:buildTest(year,level),answers:Array(10).fill(null),score:null};save();$('#testSetup').classList.add('hidden-mode');$('#testResult').classList.add('hidden-mode');$('#testReview').classList.add('hidden-mode');$('#testRunner').classList.remove('hidden-mode');renderQuestion()}
+function openQuestions(questions,year,level,mode='test'){state={active:true,finished:false,year,level,mode,index:0,questions,answers:Array(questions.length).fill(null),score:null};save();$('#testSetup').classList.add('hidden-mode');$('#testResult').classList.add('hidden-mode');$('#testReview').classList.add('hidden-mode');$('#testRunner').classList.remove('hidden-mode');renderQuestion()}
+function startTest(year=+$('#testYear').value,level=+$('#testLevel').value){openQuestions(buildTest(year,level),year,level,'test')}
+function trainErrors(){
+ const failed=[...new Set(state.questions.filter((q,i)=>!isCorrect(q,state.answers[i])).map(q=>q.generator).filter(Boolean))];
+ const questions=buildErrorTraining(state.year,state.level,failed);
+ if(questions.length)openQuestions(questions,state.year,state.level,'errors');
+}
 function resumeTest(){state=load();if(!state?.active)return;$('#testSetup').classList.add('hidden-mode');$('#testRunner').classList.remove('hidden-mode');renderQuestion()}
 
-function renderQuestion(){const q=state.questions[state.index],answer=state.answers[state.index];$('#testTags').textContent=`${state.year}.º ano · ${levelName[state.level]}`;$('#testProgress').textContent=`Questão ${state.index+1} de 10`;$('#progressFill').style.width=`${(state.index+1)*10}%`;$('#testPrompt').innerHTML=esc(q.prompt);$('#testStatement').innerHTML=q.statement||'';const box=$('#testResponse');
+function renderQuestion(){const q=state.questions[state.index],answer=state.answers[state.index],total=state.questions.length;$('#testTags').textContent=`${state.year}.º ano · ${levelName[state.level]}${state.mode==='errors'?' · Treino dos erros':''}`;$('#testProgress').textContent=`Questão ${state.index+1} de ${total}`;$('#progressFill').style.width=`${(state.index+1)*100/total}%`;$('#testPrompt').innerHTML=esc(q.prompt);$('#testStatement').innerHTML=q.statement||'';const box=$('#testResponse');
  if(['choice','truefalse','sign','representation','membership'].includes(q.type)){const short=['truefalse','sign','membership'].includes(q.type);box.innerHTML=`<div class="${short?'short-options':'answer-options'}">${q.options.map((o,i)=>`<button class="option-btn ${answer===i?'selected':''}" data-option="${i}"><span class="option-key">${String.fromCharCode(65+i)}</span><span>\\(${o.text}\\)</span></button>`).join('')}</div>`;box.querySelectorAll('[data-option]').forEach(b=>b.onclick=()=>{state.answers[state.index]=+b.dataset.option;save();renderQuestion()})}
  else if(q.type==='fill'||q.type==='numeric'){box.innerHTML=`<div class="test-input-wrap"><input id="testInput" class="test-input" inputmode="decimal" autocomplete="off" placeholder="Escreve a resposta" value="${esc(answer??'')}"></div><p class="test-intro" style="text-align:center">Podes usar vírgula, ponto ou uma fração como 1/2.</p>`;const input=$('#testInput');input.oninput=()=>{state.answers[state.index]=input.value;save();renderDots()};setTimeout(()=>input.focus(),0)}
  else if(q.type==='order'){const chosen=Array.isArray(answer)?answer:[],available=q.cards.filter(c=>!chosen.includes(c.id));box.innerHTML=`<p class="test-intro">Cartões disponíveis</p><div class="order-bank">${available.map(c=>`<button class="order-card" data-add="${c.id}">\\(${c.text}\\)</button>`).join('')||'<span>Todos os cartões foram usados.</span>'}</div><p class="test-intro">A tua ordenação</p><div class="order-answer">${chosen.map(id=>{const c=q.cards.find(x=>x.id===id);return`<button class="order-card" data-remove="${id}">\\(${c.text}\\)</button>`}).join('')||'<span>Toca nos cartões pela ordem crescente.</span>'}</div><button id="resetOrder" style="width:auto;display:block;margin:auto">Recomeçar ordenação</button>`;box.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{state.answers[state.index]=[...chosen,b.dataset.add];save();renderQuestion()});box.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{const copy=[...chosen],i=copy.indexOf(b.dataset.remove);copy.splice(i,1);state.answers[state.index]=copy;save();renderQuestion()});$('#resetOrder').onclick=()=>{state.answers[state.index]=[];save();renderQuestion()}}
- renderDots();$('#previousQuestion').disabled=state.index===0;$('#nextQuestion').disabled=state.index===9;typeset()
+ renderDots();$('#previousQuestion').disabled=state.index===0;$('#nextQuestion').disabled=state.index===total-1;typeset()
 }
 function answered(i){const a=state.answers[i],q=state.questions[i];return q.type==='order'?Array.isArray(a)&&a.length===q.cards.length:a!==null&&String(a).trim()!==''}
 function renderDots(){$('#questionDots').innerHTML=state.questions.map((q,i)=>`<button class="question-dot ${i===state.index?'current':''} ${answered(i)?'answered':''}" data-question="${i}" aria-label="Questão ${i+1}">${i+1}</button>`).join('');$('#questionDots').querySelectorAll('[data-question]').forEach(b=>b.onclick=()=>{state.index=+b.dataset.question;save();renderQuestion()})}
 function isCorrect(q,a){if(['choice','truefalse','sign','representation','membership'].includes(q.type))return a===q.correct;if(q.type==='fill'||q.type==='numeric')return numericEqual(a,q.expected);if(q.type==='order')return Array.isArray(a)&&a.length===q.correctOrder.length&&a.every((id,i)=>id===q.correctOrder[i]);return false}
 function finish(){const missing=state.questions.map((q,i)=>answered(i)?null:i+1).filter(Boolean);if(missing.length&&!confirm(`Ainda tens ${missing.length} ${missing.length===1?'questão por responder':'questões por responder'}. Queres terminar mesmo assim?`))return;state.score=state.questions.reduce((n,q,i)=>n+(isCorrect(q,state.answers[i])?1:0),0);state.finished=true;save();showResult()}
 function resultText(score){return score<=4?'Ainda precisas de rever este conteúdo. A revisão mostra-te onde melhorar.':score<=6?'Estás a progredir. Revê os erros e tenta novamente.':score<=8?'Bom domínio do conteúdo. Revê as questões em que tiveste dificuldade.':'Excelente domínio do conteúdo!'}
-function showResult(){$('#testRunner').classList.add('hidden-mode');$('#testReview').classList.add('hidden-mode');$('#testResult').classList.remove('hidden-mode');$('#resultScore').textContent=`${state.score}/10`;$('#resultMessage').textContent=resultText(state.score)}
+function showResult(){const total=state.questions.length,hasErrors=state.score<total;$('#testRunner').classList.add('hidden-mode');$('#testReview').classList.add('hidden-mode');$('#testResult').classList.remove('hidden-mode');$('#resultTitle').textContent=state.mode==='errors'?'Resultado do treino dos erros':'Resultado do teste';$('#resultScore').textContent=`${state.score}/${total}`;$('#resultMessage').textContent=!hasErrors&&state.mode==='errors'?'Muito bem! Corrigiste todas as dificuldades neste treino.':resultText(state.score);$('#trainErrors').classList.toggle('hidden-mode',!hasErrors)}
 function displayAnswer(q,a){if(a===null||a===''||Array.isArray(a)&&!a.length)return 'Sem resposta';if(['choice','truefalse','sign','representation','membership'].includes(q.type))return `\\(${q.options[a]?.text??'—'}\\)`;if(q.type==='order')return a.map(id=>`\\(${q.cards.find(c=>c.id===id)?.text??'?'}\\)`).join(' &lt; ');return esc(a)}
 function correctDisplay(q){if(q.type==='order')return q.correctOrder.map(id=>`\\(${q.cards.find(c=>c.id===id).text}\\)`).join(' &lt; ');return `\\(${q.answerTex}\\)`}
 function feedbackFor(q,a){if(['choice','truefalse','sign','representation','membership'].includes(q.type)&&Number.isInteger(a))return q.options[a]?.feedback||'Revê o procedimento apresentado na resolução.';if(q.type==='order')return 'A sequência não está integralmente por ordem crescente.';return 'O valor introduzido não é equivalente à resposta correta.'}
 function review(){const list=$('#reviewList');list.innerHTML=state.questions.map((q,i)=>{const ok=isCorrect(q,state.answers[i]),steps=Array.isArray(q.steps)?q.steps:[q.steps];return`<article class="review-card ${ok?'correct':'wrong'}"><div class="review-title"><span>Questão ${i+1} · ${esc(q.topic)}</span><span>${ok?'✓ Correta':'✗ A rever'}</span></div><div class="test-question">${esc(q.prompt)}</div><div class="test-statement">${q.statement||''}</div><div class="review-answer user"><strong>A tua resposta:</strong> ${displayAnswer(q,state.answers[i])}</div>${ok?'':`<div class="feedback">${esc(feedbackFor(q,state.answers[i]))}</div>`}<div class="review-answer correct-answer"><strong>Resposta correta:</strong> ${correctDisplay(q)}</div><div>${steps.filter(Boolean).map(s=>`<div class="step"><div class="math">\\[${s}\\]</div></div>`).join('')}</div></article>`}).join('');$('#testResult').classList.add('hidden-mode');$('#testReview').classList.remove('hidden-mode');typeset()}
 
-$('#freeModeBtn').onclick=()=>showMode('free');$('#testModeBtn').onclick=()=>showMode('test');$('#startTest').onclick=()=>startTest();$('#resumeTest').onclick=resumeTest;$('#previousQuestion').onclick=()=>{if(state.index>0){state.index--;save();renderQuestion()}};$('#nextQuestion').onclick=()=>{if(state.index<9){state.index++;save();renderQuestion()}};$('#finishTest').onclick=finish;$('#reviewTest').onclick=review;$('#closeReview').onclick=showResult;$('#newTest').onclick=()=>{clearSaved();state=null;resetTestViews();refreshResume()};
-window.__rationalsTest={buildTest,isCorrect,parseNumber,startTest};refreshResume();
+$('#freeModeBtn').onclick=()=>showMode('free');$('#testModeBtn').onclick=()=>showMode('test');$('#startTest').onclick=()=>startTest();$('#resumeTest').onclick=resumeTest;$('#previousQuestion').onclick=()=>{if(state.index>0){state.index--;save();renderQuestion()}};$('#nextQuestion').onclick=()=>{if(state.index<state.questions.length-1){state.index++;save();renderQuestion()}};$('#finishTest').onclick=finish;$('#reviewTest').onclick=review;$('#trainErrors').onclick=trainErrors;$('#closeReview').onclick=showResult;$('#newTest').onclick=()=>{clearSaved();state=null;resetTestViews();refreshResume()};
+window.__rationalsTest={buildTest,buildErrorTraining,isCorrect,parseNumber,startTest};refreshResume();
 })();
