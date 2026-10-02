@@ -1,0 +1,27 @@
+MATHLAB 7–9 — OTIMIZAÇÃO PARA MOTORES DE PESQUISA
+==================================================
+
+Esta atualização foi preparada localmente e ainda não foi publicada.
+
+Ficheiros novos:
+- sitemap.xml
+- robots.txt
+
+Ficheiros atualizados:
+- index.html
+- todos os módulos ativos do MathLab
+- intervalos-numeros-reais-v1.3.html, assinalado como versão anterior
+
+Depois de confirmar e publicar os ficheiros no GitHub:
+
+1. Abrir https://search.google.com/search-console/
+2. Adicionar a propriedade:
+   https://nmiguelaraujo-math.github.io/mathlab-7-9/
+3. Confirmar a propriedade pelo método disponibilizado pelo Google.
+4. Na área "Sitemaps", enviar:
+   https://nmiguelaraujo-math.github.io/mathlab-7-9/sitemap.xml
+5. Em "Inspeção de URL", testar a página principal e pedir a indexação.
+6. Aguardar o rastreio e acompanhar o relatório de indexação.
+
+Nota: o sitemap e o pedido de indexação ajudam o Google a descobrir o site,
+mas não garantem uma posição específica nos resultados de pesquisa.

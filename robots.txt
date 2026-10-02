@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nmiguelaraujo-math.github.io/mathlab-7-9/sitemap.xml
