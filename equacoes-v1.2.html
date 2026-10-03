@@ -194,6 +194,7 @@
             box-sizing: border-box;
             margin-top: auto;
         }
+        .mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}.mode-switch button{background:#fff;color:#24415d;border:1px solid #b9c7d6}.mode-switch button.active{background:#315ee7;color:#fff;border-color:#315ee7}.hidden-mode{display:none!important}.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.question-label{display:inline-block;background:#edf3ff;color:#174ea6;border-radius:999px;padding:5px 10px;font-weight:750;font-size:.85rem}.problem-text{font-size:1.08rem;line-height:1.55;text-align:left}.test-card{margin-top:16px;padding:20px;border:1px solid #d8e0ea;border-radius:12px;background:#fbfcff}.test-setup{display:grid;grid-template-columns:1fr 1fr;gap:14px}.test-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:750}.progress-track{height:9px;background:#e6ebf2;border-radius:99px;overflow:hidden;margin:10px 0 18px}.progress-fill{height:100%;background:#315ee7}.test-statement{min-height:82px;display:grid;place-items:center;text-align:center;font-size:1.25rem;overflow-x:auto}.answer-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option-btn{background:#fff;color:#20354d;border:1px solid #b9c7d6;text-align:left;display:flex;align-items:center;gap:10px}.option-btn.selected{border:2px solid #315ee7;background:#edf3ff}.option-key{display:grid;place-items:center;min-width:30px;height:30px;border-radius:50%;background:#dce8ff;color:#174ea6}.test-input{display:block;width:min(300px,90%);margin:16px auto;padding:12px;font-size:1.1rem;text-align:center;border:2px solid #b9c7d6;border-radius:8px}.question-dots{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:15px 0}.question-dot{width:34px;padding:8px 0;background:#fff;color:#24415d;border:1px solid #b9c7d6;border-radius:50%}.question-dot.current{background:#315ee7;color:#fff}.question-dot.answered{border-color:#229767;background:#e8f7ef}.test-nav,.test-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.result-score{text-align:center;font-size:3.5rem;font-weight:850;color:#229767}.result-message{text-align:center;font-size:1.1rem}.review-card{border:1px solid #d8e0ea;border-left:6px solid #229767;border-radius:10px;padding:14px;margin:12px 0}.review-card.wrong{border-left-color:#c0394d}.review-answer{padding:9px 11px;border-radius:8px;background:#f0f3f7;margin:8px 0}.review-answer.correct{background:#e8f7ef}.feedback{color:#a5283c;font-weight:650}.test-badge{display:inline-block;background:#edf3ff;color:#174ea6;border-radius:999px;padding:4px 9px}.secondary{background:#64748b}@media(max-width:680px){.control-grid,.test-setup,.answer-options,.test-actions{grid-template-columns:1fr}.test-nav{grid-template-columns:1fr 1fr}.test-nav button:last-child{grid-column:1/-1}}
     </style>
 <script data-goatcounter="https://mathlabnuno.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -201,6 +202,8 @@
 
 <div class="container">
     <h2>Equações do 1.º grau</h2>
+    <div class="mode-switch"><button id="freeModeBtn" class="active">Treino livre</button><button id="testModeBtn">Modo teste</button></div>
+    <div id="freeMode">
     
     <button class="btn-teoria" onclick="toggleTeoria()">Regras de Resolução (Teoria)</button>
     <div id="teoriaBox" class="teoria-box">
@@ -214,25 +217,13 @@
         </ol>
     </div>
      
-    <div class="form-group">
-        <label for="dificuldade">Nível de Dificuldade:</label>
-        <select id="dificuldade">
-            <option value="1">Principiante (7º ano)</option>
-            <option value="2">Intermédio (8º ano)</option>
-            <option value="3">Especialista (8º e 9º ano)</option>
-        </select>
+    <div class="control-grid">
+      <div class="form-group"><label for="ano">Ano:</label><select id="ano"><option value="7">7.º ano</option><option value="8">8.º ano</option><option value="9">9.º ano</option></select></div>
+      <div class="form-group"><label for="dificuldade">Dificuldade:</label><select id="dificuldade"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div>
+      <div class="form-group" style="grid-column:1/-1"><label for="tipoExercicio">Tipo de exercício:</label><select id="tipoExercicio"><option value="misto">Treino misto</option><option value="calculo">Resolver equações</option><option value="selecao">Seleção e análise de erros</option><option value="problema">Problemas</option></select></div>
     </div>
 
-    <div class="form-group">
-        <label>Configurações Adicionais:</label>
-        <div class="checkbox-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="parenteses"> Incluir Parênteses
-            </label>
-        </div>
-    </div>
-
-    <button class="btn-gerar" onclick="gerarEquacao()">Gerar Nova Equação</button>
+    <button class="btn-gerar" onclick="gerarEquacao()">Novo exercício</button>
 
     <div id="resultado" class="resultado-box">
         <label>Equação gerada:</label>
@@ -246,10 +237,18 @@
         <div id="solucaoBox" class="solucao-box"></div>
         <div id="passosBox" class="passos-box"></div>
     </div>
+    </div>
+
+    <div id="testMode" class="hidden-mode">
+      <section id="testSetup" class="test-card"><h3>Modo teste</h3><p>10 questões variadas, correção final e treino dirigido às dificuldades detetadas.</p><div class="test-setup"><div><label for="testYear">Ano</label><select id="testYear"><option value="7">7.º ano</option><option value="8">8.º ano</option><option value="9">9.º ano</option></select></div><div><label for="testLevel">Dificuldade</label><select id="testLevel"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div></div><button id="startTest" class="btn-gerar" style="margin-top:15px">Começar teste</button><button id="resumeTest" class="secondary hidden-mode" style="margin-top:10px">Retomar teste</button></section>
+      <section id="testRunner" class="test-card hidden-mode"><div class="test-head"><span id="testTags" class="test-badge"></span><span id="testProgress"></span></div><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><div id="testPrompt"></div><div id="testStatement" class="test-statement"></div><div id="testResponse"></div><div id="questionDots" class="question-dots"></div><div class="test-nav"><button id="previousQuestion" class="secondary">Anterior</button><button id="nextQuestion" class="secondary">Seguinte</button><button id="finishTest" class="btn-gerar">Terminar teste</button></div></section>
+      <section id="testResult" class="test-card hidden-mode"><h3 id="resultTitle">Resultado do teste</h3><div id="resultScore" class="result-score"></div><div id="resultMessage" class="result-message"></div><div class="test-actions"><button id="reviewTest" class="btn-gerar">Rever respostas</button><button id="trainErrors" class="secondary">Treinar os meus erros</button><button id="newTest" class="secondary">Novo teste</button></div></section>
+      <section id="testReview" class="test-card hidden-mode"><h3>Revisão das respostas</h3><div id="reviewList"></div><button id="closeReview" class="secondary">Voltar ao resultado</button></section>
+    </div>
 </div>
 
 <footer>
-    © 2026 — Powered by Nuno Araújo · versão V1.2
+    © 2026 — Powered by Nuno Araújo · versão V1.3
 </footer>
 
 <script>
@@ -304,7 +303,7 @@ function toggleTeoria() {
 
 function gerarEquacao() {
     const dif = parseInt(document.getElementById('dificuldade').value);
-    const comParenteses = document.getElementById('parenteses').checked;
+    const comParenteses = false;
 
     document.getElementById('passosBox').style.display = 'none';
     document.getElementById('solucaoBox').style.display = 'none';
@@ -622,5 +621,7 @@ function construirPassosUI() {
 }
 </script>
 
+<script src="equacoes-v1.3-engine.js"></script>
+<script src="modo-teste-equacoes.js"></script>
 <script src="voltar.js"></script></body>
 </html>
