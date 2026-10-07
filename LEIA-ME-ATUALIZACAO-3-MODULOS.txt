@@ -5,8 +5,8 @@ substituindo os ficheiros com o mesmo nome.
 
 Versões apresentadas no site:
 - Números Racionais V1.6 (mantém o endereço numeros-racionais-v1.5.html)
-- Dízimas V1.2 (mantém o endereço dizimas-v1.1.html)
-- Raízes quadradas e cúbicas V1.1 (mantém o endereço raizes-quadradas-cubicas-v1.0.html)
+- Dízimas V1.3 (mantém o endereço dizimas-v1.1.html)
+- Raízes quadradas e cúbicas V1.2 (mantém o endereço raizes-quadradas-cubicas-v1.0.html)
 
 Os nomes dos ficheiros foram mantidos para não quebrar ligações já publicadas.
 O ficheiro index.html atualiza as etiquetas das versões na página principal.
@@ -14,5 +14,6 @@ O ficheiro index.html atualiza as etiquetas das versões na página principal.
 No módulo de Dízimas, todas as dízimas infinitas periódicas têm período 3 ou 6,
 incluindo os exercícios do nível Especialista.
 
-O pacote inclui ainda modo-teste-racionais.js e voltar.js, necessários para
-o funcionamento completo dos módulos.
+Os três módulos incluem modo teste com 10 questões, revisão das respostas e
+“Treinar os meus erros”. O pacote inclui os respetivos motores de teste, o
+motor e os estilos comuns e voltar.js; todos são necessários ao funcionamento.

@@ -11,11 +11,14 @@
 <style>
 :root{--ink:#17243b;--blue:#1769e0;--blue2:#eaf3ff;--green:#087443;--line:#d8e2ef;--muted:#59697f;--bg:#f4f7fb;--orange:#b64c00}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}header{background:linear-gradient(130deg,#123568,#1676d2);color:#fff;padding:24px 18px}header>div,main,footer{max-width:1000px;margin:auto}h1{margin:0;font-size:clamp(1.55rem,4.5vw,2.35rem);line-height:1.2}.subtitle{margin:6px 0 0;opacity:.92}.version{display:inline-block;border:1px solid #ffffff70;border-radius:999px;padding:2px 9px;margin-top:10px;font-size:.82rem}main{padding:18px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 3px 14px #17345a0d}.controls{display:grid;grid-template-columns:1fr 2fr;gap:14px}label{display:block;font-weight:750;margin-bottom:5px}select,button{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid #b7c5d7;border-radius:10px;padding:10px 11px}button{font-weight:750;cursor:pointer}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.actions{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:10px;margin-top:15px}.tag{display:inline-block;background:var(--blue2);color:#174ea6;border-radius:999px;padding:3px 10px;margin:0 5px 6px 0;font-size:.83rem;font-weight:750}#prompt{font-weight:750;margin-top:10px;font-size:1.04rem}#statement{min-height:110px;display:grid;place-items:center;text-align:center;font-size:clamp(1.18rem,4vw,1.7rem);padding:12px;overflow-x:auto}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:780px;margin:6px auto}.choice{display:flex;align-items:center;gap:9px;text-align:left;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fbfdff}.letter{display:grid;place-items:center;min-width:29px;height:29px;border-radius:50%;background:var(--blue2);color:#174ea6;font-weight:800}.panel{display:none;border-top:1px solid var(--line);margin-top:16px;padding-top:15px}.panel.show{display:block}.answer{text-align:center;color:var(--green);font-size:1.22rem;overflow-x:auto}.step{border-left:4px solid #8db7fc;background:#f7faff;border-radius:0 9px 9px 0;padding:10px 12px;margin:9px 0}.math{text-align:center;font-size:1.13rem;overflow-x:auto}.reason{color:var(--muted);font-size:.94rem;margin-top:5px}.warning{border-left-color:#ff9d57;background:#fff8f2}.rules li{margin:8px 0}.note{color:var(--muted);font-size:.92rem;margin:8px 0 0}footer{text-align:center;color:#687588;padding:8px 18px 28px}@media(max-width:740px){main{padding:12px}.card{padding:14px}.controls{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.primary{grid-column:1/-1}.choices{grid-template-columns:1fr}}
 </style>
+<link rel="stylesheet" href="modo-teste-comum.css">
 <script data-goatcounter="https://mathlabnuno.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
-<header><div><h1>Dízimas</h1><p class="subtitle">Representações dos números racionais — 8.º ano</p><span class="version">Versão 1.2</span></div></header>
+<header><div><h1>Dízimas</h1><p class="subtitle">Representações dos números racionais — 8.º ano</p><span class="version">Versão 1.3</span></div></header>
 <main>
+<section class="card mode-switch" aria-label="Modo de treino"><button id="freeModeBtn" class="active">Treino livre</button><button id="testModeBtn">Modo teste</button></section>
+<div id="freeMode">
 <section class="card">
   <div class="controls">
     <div><label for="level">Nível</label><select id="level"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div>
@@ -29,6 +32,13 @@
   <div id="stepsPanel" class="panel"><h2>Resolução passo a passo</h2><div id="steps"></div></div>
   <div id="rulesPanel" class="panel rules"><h2>Regras essenciais</h2><div id="rules"></div></div>
 </section>
+</div>
+<div id="testMode" class="hidden-mode">
+<section id="testSetup" class="card"><h2>Modo teste</h2><div class="test-setup"><div><label for="testLevel">Dificuldade</label><select id="testLevel"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div><p class="test-intro">10 questões variadas. Responde no próprio MathLab e, no final, revê as soluções ou treina apenas os teus erros.</p><button id="startTest" class="primary">Começar teste</button><button id="resumeTest" class="hidden-mode">Continuar teste</button></div></section>
+<section id="testRunner" class="card hidden-mode"><div class="test-head"><span id="testBadge" class="test-badge"></span><span id="testProgress" class="progress"></span></div><div class="progress-track"><div id="testProgressFill" class="progress-fill"></div></div><div id="testPrompt" class="test-question"></div><div id="testStatement" class="test-statement"></div><div id="testAnswerArea"></div><div id="questionDots" class="question-dots"></div><div class="test-nav"><button id="previousQuestion">Anterior</button><button id="nextQuestion">Seguinte</button><button id="finishTest" class="primary finish-test">Terminar teste</button></div></section>
+<section id="testResult" class="card hidden-mode"><h2 id="resultTitle">Resultado</h2><div id="resultScore" class="result-score"></div><div id="resultMessage" class="result-message"></div><div class="test-actions"><button id="reviewTest">Rever respostas</button><button id="trainErrors" class="primary">Treinar os meus erros</button><button id="newTest">Novo teste</button></div></section>
+<section id="testReview" class="card hidden-mode"><h2>Revisão do teste</h2><div id="reviewList"></div><button id="closeReview">Voltar ao resultado</button></section>
+</div>
 </main>
 <footer>© 2026 — Nuno Araújo</footer>
 <script>
@@ -101,6 +111,8 @@ function safeMath(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 function toggle(id){$(id).classList.toggle('show');typeset()}$('#new').onclick=draw;$('#answerBtn').onclick=()=>toggle('#answerPanel');$('#stepsBtn').onclick=()=>toggle('#stepsPanel');$('#rulesBtn').onclick=()=>toggle('#rulesPanel');['#level','#category'].forEach(id=>$(id).onchange=draw);window.__decimals={make,data,convert,recognise,complete,compare,problems,selection,Q,decTex};draw();
 })();
 </script>
+<script src="modo-teste-comum.js"></script>
+<script src="modo-teste-dizimas.js"></script>
 <script src="voltar.js"></script>
 </body>
 </html>
