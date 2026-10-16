@@ -1,0 +1,17 @@
+ATUALIZAÇÃO MATHLAB — NOTAÇÃO CIENTÍFICA V1.3
+
+Carregar todos os ficheiros deste pacote na raiz do repositório GitHub,
+substituindo os ficheiros com o mesmo nome.
+
+O endereço do módulo mantém-se: notacao-cientifica-v1.2.html
+
+Principais alterações:
+- operações completas no 7.º ano, apenas com expoentes positivos;
+- operações completas no 8.º ano, com expoentes positivos e negativos;
+- adição e subtração com igualação prévia dos expoentes;
+- diferenças sempre com resultado positivo;
+- nível Especialista com expressões e raciocínio em várias etapas;
+- novas famílias de problemas;
+- modo teste com 10 questões, revisão e Treinar os meus erros.
+
+São necessários os ficheiros de motor e estilos incluídos no pacote.
