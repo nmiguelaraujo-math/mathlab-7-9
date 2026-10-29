@@ -40,14 +40,17 @@ function classify(){
  const reduced=`${lin(leftA,leftB)}=${lin(r,s)}`;
  return special(q,[reduced,identity?'0x=0':`0x=${s-leftB}`,identity?'\\text{Todos os números reais verificam a igualdade.}':'\\text{A igualdade é impossível.}'],identity?'identity':'impossible','classificacao');
 }
-function selection(level){
- const wrong=pick(['produto','transposicao','distributiva']);
+function selection(level,structure='misto'){
+ const families=structure==='sem'?['transposicao','distributiva']:structure==='com'?['produto']:['produto','transposicao','distributiva'],wrong=pick(families);
  if(wrong==='produto'){const a=ri(2,6),b=ri(2,5);return{question:`\\text{Um aluno escreveu }${a}(x+${b})=${a}x+${b}.\\text{ A igualdade está correta?}`,steps:[`${a}(x+${b})=${a}x+${a*b}`,`\\text{O fator exterior multiplica os dois termos.}`],solution:{answer:'\\text{Não}',set:`\\text{Correção: }${a}x+${a*b}`},family:'erro-distributiva',label:'Analisar e corrigir o erro'}}
  if(wrong==='transposicao'){const a=ri(2,7),b=ri(2,9),x=ri(1,8),c=a*x+b;return{question:`\\text{Na equação }${a}x+${b}=${c}\\text{, um aluno obteve }${a}x=${c}+${b}.\\text{ Está correto?}`,steps:[`${a}x+${b}=${c}`,`${a}x=${c}-${b}`,`x=${x}`],solution:{answer:'\\text{Não}',set:`\\left\\{${x}\\right\\}`},family:'erro-transposicao',label:'Analisar e corrigir o erro'}}
  const a=ri(2,6),b=ri(2,8),x=ri(1,7),c=a*x-b;return{question:`\\text{Qual é a operação inversa que permite passar de }${a}x-${b}=${c}\\text{ para }${a}x=\\,?`,steps:[`${a}x=${c}+${b}`,`${a}x=${a*x}`,`x=${x}`],solution:{answer:`${c}+${b}`,set:`\\left\\{${x}\\right\\}`},family:'operacao-inversa',label:'Selecionar o passo correto'};
 }
-function problem(level){
- const families=level===1?['idade','numero','perimetro','compras']:level===2?['idade','consecutivos','tarifa','retangulo','mistura']:['idade2','consecutivos','tarifa','retangulo','bilhetes','percurso'];
+function problem(level,structure='misto'){
+ const mixed=level===1?['idade','numero','perimetro','compras']:level===2?['idade','consecutivos','tarifa','retangulo','mistura']:['idade2','consecutivos','tarifa','retangulo','bilhetes','percurso'];
+ const without=level===1?['numero','compras']:level===2?['tarifa','mistura']:['tarifa','percurso'];
+ const withParentheses=level===1?['idade','perimetro']:level===2?['idade','consecutivos','retangulo']:['idade2','consecutivos','retangulo','bilhetes'];
+ const families=structure==='sem'?without:structure==='com'?withParentheses:mixed;
  const f=pick(families);
  if(f==='numero'){const x=ri(4,25),a=ri(2,5),b=ri(3,12),total=a*x+b;return normal(`Um número é multiplicado por ${a} e ao resultado adicionam-se ${b}. Obtém-se ${total}. Qual é o número?`,[`${a}x+${b}=${total}`,`${a}x=${total-b}`,`x=${x}`],x,1,'problema-numero','Resolve o problema através de uma equação');}
  if(f==='idade'||f==='idade2'){const x=ri(8,18),gap=ri(3,12),years=f==='idade2'?ri(2,6):0,total=x+years+x+gap+years;return normal(`A Inês tem menos ${gap} anos do que o irmão. ${years?`Daqui a ${years} anos,`: 'Atualmente,'} a soma das idades será ${total} anos. Que idade tem atualmente a Inês?`,[`x+${years}+(x+${gap}+${years})=${total}`,`2x+${gap+2*years}=${total}`,`2x=${2*x}`,`x=${x}`],x,1,'problema-idades','Define a incógnita e resolve');}
@@ -58,9 +61,13 @@ function problem(level){
  if(f==='percurso'){const v1=pick([3,4,5]),v2=v1+pick([2,3]),t=ri(3,8),extra=ri(6,20),total=v1*t+v2*(t+extra/v2);return normal(`Dois percursos totalizam ${total} km. No primeiro percorrem-se ${v1} km por etapa; no segundo, ${v2} km por etapa e ainda ${extra} km adicionais. Se ambos têm o mesmo número de etapas, quantas etapas tem cada percurso?`,[`${v1}x+${v2}x+${extra}=${total}`,`${v1+v2}x=${total-extra}`,`x=${t}`],t,1,'problema-percurso','Escolhe uma incógnita comum');}
  const packs=ri(3,10),each=ri(4,12),used=ri(5,Math.min(20,packs*each-1)),left=packs*each-used;return normal(`Foram compradas ${packs} embalagens com o mesmo número de unidades. Depois de se utilizarem ${used}, sobraram ${left}. Quantas unidades tinha cada embalagem?`,[`${packs}x-${used}=${left}`,`${packs}x=${left+used}`,`x=${each}`],each,1,'problema-compras','Resolve o problema através de uma equação');
 }
-function generate(level,type){
- const map={calculo:level===1?[simple]:level===2?[simple,parentheses,fractions]:[parentheses,fractions,minusFraction,nested,classify],selecao:[selection,classify],problema:[()=>problem(level)]};
- const choices=type==='misto'?[...(map.calculo),selection,()=>problem(level)]:map[type];return pick(choices)(level);
+function generate(level,type,structure='misto'){
+ const without=level===1?[simple]:level===2?[simple,fractions]:[simple,fractions,minusFraction];
+ const withParentheses=level===1?[parentheses]:level===2?[parentheses,parentheses]:[parentheses,nested];
+ const calculation=structure==='sem'?without:structure==='com'?withParentheses:[...without,...withParentheses];
+ const selectionPool=structure==='sem'?[()=>selection(level,'sem')]:structure==='com'?[()=>selection(level,'com'),classify]:[selection,classify];
+ const map={calculo:calculation,selecao:selectionPool,problema:[()=>problem(level,structure)]};
+ const choices=type==='misto'?[...calculation,...selectionPool,()=>problem(level,structure)]:map[type];return pick(choices)(level);
 }
 function render(ex){
  dadosResolucao={passos:ex.steps.map((eq,i)=>({desc:i===0?'<strong>Começamos por traduzir ou simplificar:</strong>':'<strong>Equação equivalente:</strong>',eq})),solucaoTexto:`A resposta é: $$${ex.solution.answer}$$`,conjuntoSolucao:ex.solution.set,tipo:'normal'};
@@ -68,6 +75,6 @@ function render(ex){
  $('passosBox').style.display='none';$('solucaoBox').style.display='none';$('btnPassos').textContent='Ver Passos da Resolução';$('btnSolucao').textContent='Ver Apenas Solução';$('resultado').style.display='block';$('btnPassos').style.display='block';$('btnSolucao').style.display='block';
  if(window.MathJax?.typesetPromise)MathJax.typesetPromise([box]);
  }
- window.gerarEquacao=()=>render(generate(+$('dificuldade').value,$('tipoExercicio').value));
+ window.gerarEquacao=()=>render(generate(+$('dificuldade').value,$('tipoExercicio').value,$('estrutura')?.value||'misto'));
  window.__equations={generate,simple,parentheses,fractions,minusFraction,nested,classify,selection,problem};
 })();

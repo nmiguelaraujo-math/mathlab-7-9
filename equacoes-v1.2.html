@@ -220,7 +220,8 @@
     <div class="control-grid">
       <div class="form-group"><label for="ano">Ano:</label><select id="ano"><option value="7">7.º ano</option><option value="8">8.º ano</option><option value="9">9.º ano</option></select></div>
       <div class="form-group"><label for="dificuldade">Dificuldade:</label><select id="dificuldade"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div>
-      <div class="form-group" style="grid-column:1/-1"><label for="tipoExercicio">Tipo de exercício:</label><select id="tipoExercicio"><option value="misto">Treino misto</option><option value="calculo">Resolver equações</option><option value="selecao">Seleção e análise de erros</option><option value="problema">Problemas</option></select></div>
+      <div class="form-group"><label for="tipoExercicio">Tipo de exercício:</label><select id="tipoExercicio"><option value="misto">Treino misto</option><option value="calculo">Resolver equações</option><option value="selecao">Seleção e análise de erros</option><option value="problema">Problemas</option></select></div>
+      <div class="form-group"><label for="estrutura">Estrutura das equações:</label><select id="estrutura"><option value="misto">Treino misto</option><option value="sem">Sem parênteses</option><option value="com">Com parênteses</option></select></div>
     </div>
 
     <button class="btn-gerar" onclick="gerarEquacao()">Novo exercício</button>
@@ -240,7 +241,7 @@
     </div>
 
     <div id="testMode" class="hidden-mode">
-      <section id="testSetup" class="test-card"><h3>Modo teste</h3><p>10 questões variadas, correção final e treino dirigido às dificuldades detetadas.</p><div class="test-setup"><div><label for="testYear">Ano</label><select id="testYear"><option value="7">7.º ano</option><option value="8">8.º ano</option><option value="9">9.º ano</option></select></div><div><label for="testLevel">Dificuldade</label><select id="testLevel"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div></div><button id="startTest" class="btn-gerar" style="margin-top:15px">Começar teste</button><button id="resumeTest" class="secondary hidden-mode" style="margin-top:10px">Retomar teste</button></section>
+      <section id="testSetup" class="test-card"><h3>Modo teste</h3><p>10 questões variadas, correção final e treino dirigido às dificuldades detetadas.</p><div class="test-setup"><div><label for="testYear">Ano</label><select id="testYear"><option value="7">7.º ano</option><option value="8">8.º ano</option><option value="9">9.º ano</option></select></div><div><label for="testLevel">Dificuldade</label><select id="testLevel"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></div><div><label for="testStructure">Estrutura das equações</label><select id="testStructure"><option value="misto">Treino misto</option><option value="sem">Sem parênteses</option><option value="com">Com parênteses</option></select></div></div><button id="startTest" class="btn-gerar" style="margin-top:15px">Começar teste</button><button id="resumeTest" class="secondary hidden-mode" style="margin-top:10px">Retomar teste</button></section>
       <section id="testRunner" class="test-card hidden-mode"><div class="test-head"><span id="testTags" class="test-badge"></span><span id="testProgress"></span></div><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><div id="testPrompt"></div><div id="testStatement" class="test-statement"></div><div id="testResponse"></div><div id="questionDots" class="question-dots"></div><div class="test-nav"><button id="previousQuestion" class="secondary">Anterior</button><button id="nextQuestion" class="secondary">Seguinte</button><button id="finishTest" class="btn-gerar">Terminar teste</button></div></section>
       <section id="testResult" class="test-card hidden-mode"><h3 id="resultTitle">Resultado do teste</h3><div id="resultScore" class="result-score"></div><div id="resultMessage" class="result-message"></div><div class="test-actions"><button id="reviewTest" class="btn-gerar">Rever respostas</button><button id="trainErrors" class="secondary">Treinar os meus erros</button><button id="newTest" class="secondary">Novo teste</button></div></section>
       <section id="testReview" class="test-card hidden-mode"><h3>Revisão das respostas</h3><div id="reviewList"></div><button id="closeReview" class="secondary">Voltar ao resultado</button></section>
@@ -248,7 +249,7 @@
 </div>
 
 <footer>
-    © 2026 — Powered by Nuno Araújo · versão V1.3
+    © 2026 — Powered by Nuno Araújo · versão V1.3.1
 </footer>
 
 <script>
@@ -621,7 +622,7 @@ function construirPassosUI() {
 }
 </script>
 
-<script src="equacoes-v1.3-engine.js"></script>
-<script src="modo-teste-equacoes.js"></script>
+<script src="equacoes-v1.3-engine.js?v=1.3.1"></script>
+<script src="modo-teste-equacoes.js?v=1.3.1"></script>
 <script src="voltar.js"></script></body>
 </html>
