@@ -1,18 +1,18 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pick=a=>a[ri(0,a.length-1)],shuffle=a=>{const b=[...a];for(let i=b.length-1;i;i--){const j=ri(0,i);[b[i],b[j]]=[b[j],b[i]]}return b};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const levels=['','Principiante','Intermédio','Especialista'],storeKey='mathlab-equacoes-teste-v1';let state=null;
+const levels=['','Principiante','Intermédio','Especialista'],storeKey='mathlab-equacoes-teste-v2';let state=null;
 const optionQuestion=(topic,prompt,statement,correct,wrong,steps,generator,isText=false)=>{const raw=[{text:correct,ok:true,feedback:''},...wrong.map((text,i)=>({text,ok:false,feedback:['Confirma a operação inversa e os sinais.','Substitui o valor na equação inicial para verificares.','Revê a propriedade aplicada neste passo.'][i%3]}))],options=shuffle(raw);return{type:'choice',topic,prompt,statement,options,correct:options.findIndex(o=>o.ok),answerTex:correct,steps,generator,isText}};
-function equationQuestion(level,type='calculo',structure='misto'){
- let ex=window.__equations.generate(level,type,structure),guard=0;while(ex.solution.value===undefined&&guard++<8)ex=window.__equations.generate(level,type,structure);
- if(ex.solution.value===undefined)return classifyQuestion(level);
+function equationQuestion(year,level,type='calculo',structure='misto'){
+ let ex=window.__equations.generate(year,level,type,structure),guard=0;while(ex.solution.value===undefined&&guard++<8)ex=window.__equations.generate(year,level,type,structure);
+ if(ex.solution.value===undefined)return classifyQuestion(year,level);
  const v=ex.solution.value,integer=Number.isInteger(v),answer=integer?String(v):ex.solution.x;
  if(Math.random()<.45)return{type:'numeric',topic:ex.label,prompt:ex.family.startsWith('problema')?ex.question:'Resolve a equação.',statement:ex.family.startsWith('problema')?'':ex.question,expected:v,answerTex:answer,steps:ex.steps,generator:ex.family,isText:ex.family.startsWith('problema')};
  const wrong=[String(integer?-v:v+1),String(integer?v+1:v-1),String(integer?v-1:v*2)].filter((x,i,a)=>x!==answer&&a.indexOf(x)===i).slice(0,3);
  return optionQuestion(ex.label,ex.family.startsWith('problema')?ex.question:'Seleciona a solução da equação.',ex.family.startsWith('problema')?'':ex.question,answer,wrong,ex.steps,ex.family,ex.family.startsWith('problema'));
 }
-function classifyQuestion(level){
- const ex=window.__equations.classify(level),identity=ex.solution.set==='\\mathbb R';
+function classifyQuestion(year,level){
+ const ex=window.__equations.classify(year,level),identity=ex.solution.set==='\\mathbb R';
  return optionQuestion('Classificação de equações','Classifica a equação.',ex.question,identity?'\\text{Possível indeterminada}':'\\text{Impossível}',identity?['\\text{Impossível}','\\text{Possível determinada}','\\text{Sem resolução}']:['\\text{Possível indeterminada}','\\text{Possível determinada}','\\text{Solução }0'],ex.steps,ex.family);
 }
 function trueFalse(level,structure='misto'){
@@ -36,9 +36,9 @@ function modelProblem(level,structure='misto'){
 }
 function buildTest(year,level,structure='misto'){
  const blueprint=level===1?['calc','calc','tf','missing','step','model','problem','calc','tf','problem']:level===2?['calc','calc','calc','tf','missing','step','model','problem','calc','classify']:['calc','calc','calc','classify','tf','step','model','problem','problem','calc'];
- return blueprint.map(k=>k==='tf'?trueFalse(level,structure):k==='missing'?missingNumber(level):k==='step'?chooseStep(level):k==='model'?modelProblem(level,structure):k==='classify'?(structure==='sem'?chooseStep(level):classifyQuestion(level)):k==='problem'?equationQuestion(level,'problema',structure):equationQuestion(level,'calculo',structure));
+ return blueprint.map(k=>k==='tf'?trueFalse(level,structure):k==='missing'?missingNumber(level):k==='step'?chooseStep(level):k==='model'?modelProblem(level,structure):k==='classify'?(structure==='sem'?chooseStep(level):classifyQuestion(year,level)):k==='problem'?equationQuestion(year,level,'problema',structure):equationQuestion(year,level,'calculo',structure));
 }
-function buildErrorTraining(year,level,keys,structure='misto'){const unique=keys.length?[...new Set(keys)]:['passo-equivalente'];return Array.from({length:10},(_,i)=>{const k=unique[i%unique.length];if(k==='distributiva'||k==='equivalencia-sem-parenteses')return trueFalse(level,structure);if(k==='completar')return missingNumber(level);if(k==='passo-equivalente')return chooseStep(level);if(k.startsWith('modelacao'))return modelProblem(level,structure);if(k==='classificacao')return structure==='sem'?chooseStep(level):classifyQuestion(level);return equationQuestion(level,k.startsWith('problema')?'problema':'calculo',structure)})}
+function buildErrorTraining(year,level,keys,structure='misto'){const unique=keys.length?[...new Set(keys)]:['passo-equivalente'];return Array.from({length:10},(_,i)=>{const k=unique[i%unique.length];if(k==='distributiva'||k==='equivalencia-sem-parenteses')return trueFalse(level,structure);if(k==='completar')return missingNumber(level);if(k==='passo-equivalente')return chooseStep(level);if(k.startsWith('modelacao'))return modelProblem(level,structure);if(k==='classificacao')return structure==='sem'?chooseStep(level):classifyQuestion(year,level);return equationQuestion(year,level,k.startsWith('problema')?'problema':'calculo',structure)})}
 const numericValue=s=>{if(s===null||s===undefined)return NaN;const t=String(s).trim().replace(',','.');if(/^[-+]?\d+(\.\d+)?$/.test(t))return Number(t);const m=t.match(/^([-+]?\d+)\s*\/\s*([-+]?\d+)$/);return m&&+m[2]!==0?+m[1]/+m[2]:NaN};
 const isCorrect=(q,a)=>q.type==='choice'?a===q.correct:Math.abs(numericValue(a)-q.expected)<1e-9;
 function typeset(){if(window.MathJax?.typesetPromise){MathJax.typesetClear?.();return MathJax.typesetPromise()}return Promise.resolve()}
