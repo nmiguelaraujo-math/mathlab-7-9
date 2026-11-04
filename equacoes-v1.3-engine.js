@@ -46,6 +46,11 @@ function nested(){
  const x=ri(-5,7),d=pick([2,3,4]),e=pick([2,3,5]),k=nz(-3,3),p=ri(-4,4),r=nz(-3,3),t=ri(-4,4),mm=d*e/gcd(d,e),A=mm/d*k,B=mm/e*r,C=A*(x+p)-B*(x+t);
  return normal(`\\frac{${factor(k)}(x ${sign(p)})}{${d}}-\\frac{${factor(r)}(x ${sign(t)})}{${e}}=${frac(C,mm)}`,[`${factor(A)}(x ${sign(p)})-${factor(B)}(x ${sign(t)})=${C}`,`${coef(A)} ${sign(A*p)} ${sign(-B)}x ${sign(-B*t)}=${C}`,`${coef(A-B)}=${C-A*p+B*t}`,`x=${x}`],x,1,'varias-operacoes');
 }
+function signedNested(doubleNegative=false){
+ const x=ri(-5,7),d=pick([2,3,4,5]),e=pick([2,3,4,5]),a=ri(2,5),inner=doubleNegative?-a:a,p=nz(-5,5),q=nz(-5,5),mm=d*e/gcd(d,e),K=-(mm/d*inner);let b,B;do{b=ri(1,5);B=mm/e*b}while(B===-K);const C=K*(x+p)+B*(x+q);
+ return normal(`-\\frac{${factor(inner)}(x ${sign(p)})}{${d}}+\\frac{${factor(b)}(x ${sign(q)})}{${e}}=${frac(C,mm)}`,[`${factor(K)}(x ${sign(p)})+${factor(B)}(x ${sign(q)})=${C}`,`${coef(K)} ${sign(K*p)} ${sign(B)}x ${sign(B*q)}=${C}`,`${coef(K+B)}=${C-K*p-B*q}`,`x=${x}`],x,1,doubleNegative?'parenteses-denominadores-duplo-sinal':'parenteses-denominadores-sinal');
+}
+const singleSignedNested=()=>signedNested(false),doubleSignedNested=()=>signedNested(true);
 function classify(year=9,level=3){
  const identity=Math.random()<.5,b=nz(-10,10),positiveOnly=year===7||(year===8&&level===1),k=positiveOnly?ri(2,5):nz(-4,4),p=nz(-5,5),leftA=k,leftB=k*p+b,r=leftA,s=identity?leftB:leftB+nz(-5,5);
  const q=`${factor(k)}(x ${sign(p)}) ${sign(b)}=${lin(r,s)}`;
@@ -53,7 +58,10 @@ function classify(year=9,level=3){
  return special(q,[reduced,identity?'0x=0':`0x=${s-leftB}`,identity?'\\text{Todos os números reais verificam a igualdade.}':'\\text{A igualdade é impossível.}'],identity?'identity':'impossible','classificacao');
 }
 function selection(level,structure='misto'){
- const families=structure==='sem'?['transposicao','distributiva']:structure==='com'?['produto']:['produto','transposicao','distributiva'],wrong=pick(families);
+ const families=structure==='sem'?['transposicao','distributiva']:structure==='com'?['produto']:structure==='denom'?['denominador','sinal-fracao']:structure==='ambos'?['sinal-fracao','produto-fracao']:['produto','transposicao','distributiva'],wrong=pick(families);
+ if(wrong==='denominador'){const d=pick([2,3,4,5]),a=ri(2,6),b=ri(1,8);return{question:`\\text{Um aluno escreveu }\\frac{${a}x+${b}}{${d}}=${a}x+${b}.\\text{ Está correto?}`,steps:[`\\frac{${a}x+${b}}{${d}}\\neq ${a}x+${b}`,`\\text{Para eliminar o denominador é necessário multiplicar os dois membros por }${d}.`],solution:{answer:'\\text{Não}',set:'\\text{O denominador não pode ser simplesmente eliminado.}'},family:'erro-denominador',label:'Analisar e corrigir o erro'}}
+ if(wrong==='sinal-fracao'){const a=ri(2,6),b=ri(1,8),d=pick([2,3,4,5]);return{question:`\\text{Um aluno escreveu }-\\frac{${a}x-${b}}{${d}}=\\frac{-${a}x-${b}}{${d}}.\\text{ Está correto?}`,steps:[`-(${a}x-${b})=-${a}x+${b}`,`-\\frac{${a}x-${b}}{${d}}=\\frac{-${a}x+${b}}{${d}}`],solution:{answer:'\\text{Não}',set:`\\frac{-${a}x+${b}}{${d}}`},family:'erro-sinal-fracao',label:'Analisar o sinal antes da fração'}}
+ if(wrong==='produto-fracao'){const a=ri(2,5),b=ri(1,6),d=pick([2,3,4]);return{question:`\\text{Ao eliminar denominadores em }\\frac{${a}(x+${b})}{${d}}=1\\text{, obtém-se }${a}x+${b}=${d}.\\text{ Está correto?}`,steps:[`${a}(x+${b})=${d}`,`${a}x+${a*b}=${d}`],solution:{answer:'\\text{Não}',set:`\\text{O fator }${a}\\text{ multiplica os dois termos.}`},family:'erro-produto-fracao',label:'Analisar denominadores e parênteses'}}
  if(wrong==='produto'){const a=ri(2,6),b=ri(2,5);return{question:`\\text{Um aluno escreveu }${a}(x+${b})=${a}x+${b}.\\text{ A igualdade está correta?}`,steps:[`${a}(x+${b})=${a}x+${a*b}`,`\\text{O fator exterior multiplica os dois termos.}`],solution:{answer:'\\text{Não}',set:`\\text{Correção: }${a}x+${a*b}`},family:'erro-distributiva',label:'Analisar e corrigir o erro'}}
  if(wrong==='transposicao'){const a=ri(2,7),b=ri(2,9),x=ri(1,8),c=a*x+b;return{question:`\\text{Na equação }${a}x+${b}=${c}\\text{, um aluno obteve }${a}x=${c}+${b}.\\text{ Está correto?}`,steps:[`${a}x+${b}=${c}`,`${a}x=${c}-${b}`,`x=${x}`],solution:{answer:'\\text{Não}',set:`\\left\\{${x}\\right\\}`},family:'erro-transposicao',label:'Analisar e corrigir o erro'}}
  const a=ri(2,6),b=ri(2,8),x=ri(1,7),c=a*x-b;return{question:`\\text{Qual é a operação inversa que permite passar de }${a}x-${b}=${c}\\text{ para }${a}x=\\,?`,steps:[`${a}x=${c}+${b}`,`${a}x=${a*x}`,`x=${x}`],solution:{answer:`${c}+${b}`,set:`\\left\\{${x}\\right\\}`},family:'operacao-inversa',label:'Selecionar o passo correto'};
@@ -80,20 +88,26 @@ function problem(year,level,structure='misto'){
 }
 function generate(year,level,type,structure='misto'){
  const simpleY=()=>simple(year,level),parenthesesY=()=>parentheses(year,level),classifyY=()=>classify(year,level);
- let without,withParentheses;
+ let plain,withParentheses,withDenominators,withBoth;
  if(year===7){
-  without=[simpleY];
+  plain=[simpleY];
   withParentheses=level===1?[]:[parenthesesY];
+  withDenominators=[];withBoth=[];
  }else if(year===8){
-  without=level===3?[simpleY,fractions]:[simpleY];
+  plain=[simpleY];
   withParentheses=[parenthesesY];
+  withDenominators=level===1?[fractions]:level===2?[fractions]:[fractions,minusFraction];
+  withBoth=level===1?[]:level===2?[nested]:[doubleSignedNested,singleSignedNested,singleSignedNested,nested,nested];
  }else{
-  without=level===1?[simpleY,fractions]:level===2?[fractions,minusFraction]:[fractions,minusFraction];
-  withParentheses=level===1?[parenthesesY]:level===2?[parenthesesY,nested]:[parenthesesY,nested,nested];
+  plain=[simpleY];
+  withParentheses=[parenthesesY];
+  withDenominators=level===1?[fractions]:[fractions,minusFraction];
+  withBoth=level===1?[nested]:level===2?[nested]:[doubleSignedNested,singleSignedNested,singleSignedNested,nested,nested];
  }
- if(structure==='com'&&!withParentheses.length)structure='sem';
- const calculation=structure==='sem'?without:structure==='com'?withParentheses:[...without,...withParentheses];
- const selectionPool=structure==='sem'?[()=>selection(level,'sem')]:structure==='com'?[()=>selection(level,'com'),classifyY]:[()=>selection(level,'misto'),classifyY];
+ const pools={sem:plain,com:withParentheses,denom:withDenominators,ambos:withBoth};
+ if(!pools[structure]?.length)structure='sem';
+ const calculation=pools[structure]||plain;
+ const selectionPool=[()=>selection(level,structure),classifyY];
  const map={calculo:calculation,selecao:selectionPool,problema:[()=>problem(year,level,structure)]};
  const choices=type==='misto'?[...calculation,...selectionPool,()=>problem(year,level,structure)]:map[type];
  const forbidden=s=>/(?:\+|-)\s*0(?![.,\d])|0x/.test(String(s||''));
@@ -107,5 +121,5 @@ function render(ex){
  if(window.MathJax?.typesetPromise)MathJax.typesetPromise([box]);
  }
  window.gerarEquacao=()=>render(generate(+$('ano').value,+$('dificuldade').value,$('tipoExercicio').value,$('estrutura')?.value||'misto'));
- window.__equations={generate,simple,parentheses,fractions,minusFraction,nested,classify,selection,problem};
+ window.__equations={generate,simple,parentheses,fractions,minusFraction,nested,signedNested,singleSignedNested,doubleSignedNested,classify,selection,problem};
 })();
