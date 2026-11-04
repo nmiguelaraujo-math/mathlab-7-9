@@ -51,6 +51,16 @@ function signedNested(doubleNegative=false){
  return normal(`-\\frac{${factor(inner)}(x ${sign(p)})}{${d}}+\\frac{${factor(b)}(x ${sign(q)})}{${e}}=${frac(C,mm)}`,[`${factor(K)}(x ${sign(p)})+${factor(B)}(x ${sign(q)})=${C}`,`${coef(K)} ${sign(K*p)} ${sign(B)}x ${sign(B*q)}=${C}`,`${coef(K+B)}=${C-K*p-B*q}`,`x=${x}`],x,1,doubleNegative?'parenteses-denominadores-duplo-sinal':'parenteses-denominadores-sinal');
 }
 const singleSignedNested=()=>signedNested(false),doubleSignedNested=()=>signedNested(true);
+function rationalMixed(){
+ let x,d,e,f,L,a,b,c,r,p,q,s,A,B,C,K,sgnA,sgnB,guard=0;
+ do{
+  x=ri(-5,6);d=pick([2,3,4,6]);e=pick([2,3,4,6]);f=pick([2,3,4,6]);L=d*e/gcd(d,e);L=L*f/gcd(L,f);
+  do a=ri(1,4);while(gcd(a,d)!==1);do b=ri(1,4);while(gcd(b,e)!==1);do c=nz(-5,5);while(gcd(Math.abs(c),f)!==1);r=nz(-4,4);p=nz(-5,5);q=nz(-5,5);sgnA=Math.random()<.3?-1:1;sgnB=Math.random()<.5?-1:1;
+  A=sgnA*a*L/d;B=sgnB*b*L/e;C=c*L/f;K=A+B-r;s=A*(x+p)+B*(x+q)+C-r*x;guard++;
+ }while(guard<200&&(K===0||s===0||Math.abs(s)>45||gcd(gcd(Math.abs(r),Math.abs(s)),L)!==1));
+ const first=`${sgnA<0?'-':''}\\frac{${factor(a)}(x ${sign(p)})}{${d}}`,constant=`${c<0?'-':'+'} \\frac{${Math.abs(c)}}{${f}}`,second=`${sgnB<0?'-':'+'} \\frac{${factor(b)}(x ${sign(q)})}{${e}}`;
+ return normal(`${first} ${constant} ${second}=\\frac{${coef(r)} ${sign(s)}}{${L}}`,[`${factor(A)}(x ${sign(p)}) ${sign(C)} ${factor(B)}(x ${sign(q)})=${coef(r)} ${sign(s)}`,`${coef(A)} ${sign(A*p)} ${sign(C)} ${sign(B)}x ${sign(B*q)}=${coef(r)} ${sign(s)}`,`${coef(K)}=${s-A*p-B*q-C}`,`x=${x}`],x,1,'racionais-entre-fracoes');
+}
 function classify(year=9,level=3){
  const identity=Math.random()<.5,b=nz(-10,10),positiveOnly=year===7||(year===8&&level===1),k=positiveOnly?ri(2,5):nz(-4,4),p=nz(-5,5),leftA=k,leftB=k*p+b,r=leftA,s=identity?leftB:leftB+nz(-5,5);
  const q=`${factor(k)}(x ${sign(p)}) ${sign(b)}=${lin(r,s)}`;
@@ -102,7 +112,7 @@ function generate(year,level,type,structure='misto'){
   plain=[simpleY];
   withParentheses=[parenthesesY];
   withDenominators=level===1?[fractions]:[fractions,minusFraction];
-  withBoth=level===1?[nested]:level===2?[nested]:[doubleSignedNested,singleSignedNested,singleSignedNested,nested,nested];
+  withBoth=level===1?[nested]:level===2?[nested]:[rationalMixed,rationalMixed,doubleSignedNested,singleSignedNested,nested];
  }
  const pools={sem:plain,com:withParentheses,denom:withDenominators,ambos:withBoth};
  if(!pools[structure]?.length)structure='sem';
@@ -121,5 +131,5 @@ function render(ex){
  if(window.MathJax?.typesetPromise)MathJax.typesetPromise([box]);
  }
  window.gerarEquacao=()=>render(generate(+$('ano').value,+$('dificuldade').value,$('tipoExercicio').value,$('estrutura')?.value||'misto'));
- window.__equations={generate,simple,parentheses,fractions,minusFraction,nested,signedNested,singleSignedNested,doubleSignedNested,classify,selection,problem};
+ window.__equations={generate,simple,parentheses,fractions,minusFraction,nested,signedNested,singleSignedNested,doubleSignedNested,rationalMixed,classify,selection,problem};
 })();
