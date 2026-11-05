@@ -80,13 +80,30 @@ function problem(year,level,structure='misto'){
  const byYear=year===7
   ?(level===1?['numero','compras']:level===2?['idade','perimetro','tarifa']:['idade','consecutivos','retangulo','tarifa'])
   :year===8
-   ?(level===1?['idade','numero','perimetro','compras']:level===2?['idade','consecutivos','tarifa','retangulo']:['idade2','consecutivos','tarifa','retangulo','bilhetes','percurso'])
-   :(level===1?['tarifa','retangulo','consecutivos']:level===2?['idade2','bilhetes','percurso','retangulo']:['idade2','consecutivos','bilhetes','percurso']);
+   ?(level===1?['idade','numero','perimetro','compras']:level===2?['idade','consecutivos','tarifa','retangulo']:['idade2','consecutivos','tarifa','retangulo','bilhetes','percurso','diferenca-quantidades','saldo-parenteses','perimetros-diferenca'])
+   :(level===1?['tarifa','retangulo','consecutivos']:level===2?['idade2','bilhetes','percurso','retangulo']:['idade2','consecutivos','bilhetes','percurso','diferenca-quantidades','saldo-parenteses','perimetros-diferenca']);
  const without=byYear.filter(x=>['numero','compras','tarifa','percurso'].includes(x));
- const withParentheses=byYear.filter(x=>['idade','idade2','perimetro','consecutivos','retangulo','bilhetes'].includes(x));
+ const withParentheses=byYear.filter(x=>['idade','idade2','perimetro','consecutivos','retangulo','bilhetes','diferenca-quantidades','saldo-parenteses','perimetros-diferenca'].includes(x));
  const mixed=byYear;
  const families=structure==='sem'?without:structure==='com'?withParentheses:mixed;
  const f=pick(families.length?families:mixed);
+
+ if(f==='diferenca-quantidades'){
+  const x=ri(4,18),a=ri(3,6),b=ri(1,a-1),p=ri(2,7),q=ri(2,7),d=a*(x+p)-b*(x+q);
+  return normal(`Uma associação prepara ${a} conjuntos com (x+${p}) cartões cada. Outra prepara ${b} conjuntos com (x+${q}) cartões cada. A primeira tem mais ${d} cartões do que a segunda. Quantos cartões representa x?`,
+   [`${a}(x+${p})-${b}(x+${q})=${d}`,`${a}x+${a*p}-${b}x-${b*q}=${d}`,`${a-b}x=${d-a*p+b*q}`,`x=${x}`],x,1,'problema-diferenca-quantidades','Traduz e resolve, atendendo aos sinais');
+ }
+ if(f==='saldo-parenteses'){
+  const x=ri(5,18),a=ri(3,6),b=ri(1,a-1),p=ri(3,8),q=ri(2,7),rest=a*(x+p)-b*(x+q);
+  return normal(`Uma papelaria recebe ${a} caixas com (x+${p}) cadernos em cada uma. Vende ${b} lotes com (x+${q}) cadernos em cada lote. No final ficam ${rest} cadernos. Determina x.`,
+   [`${a}(x+${p})-${b}(x+${q})=${rest}`,`${a}x+${a*p}-${b}x-${b*q}=${rest}`,`${a-b}x=${rest-a*p+b*q}`,`x=${x}`],x,1,'problema-saldo-parenteses','Organiza os dados e resolve');
+ }
+ if(f==='perimetros-diferenca'){
+  const x=ri(5,17),p=ri(3,8),q=ri(1,p-1),r=ri(2,6),t=ri(1,5);
+  const P1=2*((x+p)+(x+r)),P2=2*((x+q)+t),diff=P1-P2;
+  return normal(`O primeiro retângulo tem lados (x+${p}) cm e (x+${r}) cm. O segundo tem lados (x+${q}) cm e ${t} cm. A diferença entre os perímetros, primeiro menos segundo, é ${diff} cm. Determina x.`,
+   [`2((x+${p})+(x+${r}))-2((x+${q})+${t})=${diff}`,`4x+${2*(p+r)}-2x-${2*(q+t)}=${diff}`,`2x=${diff-2*(p+r)+2*(q+t)}`,`x=${x}`],x,1,'problema-perimetros-diferenca','Subtrai os perímetros e resolve');
+ }
  if(f==='numero'){const x=ri(4,25),a=ri(2,5),b=ri(3,12),total=a*x+b;return normal(`Um número é multiplicado por ${a} e ao resultado adicionam-se ${b}. Obtém-se ${total}. Qual é o número?`,[`${a}x+${b}=${total}`,`${a}x=${total-b}`,`x=${x}`],x,1,'problema-numero','Resolve o problema através de uma equação');}
  if(f==='idade'||f==='idade2'){const x=ri(8,18),gap=ri(3,12),years=f==='idade2'?ri(2,6):0,total=x+years+x+gap+years,model=years?`(x+${years})+(x+${gap}+${years})=${total}`:`x+(x+${gap})=${total}`;return normal(`A Inês tem menos ${gap} anos do que o irmão. ${years?`Daqui a ${years} anos,`: 'Atualmente,'} a soma das idades será ${total} anos. Que idade tem atualmente a Inês?`,[model,`2x+${gap+2*years}=${total}`,`2x=${2*x}`,`x=${x}`],x,1,'problema-idades','Define a incógnita e resolve');}
  if(f==='consecutivos'){const x=ri(3,30),count=level===3?4:3,total=count*x+count*(count-1)/2;const terms=Array.from({length:count},(_,i)=>i?`(x+${i})`:'x').join('+');return normal(`A soma de ${count} números inteiros consecutivos é ${total}. Qual é o menor desses números?`,[`${terms}=${total}`,`${count}x+${count*(count-1)/2}=${total}`,`${count}x=${count*x}`,`x=${x}`],x,1,'problema-consecutivos','Traduz a situação por uma equação');}
@@ -97,6 +114,7 @@ function problem(year,level,structure='misto'){
  const packs=ri(3,10),each=ri(4,12),used=ri(5,Math.min(20,packs*each-1)),left=packs*each-used;return normal(`Foram compradas ${packs} embalagens com o mesmo número de unidades. Depois de se utilizarem ${used}, sobraram ${left}. Quantas unidades tinha cada embalagem?`,[`${packs}x-${used}=${left}`,`${packs}x=${left+used}`,`x=${each}`],each,1,'problema-compras','Resolve o problema através de uma equação');
 }
 function generate(year,level,type,structure='misto'){
+ const requestedStructure=structure;
  const simpleY=()=>simple(year,level),parenthesesY=()=>parentheses(year,level),classifyY=()=>classify(year,level);
  let plain,withParentheses,withDenominators,withBoth;
  if(year===7){
@@ -118,8 +136,8 @@ function generate(year,level,type,structure='misto'){
  if(!pools[structure]?.length)structure='sem';
  const calculation=pools[structure]||plain;
  const selectionPool=[()=>selection(level,structure),classifyY];
- const map={calculo:calculation,selecao:selectionPool,problema:[()=>problem(year,level,structure)]};
- const choices=type==='misto'?[...calculation,...selectionPool,()=>problem(year,level,structure)]:map[type];
+ const map={calculo:calculation,selecao:selectionPool,problema:[()=>problem(year,level,requestedStructure)]};
+ const choices=type==='misto'?[...calculation,...selectionPool,()=>problem(year,level,requestedStructure)]:map[type];
  const forbidden=s=>/(?:\+|-)\s*0(?![.,\d])|0x/.test(String(s||''));
  let result,guard=0;do{result=pick(choices)(level);guard++}while(guard<80&&forbidden(result.question));
  return result;
