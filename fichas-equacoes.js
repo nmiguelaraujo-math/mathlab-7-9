@@ -43,9 +43,50 @@ function quantityRow(key,label,value,enabled=true){return `<div class="ws-quanti
 function drawQuantities(){let html='';if($('#wsCalc').checked){html+='<h4>Resolver equações</h4>';Object.entries(structures).forEach(([k,v],i)=>html+=quantityRow(`q_calc_${k}`,v,i<2?3:2,allowed(k)))}if($('#wsErrors').checked){html+='<h4>Seleção e análise de erros</h4>';Object.entries(structures).forEach(([k,v])=>html+=quantityRow(`q_selecao_${k}`,v,1,allowed(k)))}if($('#wsProblems').checked)html+='<h4>Problemas</h4>'+quantityRow('q_problema','Problemas adequados ao ano e nível',2,true);quantities.innerHTML=html||'<div class="ws-empty">Seleciona pelo menos um tipo de exercício.</div>';quantities.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const i=$('#'+b.dataset.target);i.value=Math.max(0,Math.min(10,+i.value + +b.dataset.step));updateTotal()});quantities.querySelectorAll('input').forEach(i=>i.oninput=updateTotal);updateTotal()}
 function updateTotal(){const total=[...quantities.querySelectorAll('input')].reduce((n,i)=>n+(+i.value||0),0);$('#wsTotal').textContent=total;$('#wsWarning').textContent=total>30?'O máximo absoluto é 30 questões.':total>20?'Ficha extensa: recomendamos até 20 questões.':'';$('#wsGenerate').disabled=!total||total>30}
 function typeset(){if(window.MathJax?.typesetPromise){MathJax.typesetClear?.();return MathJax.typesetPromise()}return Promise.resolve()}
-function makeItems(){const y=+year.value,l=+level.value,E=window.__equations,out=[];for(const type of ['calculo','selecao'])for(const s of Object.keys(structures)){const prefix=type==='calculo'?'calc':'selecao',input=$(`#q_${prefix}_${s}`);for(let n=0;n<+(input?.value||0);n++){const ex=E.generate(y,l,type,s);out.push({type,structure:s,ex})}}for(let n=0;n<+( $('#q_problema')?.value||0);n++)out.push({type:'problema',structure:'misto',ex:E.generate(y,l,'problema','misto')});if($('#wsOrder').value==='mixed')for(let i=out.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
+function makeItems(){
+ const y=+year.value,l=+level.value,E=window.__equations,out=[];
+ const usedText=new Set(),familyCount=new Map(),familyLast=new Map();
+ // Amostragem de várias famílias do motor original, sem alterar os níveis nem as soluções.
+ function pick(type,structure){
+   let best=null,bestScore=-Infinity;
+   const attempts=type==='problema'?90:24;
+   for(let k=0;k<attempts;k++){
+     let ex;
+     try{ex=E.generate(y,l,type,structure)}catch(err){if(best)break;throw err}
+     if(!ex||!ex.question)continue;
+     const family=String(ex.family||'desconhecida');
+     const question=String(ex.question).replace(/\s+/g,' ').trim().toLowerCase();
+     const duplicate=usedText.has(question);
+     const count=familyCount.get(type+'|'+family)||0;
+     const last=familyLast.get(type+'|'+family)??-1000;
+     const score=(duplicate?-10000:0)-count*120-(out.length-last<=2?45:0)+Math.random()*5;
+     if(score>bestScore){best={ex,family,question};bestScore=score}
+     // Quando surge uma família ainda não usada, preferi-la imediatamente.
+     if(!duplicate&&count===0)break;
+   }
+   if(!best)throw new Error('Não foi possível gerar um exercício.');
+   usedText.add(best.question);
+   const key=type+'|'+best.family;
+   familyCount.set(key,(familyCount.get(key)||0)+1);
+   familyLast.set(key,out.length);
+   return best.ex;
+ }
+ for(const type of ['calculo','selecao'])
+   for(const structure of Object.keys(structures)){
+     const prefix=type==='calculo'?'calc':'selecao';
+     const input=$(`#q_${prefix}_${structure}`);
+     for(let n=0;n<+(input?.value||0);n++)
+       out.push({type,structure,ex:pick(type,structure)});
+   }
+ const problems=+($('#q_problema')?.value||0);
+ for(let n=0;n<problems;n++)
+   out.push({type:'problema',structure:'misto',ex:pick('problema','misto')});
+ if($('#wsOrder').value==='mixed')
+   for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
+ return out;
+}
 function statement(ex){return ex.family.startsWith('problema')?`<div>${ex.question}</div>`:`\\[${ex.question}\\]`}
-function generate(){const items=makeItems(),y=+year.value,l=+level.value,grouped=$('#wsOrder').value==='grouped';let body='',number=0;const groups=grouped?[['calculo','Resolve as equações.'],['selecao','Analisa, seleciona ou corrige.'],['problema','Resolve os problemas.']]:[['all','Resolve as questões seguintes.']];for(const [key,title] of groups){const list=key==='all'?items:items.filter(i=>i.type===key);if(!list.length)continue;body+=`<section class="ws-section student-only"><h2>${title}</h2>`+list.map(i=>`<div class="ws-question ${i.type==='problema'?'problem':''}"><strong>${++number}.</strong><div class="ws-statement">${statement(i.ex)}</div></div>`).join('')+'</section>'}body+=`<section class="solutions-only"><h1>Soluções</h1>`+items.map((i,n)=>`<div class="ws-solution"><strong>${n+1}.</strong> ${statement(i.ex)}<div class="answer">${i.type==='calculo'?`\\[S=${i.ex.solution.set}\\]`:`Resposta: \\(${i.ex.solution.answer}\\)`}</div>${i.ex.steps.map((s,j)=>`<div>${j?'\\[\\equiv '+s+'\\]':'\\['+s+'\\]'}</div>`).join('')}</div>`).join('')+'</section>';$('#wsPaper').classList.remove('show-solutions');$('#wsPaper').innerHTML=`<header class="ws-paper-header"><h1>Ficha de trabalho — Equações do 1.º grau · A4 V3</h1><p>${y}.º ano · ${levels[l]}</p></header><div class="ws-student student-only"><span>Nome: __________________________________</span><span>Turma: ______</span><span>Data: ____ / ____ / ______</span></div>${body}<footer class="ws-paper-footer">© 2026 — Nuno Araújo · MathLab 7–9 · nmiguelaraujo-math.github.io/mathlab-7-9</footer>`;$('.ws-builder').classList.add('hidden-mode');$('#wsPreview').classList.remove('hidden-mode');$('#wsSolutions').textContent='Ver soluções';typeset()}
+function generate(){const items=makeItems(),y=+year.value,l=+level.value,grouped=$('#wsOrder').value==='grouped';let body='',number=0;const groups=grouped?[['calculo','Resolve as equações.'],['selecao','Analisa, seleciona ou corrige.'],['problema','Resolve os problemas.']]:[['all','Resolve as questões seguintes.']];for(const [key,title] of groups){const list=key==='all'?items:items.filter(i=>i.type===key);if(!list.length)continue;body+=`<section class="ws-section student-only"><h2>${title}</h2>`+list.map(i=>`<div class="ws-question ${i.type==='problema'?'problem':''}"><strong>${++number}.</strong><div class="ws-statement">${statement(i.ex)}</div></div>`).join('')+'</section>'}body+=`<section class="solutions-only"><h1>Soluções</h1>`+items.map((i,n)=>`<div class="ws-solution"><strong>${n+1}.</strong> ${statement(i.ex)}<div class="answer">${i.type==='calculo'?`\\[S=${i.ex.solution.set}\\]`:`Resposta: \\(${i.ex.solution.answer}\\)`}</div>${i.ex.steps.map((s,j)=>`<div>${j?'\\[\\equiv '+s+'\\]':'\\['+s+'\\]'}</div>`).join('')}</div>`).join('')+'</section>';$('#wsPaper').classList.remove('show-solutions');$('#wsPaper').innerHTML=`<header class="ws-paper-header"><h1>Ficha de trabalho — Equações do 1.º grau · A4 V4</h1><p>${y}.º ano · ${levels[l]}</p></header><div class="ws-student student-only"><span>Nome: __________________________________</span><span>Turma: ______</span><span>Data: ____ / ____ / ______</span></div>${body}<footer class="ws-paper-footer">© 2026 — Nuno Araújo · MathLab 7–9 · nmiguelaraujo-math.github.io/mathlab-7-9</footer>`;$('.ws-builder').classList.add('hidden-mode');$('#wsPreview').classList.remove('hidden-mode');$('#wsSolutions').textContent='Ver soluções';typeset()}
 function showMode(name){$('#freeMode').classList.toggle('hidden-mode',name!=='free');$('#worksheetMode').classList.toggle('hidden-mode',name!=='worksheet');$('#testMode').classList.toggle('hidden-mode',name!=='test');$('#freeModeBtn').classList.toggle('active',name==='free');$('#worksheetModeBtn').classList.toggle('active',name==='worksheet');$('#testModeBtn').classList.toggle('active',name==='test')}
 ['#wsCalc','#wsErrors','#wsProblems'].forEach(id=>$(id).onchange=e=>{e.target.closest('.ws-check').classList.toggle('active',e.target.checked);drawQuantities()});year.onchange=drawQuantities;level.onchange=drawQuantities;$('#wsGenerate').onclick=generate;$('#wsRegenerate').onclick=generate;$('#wsBack').onclick=()=>{$('#wsPreview').classList.add('hidden-mode');$('.ws-builder').classList.remove('hidden-mode')};$('#wsSolutions').onclick=()=>{const show=$('#wsPaper').classList.toggle('show-solutions');$('#wsSolutions').textContent=show?'Ver ficha do aluno':'Ver soluções';typeset()};$('#wsPrint').onclick=()=>{document.body.classList.add('print-worksheet');window.print();setTimeout(()=>document.body.classList.remove('print-worksheet'),500)};
 $('#freeModeBtn').onclick=()=>showMode('free');$('#worksheetModeBtn').onclick=()=>showMode('worksheet');$('#testModeBtn').onclick=()=>showMode('test');drawQuantities();
