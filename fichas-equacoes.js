@@ -11,6 +11,10 @@ mode.innerHTML=`<section class="ws-card ws-builder"><h2>Criar ficha de trabalho<
 document.head.insertAdjacentHTML('beforeend',`<style>
 .mode-switch{grid-template-columns:repeat(3,1fr)!important}.ws-card{background:#fff;border:1px solid #d8e2ef;border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 5px 20px #17345a0d}.ws-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ws-grid label{font-weight:800}.ws-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.ws-check{display:block;border:2px solid #d8e2ef;border-radius:12px;padding:14px;cursor:pointer}.ws-check.active{border-color:#315ee7;background:#eaf0ff}.ws-check input{width:auto;margin-right:8px}.ws-check span{display:block;color:#59697f;font-size:.83rem;font-weight:500;margin:5px 0 0 25px}.ws-quantity{display:grid;grid-template-columns:minmax(220px,1fr) 120px;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #e5ebf3}.ws-stepper{display:grid;grid-template-columns:34px 48px 34px;gap:3px}.ws-stepper button{padding:6px}.ws-stepper input{text-align:center;padding:6px}.ws-disabled{opacity:.45}.ws-total{display:flex;justify-content:space-between;gap:15px;margin:16px 0}.ws-total span{color:#a33b32}.ws-toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}.ws-paper{max-width:800px;margin:auto;color:#111;background:#fff;padding:25px}.ws-paper-header{text-align:center;border-bottom:2px solid #1e3150;padding-bottom:12px}.ws-student{display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px;margin:22px 0}.ws-section{margin:25px 0}.ws-question{break-inside:avoid;margin:18px 0;min-height:62px}.ws-question.problem{min-height:100px}.ws-solution{break-inside:avoid;border-top:1px solid #d9e0e8;padding:12px 0}.ws-solution .answer{color:#168763;font-weight:800}.ws-empty{padding:14px;background:#fff4df;border-radius:10px}.ws-paper.show-solutions .student-only{display:none}.ws-paper:not(.show-solutions) .solutions-only{display:none}@media(max-width:740px){.ws-grid,.ws-type-grid,.ws-toolbar{grid-template-columns:1fr}.ws-quantity{grid-template-columns:1fr auto}.ws-student{grid-template-columns:1fr}}
 @media print{body.print-worksheet>*{display:none!important}body.print-worksheet .container{display:block!important;max-width:none!important}.print-worksheet .container>*{display:none!important}.print-worksheet #worksheetMode,.print-worksheet #wsPreview,.print-worksheet #wsPaper{display:block!important}.print-worksheet #wsPreview{border:0;box-shadow:none;margin:0;padding:0}.print-worksheet .ws-toolbar{display:none!important}.print-worksheet #wsPaper{max-width:none;padding:0}.print-worksheet footer{display:none!important}@page{size:A4;margin:16mm}}
+.ws-options{margin:6px 0 0 12px;display:grid;gap:4px}.ws-options>div{min-height:1.5em}
+
+/* V14: sem negritos nos enunciados, fichas e soluções */
+.ws-paper, .ws-paper *, .ws-paper h1, .ws-paper h2, .ws-paper strong, .ws-paper b, .ws-paper .answer, .ws-question>strong {font-weight:400!important}
 </style>`);
 document.head.insertAdjacentHTML('beforeend',`<style>
 /* Folha de trabalho: visual de documento A4 */
@@ -22,7 +26,7 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .ws-student span{white-space:nowrap}.ws-section{margin:0 0 9mm}.ws-section h2{font-size:11pt;font-weight:700;margin:0 0 5mm;line-height:1.4}
 .ws-question{display:grid;grid-template-columns:10mm minmax(0,1fr);column-gap:2mm;align-items:start;min-height:32mm;margin:0 0 4mm;break-inside:avoid;page-break-inside:avoid}
 .ws-question.problem{min-height:43mm}.ws-question>strong{font-weight:700}.ws-question .ws-statement{min-width:0}.ws-question .MathJax,.ws-question mjx-container[display="true"]{text-align:left!important;margin:0!important}
-.ws-question .ws-statement>div{margin:0}.ws-question mjx-container{max-width:100%}
+.ws-question .ws-statement>div{margin:0}.ws-task{font-size:10pt;margin:0 0 2mm!important;font-weight:400}.ws-question mjx-container{max-width:100%}
 .ws-paper-footer{font-size:8pt;color:#666;border-top:1px solid #aaa;margin-top:15mm;padding-top:3mm;text-align:center;break-inside:avoid}
 .ws-paper-footer a{color:inherit;text-decoration:none}.ws-paper .solutions-only h1{font-size:15pt;margin:0 0 8mm}.ws-solution{break-inside:avoid;page-break-inside:avoid;border-top:1px solid #ddd;padding:4mm 0;margin:0;font-size:10pt}
 .ws-solution .answer{color:#111;font-weight:700}.ws-solution mjx-container[display="true"]{text-align:left!important;margin:2mm 0!important}
@@ -36,6 +40,9 @@ document.head.insertAdjacentHTML('beforeend',`<style>
  .ws-question{min-height:32mm!important}.ws-question.problem{min-height:43mm!important}
  .ws-paper-footer{color:#555!important}
 }
+
+/* V14: sem negritos nos enunciados, fichas e soluções */
+.ws-paper, .ws-paper *, .ws-paper h1, .ws-paper h2, .ws-paper strong, .ws-paper b, .ws-paper .answer, .ws-question>strong {font-weight:400!important}
 </style>`);
 const entry=+new URLSearchParams(location.search).get('ano'),year=$('#wsYear'),level=$('#wsLevel'),quantities=$('#wsQuantities');year.value=[7,8,9].includes(entry)?String(entry):'9';level.value=year.value==='9'?'3':'1';
 function allowed(s){const y=+year.value,l=+level.value;if(s==='com')return !(y===7&&l===1);if(s==='denom')return y>=8;if(s==='ambos')return y===9||(y===8&&l>=2);return true}
@@ -45,11 +52,11 @@ function updateTotal(){const total=[...quantities.querySelectorAll('input')].red
 function typeset(){if(window.MathJax?.typesetPromise){MathJax.typesetClear?.();return MathJax.typesetPromise()}return Promise.resolve()}
 function makeItems(){
  const y=+year.value,l=+level.value,E=window.__equations,out=[];
- const usedText=new Set(),familyCount=new Map(),familyLast=new Map();
+ const usedText=new Set(),familyCount=new Map(),familyLast=new Map(),categoryCount=new Map(),classificationCount=new Map(),truthCount=new Map();
  // Amostragem de várias famílias do motor original, sem alterar os níveis nem as soluções.
  function pick(type,structure){
    let best=null,bestScore=-Infinity;
-   const attempts=type==='problema'?90:24;
+   const attempts=type==='problema'?90:type==='selecao'?130:40;
    for(let k=0;k<attempts;k++){
      let ex;
      try{ex=E.generate(y,l,type,structure)}catch(err){if(best)break;throw err}
@@ -59,16 +66,28 @@ function makeItems(){
      const duplicate=usedText.has(question);
      const count=familyCount.get(type+'|'+family)||0;
      const last=familyLast.get(type+'|'+family)??-1000;
-     const score=(duplicate?-10000:0)-count*120-(out.length-last<=2?45:0)+Math.random()*5;
+     const category=type==='selecao'?(family==='classificacao'?'classificacao':family.startsWith('equivalente-')?'equivalencia':family==='operacao-inversa'?'operacoes':'erros'):family;
+     const categoryUses=categoryCount.get(type+'|'+category)||0;
+     const cls=ex.classification|| (family==='classificacao'?(ex.solution?.answer==='\\text{Todos os números reais verificam a igualdade.}'?'identity':null):null);
+     const clsUses=cls?(classificationCount.get(cls)||0):0;
+     const truth=typeof ex.equivalenceTruth==='boolean'?String(ex.equivalenceTruth):null;
+     const truthUses=truth?(truthCount.get(truth)||0):0;
+     const structuralPenalty=(l===3&&type==='selecao'&&family.startsWith('erro-')&&/transposicao-complexa|sinal-complexo/.test(family))?140:0;
+     const score=(duplicate?-10000:0)-count*110-categoryUses*(type==='selecao'?75:0)-clsUses*230-truthUses*120-structuralPenalty-(out.length-last<=2?45:0)+Math.random()*5;
      if(score>bestScore){best={ex,family,question};bestScore=score}
-     // Quando surge uma família ainda não usada, preferi-la imediatamente.
-     if(!duplicate&&count===0)break;
+     // Amostrar todas as tentativas para equilibrar famílias e categorias.
    }
    if(!best)throw new Error('Não foi possível gerar um exercício.');
    usedText.add(best.question);
    const key=type+'|'+best.family;
    familyCount.set(key,(familyCount.get(key)||0)+1);
    familyLast.set(key,out.length);
+   const cat=type==='selecao'?(best.family==='classificacao'?'classificacao':best.family.startsWith('equivalente-')?'equivalencia':best.family==='operacao-inversa'?'operacoes':'erros'):best.family;
+   const catKey=type+'|'+cat;categoryCount.set(catKey,(categoryCount.get(catKey)||0)+1);
+   if(best.ex.classification)classificationCount.set(best.ex.classification,(classificationCount.get(best.ex.classification)||0)+1);
+   if(typeof best.ex.equivalenceTruth==='boolean'){
+     const truth=String(best.ex.equivalenceTruth);truthCount.set(truth,(truthCount.get(truth)||0)+1);
+   }
    return best.ex;
  }
  for(const type of ['calculo','selecao'])
@@ -85,8 +104,17 @@ function makeItems(){
    for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
  return out;
 }
-function statement(ex){return ex.family.startsWith('problema')?`<div>${ex.question}</div>`:`\\[${ex.question}\\]`}
-function generate(){const items=makeItems(),y=+year.value,l=+level.value,grouped=$('#wsOrder').value==='grouped';let body='',number=0;const groups=grouped?[['calculo','Resolve as equações.'],['selecao','Analisa, seleciona ou corrige.'],['problema','Resolve os problemas.']]:[['all','Resolve as questões seguintes.']];for(const [key,title] of groups){const list=key==='all'?items:items.filter(i=>i.type===key);if(!list.length)continue;body+=`<section class="ws-section student-only"><h2>${title}</h2>`+list.map(i=>`<div class="ws-question ${i.type==='problema'?'problem':''}"><strong>${++number}.</strong><div class="ws-statement">${statement(i.ex)}</div></div>`).join('')+'</section>'}body+=`<section class="solutions-only"><h1>Soluções</h1>`+items.map((i,n)=>`<div class="ws-solution"><strong>${n+1}.</strong> ${statement(i.ex)}<div class="answer">${i.type==='calculo'?`\\[S=${i.ex.solution.set}\\]`:`Resposta: \\(${i.ex.solution.answer}\\)`}</div>${i.ex.steps.map((s,j)=>`<div>${j?'\\[\\equiv '+s+'\\]':'\\['+s+'\\]'}</div>`).join('')}</div>`).join('')+'</section>';$('#wsPaper').classList.remove('show-solutions');$('#wsPaper').innerHTML=`<header class="ws-paper-header"><h1>Ficha de trabalho — Equações do 1.º grau</h1><p>${y}.º ano · ${levels[l]}</p></header><div class="ws-student student-only"><span>Nome: __________________________________</span><span>Turma: ______</span><span>Data: ____ / ____ / ______</span></div>${body}<footer class="ws-paper-footer">© 2026 — Nuno Araújo · MathLab 7–9 · nmiguelaraujo-math.github.io/mathlab-7-9</footer>`;$('.ws-builder').classList.add('hidden-mode');$('#wsPreview').classList.remove('hidden-mode');$('#wsSolutions').textContent='Ver soluções';typeset()}
+function statement(ex){const task=ex.task?`<div class="ws-task">${ex.task}</div>`:'';const options=ex.options?.length?`<div class="ws-options">${ex.options.map(o=>`<div>\\(${o}\\)</div>`).join('')}</div>`:'';return ex.family.startsWith('problema')?`<div>${ex.question}</div>`:`${task}\\[${ex.question}\\]${options}`}
+function solutionStep(ex,step,index){
+ const text=String(step||'');
+ const isExplanation=text.includes('\\text{')||text.includes('\\neq')||text.includes('\\implies');
+ const isAnalysis=ex.family.startsWith('erro-')||ex.family.startsWith('equivalente-')||ex.family==='operacao-inversa';
+ const isFirstModel=ex.family.startsWith('problema')&&index===0;
+ const isEquation=text.includes('=')&&!isExplanation;
+ const prefix=isEquation&&!isAnalysis&&!isFirstModel?'\\Leftrightarrow\\;':'';
+ return `<div>\\[${prefix}${text}\\]</div>`;
+}
+function generate(){const items=makeItems(),y=+year.value,l=+level.value,grouped=$('#wsOrder').value==='grouped';let body='',number=0;const groups=grouped?[['calculo','Resolve as equações.'],['selecao','Analisa, seleciona ou corrige.'],['problema','Resolve os problemas.']]:[['all','Resolve as questões seguintes.']];for(const [key,title] of groups){const list=key==='all'?items:items.filter(i=>i.type===key);if(!list.length)continue;body+=`<section class="ws-section student-only"><h2>${title}</h2>`+list.map(i=>`<div class="ws-question ${i.type==='problema'?'problem':''}"><span>${++number}.</span><div class="ws-statement">${statement(i.ex)}</div></div>`).join('')+'</section>'}body+=`<section class="solutions-only"><h1>Soluções</h1>`+items.map((i,n)=>`<div class="ws-solution"><span>${n+1}.</span> ${statement(i.ex)}${i.ex.steps.map((s,j)=>solutionStep(i.ex,s,j)).join('')}<div class="answer">${i.type==='calculo'||i.ex.family==='classificacao'?`\\[S=${i.ex.solution.set}\\]`:`Resposta: \\(${i.ex.solution.answer}\\)`}</div></div>`).join('')+'</section>';$('#wsPaper').classList.remove('show-solutions');$('#wsPaper').innerHTML=`<header class="ws-paper-header"><h1>Ficha de trabalho — Equações do 1.º grau</h1><p>${y}.º ano · ${levels[l]}</p></header><div class="ws-student student-only"><span>Nome: __________________________________</span><span>Turma: ______</span><span>Data: ____ / ____ / ______</span></div>${body}<footer class="ws-paper-footer">© 2026 — Nuno Araújo · MathLab 7–9 · nmiguelaraujo-math.github.io/mathlab-7-9</footer>`;$('.ws-builder').classList.add('hidden-mode');$('#wsPreview').classList.remove('hidden-mode');$('#wsSolutions').textContent='Ver soluções';typeset()}
 function showMode(name){$('#freeMode').classList.toggle('hidden-mode',name!=='free');$('#worksheetMode').classList.toggle('hidden-mode',name!=='worksheet');$('#testMode').classList.toggle('hidden-mode',name!=='test');$('#freeModeBtn').classList.toggle('active',name==='free');$('#worksheetModeBtn').classList.toggle('active',name==='worksheet');$('#testModeBtn').classList.toggle('active',name==='test')}
 ['#wsCalc','#wsErrors','#wsProblems'].forEach(id=>$(id).onchange=e=>{e.target.closest('.ws-check').classList.toggle('active',e.target.checked);drawQuantities()});year.onchange=drawQuantities;level.onchange=drawQuantities;$('#wsGenerate').onclick=generate;$('#wsRegenerate').onclick=generate;$('#wsBack').onclick=()=>{$('#wsPreview').classList.add('hidden-mode');$('.ws-builder').classList.remove('hidden-mode')};$('#wsSolutions').onclick=()=>{const show=$('#wsPaper').classList.toggle('show-solutions');$('#wsSolutions').textContent=show?'Ver ficha do aluno':'Ver soluções';typeset()};$('#wsPrint').onclick=()=>{document.body.classList.add('print-worksheet');window.print();setTimeout(()=>document.body.classList.remove('print-worksheet'),500)};
 $('#freeModeBtn').onclick=()=>showMode('free');$('#worksheetModeBtn').onclick=()=>showMode('worksheet');$('#testModeBtn').onclick=()=>showMode('test');drawQuantities();
