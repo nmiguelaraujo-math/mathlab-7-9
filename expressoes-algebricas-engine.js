@@ -5,7 +5,42 @@ function poly(c){let s='';for(let p=c.length-1;p>=0;p--){const a=c[p];if(!a)cont
 const add=(a,b)=>Array.from({length:Math.max(a.length,b.length)},(_,i)=>(a[i]||0)+(b[i]||0)),sub=(a,b)=>add(a,b.map(x=>-x)),mul=(a,b)=>{const c=Array(a.length+b.length-1).fill(0);a.forEach((x,i)=>b.forEach((y,j)=>c[i+j]+=x*y));return c};
 const val=(c,x)=>c.reduce((s,a,i)=>s+a*x**i,0),wrap=s=>s.startsWith('-')?`(${s})`:s;
 const svg=(body,label)=>`<svg class="problem-svg" viewBox="0 0 560 300" role="img" aria-label="${label}">${body}</svg>`;
-function ex(topic,prompt,statement,answer,steps,o={}){const family=o.family||topic.toLowerCase().replace(/\s+/g,'-'),squareFamilies=['reconhecer-trinomio-quadrado-perfeito','fatorizar-trinomio-quadrado-perfeito','reconhecer-trinomio-racional','reconhecer-trinomio-irracional'];let answerTex=o.answerTex||answer;if(squareFamilies.includes(family)){const m=String(answer).match(/^\((.+)-(.+)\)\^2$/);if(m)answerTex=`${answer}\\quad\\text{ou}\\quad(${m[2]}-${m[1]})^2`}const wrong=[...new Set(o.wrong||[])].filter(x=>x&&x!==answer&&x!==answerTex),isText=o.isText??/[A-Za-zÀ-ÿ]{3,}\s/.test(statement);return{topic,prompt,statement,answer,answerTex,steps,rule:o.rule||'',helps:o.helps||[],family,visualHtml:o.visualHtml||'',isText,numeric:o.numeric,wrong,level:o.level||1,year:o.year||7}}
+
+// V12: resolução algébrica com produtos efetivamente desenvolvidos.
+// A análise é restrita a polinómios com coeficientes inteiros e variáveis x/y.
+// Se não for possível validar a expansão, preservam-se os passos originais.
+function expandedPolynomialSteps(statement,answer){
+ try{
+  const input=String(statement).replace(/\s+/g,'').replace(/\\left|\\right/g,'').replace(/\^\{(\d+)\}/g,'^$1');
+  if(!/^[0-9xy()+*\-^]+$/.test(input)||input.length>180)return null;
+  const tokens=input.match(/\d+|[xy]|[()+*\-^]/g)||[];
+  if(tokens.join('')!==input)return null;
+  let i=0;
+  const atom=()=>{
+   let t=tokens[i++];if(t==='('){const e=sum();if(tokens[i++]!==')')throw Error('paren');return e}
+   if(/^\d+$/.test(t))return [[+t,0,0]];
+   if(t==='x')return [[1,1,0]];
+   if(t==='y')return [[1,0,1]];
+   throw Error('atom');
+  };
+  const pow=()=>{let e=atom();if(tokens[i]==='^'){i++;const n=+tokens[i++];if(!Number.isInteger(n)||n>5)throw Error('power');let a=[[1,0,0]];for(let j=0;j<n;j++)a=product(a,e);e=a}return e};
+  const product=(a,b)=>a.flatMap(u=>b.map(v=>[u[0]*v[0],u[1]+v[1],u[2]+v[2]]));
+  const term=()=>{let sign=1;if(tokens[i]==='+'||tokens[i]==='-')sign=tokens[i++]==='-'?-1:1;let a=pow();while(i<tokens.length&&(tokens[i]==='*'||tokens[i]==='('||tokens[i]==='x'||tokens[i]==='y'||/^\d+$/.test(tokens[i]))){if(tokens[i]==='*')i++;a=product(a,pow())}return a.map(v=>[sign*v[0],v[1],v[2]])};
+  const sum=()=>{let a=term();while(tokens[i]==='+'||tokens[i]==='-'){let sign=tokens[i++]==='+'?1:-1;const b=term();a=a.concat(b.map(v=>[sign*v[0],v[1],v[2]]))}return a};
+  const terms=sum();if(i!==tokens.length||terms.length<2||terms.length>60)return null;
+  const format=(items)=>{let str='';for(const [v,x,y] of items){if(!v)continue;const varpart=(x?`x${x>1?'^{'+x+'}':''}`:'')+(y?`y${y>1?'^{'+y+'}':''}`:'');const part=(Math.abs(v)===1&&varpart?'':Math.abs(v))+varpart;str+=!str?(v<0?'-':'')+part:(v<0?'-':'+')+part}return str||'0'};
+  const map=new Map();for(const [v,x,y] of terms){const k=`${x},${y}`;map.set(k,(map.get(k)||0)+v)}
+  const reduced=[...map.entries()].map(([k,v])=>{const [x,y]=k.split(',').map(Number);return[v,x,y]}).sort((a,b)=>(b[1]+b[2])-(a[1]+a[2])||b[1]-a[1]);
+  const reducedTex=format(reduced);
+  const normalize=x=>String(x).replace(/\s+/g,'').replace(/\^\{(\d+)\}/g,'^$1').replace(/\^([0-9]+)/g,'^$1');
+  if(normalize(reducedTex)!==normalize(answer))return null;
+  const expanded=format(terms);
+  if(expanded===input||expanded===reducedTex)return null;
+  return [['Aplica-se a propriedade distributiva e escrevem-se todos os produtos.',expanded],['Agrupam-se e reduzem-se os termos semelhantes.',reducedTex]];
+ }catch{return null}
+}
+
+function ex(topic,prompt,statement,answer,steps,o={}){if(!o.isText){statement=String(statement).replace(/\b1([xyz])\b/g,'$1').replace(/\b-1([xyz])\b/g,'-$1').replace(/\b([xyz])\^\{1\}/g,'$1')} if(((o.year===8&&/(?:Multiplicação|Operações com polinómios)/i.test(topic))||(o.year===7&&/(?:Redução|Propriedade distributiva|Expressões equivalentes|Expressões e propriedades)/i.test(topic)))&&/(?:Desenvolve|Efetua|Reduz|Simplifica)/i.test(prompt)){const improved=expandedPolynomialSteps(statement,answer);if(improved)steps=improved} const family=o.family||topic.toLowerCase().replace(/\s+/g,'-'),squareFamilies=['reconhecer-trinomio-quadrado-perfeito','fatorizar-trinomio-quadrado-perfeito','reconhecer-trinomio-racional','reconhecer-trinomio-irracional'];let answerTex=o.answerTex||answer;if(squareFamilies.includes(family)){const m=String(answer).match(/^\((.+)-(.+)\)\^2$/);if(m)answerTex=`${answer}\\quad\\text{ou}\\quad(${m[2]}-${m[1]})^2`}const wrong=[...new Set(o.wrong||[])].filter(x=>x&&x!==answer&&x!==answerTex),isText=o.isText??(!/^(?:P\(x\)|[+\-\d\\(])/.test(statement)&&/[A-Za-zÀ-ÿ]{3,}\s/.test(statement));return{topic,prompt,statement,answer,answerTex,steps,rule:o.rule||'',helps:o.helps||[],family,visualHtml:o.visualHtml||'',isText,numeric:o.numeric,wrong,level:o.level||1,year:o.year||7}}
 function helps(rule,example,hint){return[hint,rule,`\\[${example}\\]`,'Consulta a resolução passo a passo depois de tentares novamente.']}
 
 function language7(level){const n=ri(2,7),m=ri(2,6),k=ri(1,8),kind=pick(['sum-product','difference','half','square']);let prompt,answer,wrong;
@@ -71,7 +106,7 @@ function develop9(level){
   const d=pick([2,3,4]),b=ri(1,4),middle=fracX9(2*b,d),halfMiddle=b===1?`\\frac{x}{${d}}`:`\\frac{${b}x}{${d}}`,statement=`(\\frac{x}{${d}}${sign}${b})^2`,answer=`\\frac{x^2}{${d*d}}${sign}${middle}+${b*b}`;return ex('Casos notáveis','Desenvolve sem converter as frações em valores decimais.',statement,answer,[['Aplica-se (A±B)²=A²±2AB+B².',`(\\frac{x}{${d}})^2${sign}2\\times\\frac{x}{${d}}\\times${b}+${b}^2`],['Simplifica-se cada termo.',answer]],{year:9,level,family:'desenvolver-com-fracao',wrong:[`\\frac{x^2}{${d*d}}+${b*b}`,`\\frac{x^2}{${d}}${sign}${b*b}`,`\\frac{x^2}{${d*d}}${sign}${halfMiddle}+${b*b}`],rule:'Elevar uma fração ao quadrado implica elevar o numerador e o denominador.',helps:helps('Mantém os valores na forma exata.',`(\\frac{x}{2}+3)^2=\\frac{x^2}{4}+3x+9.`,'Identifica A=x/d e B=b.')})}
  const a=level===1?1:ri(1,4),ax=a===1?'x':`${a}x`,x2=a===1?'x^2':`${a*a}x^2`,b=ri(2,8),kind=pick(['square','square','product']);if(kind==='product'){const statement=`(${ax}-${b})(${ax}+${b})`,answer=`${x2}-${b*b}`;return ex('Casos notáveis','Desenvolve utilizando o caso notável adequado.',statement,answer,[['Reconhecem-se fatores conjugados.',`(A-B)(A+B)=A^2-B^2`],['Calculam-se os quadrados.',answer]],{year:9,level,family:'produto-soma-diferenca',wrong:[`${x2}+${b*b}`,`${x2}-${2*b}`,`(${ax}-${b})^2`],rule:'(A−B)(A+B)=A²−B².',helps:helps('Os termos são iguais e os sinais centrais são opostos.',`(x-4)(x+4)=x^2-16.`,'Aplica a diferença de quadrados.')})}const A=[sgn*b,a],answer=poly(mul(A,A)),statement=`(${poly(A)})^2`;return ex('Casos notáveis','Desenvolve e reduz.',statement,answer,[['Identifica-se o quadrado de uma soma ou de uma diferença.',`(A${sign}B)^2=A^2${sign}2AB+B^2`],['Substituem-se os termos.',answer]],{year:9,level,family:sign==='+'?'quadrado-soma':'quadrado-diferenca',wrong:[`${x2}+${b*b}`,poly([b*b,-2*a*sgn*b,a*a]),`${x2}${sign}${a*b}x+${b*b}`],rule:'O termo do meio é o dobro do produto dos dois termos.',helps:helps('O último termo é sempre positivo.',`(2x-3)^2=4x^2-12x+9.`,'Calcula A², 2AB e B².')});}
 function identify9(level){const a=ri(1,4),ax=a===1?'x':`${a}x`,x2=a===1?'x^2':`${a*a}x^2`,b=ri(2,8),sign=Math.random()<.5?'+':'-',mid=2*a*b,kind=pick(['middle','last','recognise']);if(kind==='middle'){const statement=`${x2}+\\square+${b*b}=(${ax}${sign}${b})^2`,answer=`${sign==='+'?'':'-'}${mid}x`;return ex('Identificação e completamento','Determina o monómio que deve substituir o quadrado.',statement,answer,[['Compara-se com A²±2AB+B².',`2AB=2\\times ${ax}\\times ${b}=${mid}x`],['Escolhe-se o sinal do binómio.',answer]],{year:9,level,family:'completar-termo-meio',wrong:[`${mid}x^2`,`${b*b}x`,`${sign==='+'?'-':''}${mid}x`],rule:'O termo do meio de um trinómio quadrado perfeito é ±2AB.',helps:helps('Observa o sinal dentro do binómio.',`x^2+\\square+9=(x-3)^2 implica \\square=-6x.`,'Calcula duas vezes o produto das raízes dos extremos.')})}if(kind==='last'){const statement=`${x2}${sign}${mid}x+\\square=(${ax}${sign}${b})^2`,answer=String(b*b);return ex('Identificação e completamento','Determina o número que deve substituir o quadrado.',statement,answer,[['O termo independente é B².',`${b}^2=${b*b}`]],{year:9,level,family:'completar-termo-independente',numeric:b*b,wrong:[String(b),String(2*b),String(mid)],rule:'Num quadrado de binómio, o último termo é o quadrado do segundo termo.',helps:helps('Extrai a informação do termo médio.',`x^2+8x+\\square=(x+4)^2.`,'Eleva B ao quadrado.')})}const statement=`${x2}${sign}${mid}x+${b*b}`,answer=`(${ax}${sign}${b})^2`;return ex('Identificação e completamento','Reconhece e fatoriza o trinómio quadrado perfeito.',statement,answer,[['Os extremos são quadrados perfeitos.',`${x2}=(${ax})^2,\\;${b*b}=${b}^2`],['O termo médio confirma ±2AB.',answer]],{year:9,level,family:'reconhecer-trinomio-quadrado-perfeito',wrong:[`(${ax}${sign}${b*b})^2`,`(${ax}${sign==='+'?'-':'+'}${b})^2`,`(${ax}-${b})(${ax}+${b})`],rule:'A²±2AB+B²=(A±B)².',helps:helps('Verifica primeiro os extremos e depois o termo médio.',`x^2-10x+25=(x-5)^2.`,'Extrai a raiz quadrada do primeiro e do último termo.')});}
-function commonFactor9(level){const g=ri(2,6),a=ri(1,5);let b;do b=nz(-7,7);while(gcd9(a,b)!==1);if(level===3&&Math.random()<.5){const r=pick([2,3,5,7]),statement=`${g}x^2-${g*r}`,answer=`${g}(x-\\sqrt{${r}})(x+\\sqrt{${r}})`;return ex('Fator comum','Fatoriza completamente.',statement,answer,[['Coloca-se o fator comum em evidência.',`${g}(x^2-${r})`],['Fatoriza-se a diferença de quadrados.',answer]],{year:9,level,family:'fatorizacao-dois-passos-raiz',wrong:[`${g}(x^2-${r})`,`(${g}x-\\sqrt{${r}})(${g}x+\\sqrt{${r}})`,`${g}(x-${r})(x+${r})`],rule:'Depois de colocar o fator comum em evidência, verifica se ainda é possível fatorizar.',helps:helps('Não pares necessariamente depois do primeiro passo.',`3x^2-15=3(x^2-5)=3(x-\\sqrt5)(x+\\sqrt5).`,'Começa pelo máximo fator comum.')})}const statement=poly([g*b,g*a]),answer=`${g}(${poly([b,a])})`;return ex('Fator comum','Coloca o máximo fator comum em evidência.',statement,answer,[['Divide-se cada termo pelo máximo fator comum.',`${g*b}\\div${g}=${b},\\;${g*a}\\div${g}=${a}`],['Escreve-se o produto.',answer]],{year:9,level,family:'fator-comum',wrong:[`${g}(${poly([g*b,a])})`,poly([b,a]),`${g+1}(${poly([b,a])})`],rule:'Colocar um fator comum em evidência é aplicar a distributiva no sentido inverso.',helps:helps('Procura o máximo fator comum a todos os termos.',`6x+12=6(x+2).`,'Divide todos os termos pelo mesmo fator.')});}
+function commonFactor9(level){if(level===3)return commonThenNotable9(level);const g=ri(2,6),a=ri(1,5);let b;do b=nz(-7,7);while(gcd9(a,b)!==1);if(level===3&&Math.random()<.5){const r=pick([2,3,5,7]),statement=`${g}x^2-${g*r}`,answer=`${g}(x-\\sqrt{${r}})(x+\\sqrt{${r}})`;return ex('Fator comum','Fatoriza completamente.',statement,answer,[['Coloca-se o fator comum em evidência.',`${g}(x^2-${r})`],['Fatoriza-se a diferença de quadrados.',answer]],{year:9,level,family:'fatorizacao-dois-passos-raiz',wrong:[`${g}(x^2-${r})`,`(${g}x-\\sqrt{${r}})(${g}x+\\sqrt{${r}})`,`${g}(x-${r})(x+${r})`],rule:'Depois de colocar o fator comum em evidência, verifica se ainda é possível fatorizar.',helps:helps('Não pares necessariamente depois do primeiro passo.',`3x^2-15=3(x^2-5)=3(x-\\sqrt5)(x+\\sqrt5).`,'Começa pelo máximo fator comum.')})}const statement=poly([g*b,g*a]),answer=`${g}(${poly([b,a])})`;return ex('Fator comum','Coloca o máximo fator comum em evidência.',statement,answer,[['Divide-se cada termo pelo máximo fator comum.',`${g*b}\\div${g}=${b},\\;${g*a}\\div${g}=${a}`],['Escreve-se o produto.',answer]],{year:9,level,family:'fator-comum',wrong:[`${g}(${poly([g*b,a])})`,poly([b,a]),`${g+1}(${poly([b,a])})`],rule:'Colocar um fator comum em evidência é aplicar a distributiva no sentido inverso.',helps:helps('Procura o máximo fator comum a todos os termos.',`6x+12=6(x+2).`,'Divide todos os termos pelo mesmo fator.')});}
 function factorCases9(level){const kind=pick(['difference','square','difference']);if(kind==='difference'){const a=ri(1,4),ax=a===1?'x':`${a}x`,x2=a===1?'x^2':`${a*a}x^2`,root=level===3&&Math.random()<.55?`\\sqrt{${root9()}}`:String(ri(2,9)),r=/sqrt/.test(root)?Number(root.match(/\d+/)[0]):Number(root),constant=/sqrt/.test(root)?r:r*r,statement=`${x2}-${constant}`,answer=`(${ax}-${root})(${ax}+${root})`;return ex('Fatorização por casos notáveis','Fatoriza completamente.',statement,answer,[['Reconhece-se uma diferença de quadrados.',`${statement}=(${ax})^2-(${root})^2`],['Aplica-se A²−B²=(A−B)(A+B).',answer]],{year:9,level,family:/sqrt/.test(root)?'diferenca-quadrados-irracional':'diferenca-quadrados',wrong:[`(${ax}-${constant})(${ax}+${constant})`,`(${ax}-${root})^2`,`(${ax}+${root})^2`],rule:'Uma diferença de quadrados fatoriza-se no produto da diferença pela soma.',helps:helps('Escreve cada termo como um quadrado.',`x^2-7=(x-\\sqrt7)(x+\\sqrt7).`,'Determina A e B em A²−B².')})}const a=ri(1,3),ax=a===1?'x':`${a}x`,x2=a===1?'x^2':`${a*a}x^2`,b=ri(1,8),sign=Math.random()<.5?'+':'-',mid=2*a*b,statement=`${x2}${sign}${mid}x+${b*b}`,answer=`(${ax}${sign}${b})^2`;return ex('Fatorização por casos notáveis','Fatoriza o trinómio quadrado perfeito.',statement,answer,[['Extraem-se as raízes quadradas dos extremos.',`${ax}\\;\\text{ e }\\;${b}`],['Confirma-se o termo médio e fatoriza-se.',answer]],{year:9,level,family:'fatorizar-trinomio-quadrado-perfeito',wrong:[`(${ax}${sign}${b*b})^2`,`(${ax}${sign==='+'?'-':'+'}${b})^2`,`(${ax}-${b})(${ax}+${b})`],rule:'A²±2AB+B²=(A±B)².',helps:helps('O sinal do binómio é o sinal do termo médio.',`4x^2-12x+9=(2x-3)^2.`,'Verifica se o termo médio é duas vezes o produto.')});}
 function equivalent9(level){const a=ri(1,4),ax=a===1?'x':`${a}x`,a2=a*a===1?'x^2':`${a*a}x^2`,b=ri(1,7),sign=Math.random()<.5?'+':'-',sgn=sign==='+'?1:-1;if(level===3&&Math.random()<.5){const r=root9(),statement=`(x${sign}\\sqrt{${r}})^2-x^2`,answer=`${sign==='+'?'':'-'}2\\sqrt{${r}}x+${r}`;return ex('Expressões equivalentes','Desenvolve e reduz a expressão.',statement,answer,[['Desenvolve-se o quadrado do binómio.',`x^2${sign}2\\sqrt{${r}}x+${r}-x^2`],['Reduzem-se os termos semelhantes.',answer]],{year:9,level,family:'equivalencia-com-irracional',wrong:[`${sign==='+'?'':'-'}\\sqrt{${r}}x+${r}`,`${sign==='+'?'':'-'}2\\sqrt{${r}}x`,`x^2+${r}`],rule:'Desenvolve primeiro; reduz apenas depois.',helps:helps('Os termos x² anulam-se.',`(x+\\sqrt3)^2-x^2=2\\sqrt3x+3.`,'Aplica o quadrado do binómio.')})}const statement=`(${ax}${sign}${b})^2-(${a2}+${b*b})`,answer=`${sgn<0?'-':''}${2*a*b}x`;return ex('Expressões equivalentes','Simplifica a expressão.',statement,answer,[['Desenvolve-se o quadrado do binómio.',`${a2}${sign}${2*a*b}x+${b*b}-${a2}-${b*b}`],['Anulam-se os termos simétricos.',answer]],{year:9,level,family:'equivalencia-por-cancelamento',wrong:[`${2*a*b}x+${b*b}`,`${a2}${sign}${2*a*b}x`,String(b*b)],rule:'Só se reduzem termos semelhantes.',helps:helps('Desenvolve antes de retirar os parênteses.',`(x+2)^2-(x^2+4)=4x.`,'Procura termos simétricos no fim.')});}
 
@@ -148,9 +183,290 @@ function program9(level){const r=level===3?root9():null,a=r?`\\sqrt{${r}}`:Strin
 function diagonalSquares9(level){const r=pick([2,3,5,6,7]),answer=`2x^2+2\\sqrt{${r}}x+${r}`;return ex('Problemas e figuras',`Dois quadrados têm lados \\(x\\) e \\(x+\\sqrt{${r}}\\). Determina a soma das suas áreas na forma reduzida.`,'',answer,[['Somam-se as áreas dos dois quadrados.',`x^2+(x+\\sqrt{${r}})^2`],['Desenvolve-se o quadrado do binómio e reduz-se.',answer]],{year:9,level,family:'problema-soma-areas-irracional',wrong:[`2x^2+${r}`,`x^2+2\\sqrt{${r}}x+${r}`,`2x^2+\\sqrt{${r}}x+${r}`],rule:'A soma das áreas não é o quadrado da soma dos lados.',helps:helps('Calcula separadamente a área de cada quadrado.',`x^2+(x+\\sqrt2)^2.`,'Não confundas A²+B² com (A+B)².')})}
 function problem9Variety(level){const pool=level===1?[squareRegion9,rectangleChange9,triangle9,tileBorder9]:level===2?[squareRegion9,circularCrown9,rectangleChange9,triangle9,tileBorder9,program9]:[squareRegion9,circularCrown9,triangle9,tileBorder9,program9,diagonalSquares9];return pick(pool)(level)}
 
-const maps={7:{linguagem:language7,valor:value7,reducao:reduce7,distributiva:distributive7,equivalencia:equivalent7,problemas:problem7Variety},8:{monomios:monomial8Mixed,adicao:polyAdd8Mixed,multiplicacao:multiply8Mixed,escondidas:hidden8Mixed,demonstracoes:proof8,problemas:problem8Variety},9:{desenvolver:develop9Mixed,identificar:identify9Mixed,fatorizar:factorize9Mixed,equivalencia:equivalent9Mixed}};
+// Novas famílias: simplificação com cancelamento, distributiva e produtos conjugados.
+function equivalent9Product(level){
+ const a=ri(1,4),b=ri(2,8),c=ri(1,5),ax=a===1?'x':`${a}x`,base=a*a===1?'x^2':`${a*a}x^2`,d=b*b;
+ const statement=`(${ax}-${b})(${ax}+${b})-(${base}-${d}+${c}x)`;
+ const answer=`-${c}x`;
+ return ex('Expressões equivalentes','Simplifica a expressão.',statement,answer,[['Aplica-se o produto da soma pela diferença.',`(${ax}-${b})(${ax}+${b})=${base}-${d}`],['Eliminam-se os parênteses e reduzem-se os termos semelhantes.',answer]],{year:9,level,family:'equivalencia-produto-conjugados-subtracao',wrong:[`${c}x`,`${base}-${d}-${c}x`,`-${c}`],rule:'Ao subtrair um polinómio, mudam-se os sinais de todos os seus termos.',helps:helps('Começa pelo produto conjugado.',`(x-3)(x+3)-(x^2-9+2x)=-2x.`,'Aplica A²−B² e só depois elimina os parênteses.')});
+}
+function equivalent9TwoSquares(level){
+ const a=ri(2,6),b=ri(1,4),c=ri(1,4),k=a+b;
+ const statement=`(x+${a})^2-(x-${b})^2-${2*k}x`;
+ const answer=String(a*a-b*b);
+ return ex('Expressões equivalentes','Desenvolve e reduz a expressão.',statement,answer,[['Desenvolvem-se os dois quadrados.',`x^2+${2*a}x+${a*a}-(x^2-${2*b}x+${b*b})-${2*k}x`],['Eliminam-se os parênteses e reduzem-se os termos semelhantes.',answer]],{year:9,level,family:'equivalencia-diferenca-dois-quadrados',wrong:[`${2*k}x+${answer}`,String(a*a+b*b),`${2*k}x`],rule:'Na subtração de um quadrado, todos os sinais do polinómio desenvolvido mudam.',helps:helps('Desenvolve os dois quadrados separadamente.',`(x+3)^2-(x-2)^2-10x=5.`,'Tem atenção ao sinal menos antes do segundo quadrado.')});
+}
+function equivalent9Distributive(level){
+ const a=ri(2,5),b=ri(2,7),c=ri(1,4),k=ri(2,5),d=ri(1,4),x2=a*k;
+ const statement=`${x2}x(x+${b})-${k}x(${a}x-${c})+${d}(x-${b})`;
+ const coef=x2*b+k*c+d,constant=-d*b;
+ const answer=`${coef}x-${d*b}`;
+ return ex('Expressões equivalentes','Aplica a propriedade distributiva e reduz.',statement,answer,[['Aplicam-se as propriedades distributivas.',`${x2}x^2+${x2*b}x-${x2}x^2+${k*c}x+${d}x-${d*b}`],['Reduzem-se os termos semelhantes.',answer]],{year:9,level,family:'equivalencia-dupla-distributiva',wrong:[`${x2}x^2+${coef}x-${d*b}`,`${coef}x+${d*b}`,`${coef-k*c}x-${d*b}`],rule:'É necessário aplicar a distributiva antes de reduzir os termos semelhantes.',helps:helps('Desenvolve os três produtos, sem omitir sinais.',`6x(x+3)-3x(2x-1)+2(x-3)=23x-6.`,'Os termos de grau dois anulam-se.')});
+}
+function equivalent9MixedVariety(level){
+ const pool=level===3?[equivalent9, equivalent9, equivalent9Product,equivalent9TwoSquares,equivalent9Distributive]:[equivalent9,equivalent9,equivalent9Product,equivalent9TwoSquares,equivalent9Distributive];
+ return pick(pool)(level);
+}
+
+// V8: famílias adicionais, diferenciação estrutural e rigor das representações.
+function value7Advanced(level){
+ const a=ri(2,5),b=ri(1,6),c=ri(1,5),x=level===3?nz(-4,4):ri(1,5);
+ const statement=level===3?`P(x)=${a}(x-${b})+${c}x,\\quad x=${x}`:`P(x)=${a}x+${b},\\quad x=${x}`;
+ const result=level===3?a*(x-b)+c*x:a*x+b;
+ const first=level===3?`${a}(${wrap(String(x))}-${b})+${c}\\times${wrap(String(x))}`:`${a}\\times${wrap(String(x))}+${b}`;
+ return ex('Valor numérico','Calcula o valor numérico da expressão.',statement,String(result),[['Substitui-se a variável pelo valor indicado.',first],['Efetuam-se as operações pela ordem correta.',String(result)]],{year:7,level,family:level===3?'valor-numerico-parenteses':'valor-numerico-linear',numeric:result,wrong:[String(result+a),String(-result),String(result-b)]});
+}
+function reduce7Advanced(level){
+ if(level===1)return reduce7(level);
+ const a=nz(-6,6),b=nz(-5,5),c=nz(-6,6),d=nz(-5,5),k=nz(-7,7);
+ const result=poly([k,a+b+c+d]);
+ const statement=level===3?`${a}x${sg(k)}${sg(b)}x${sg(c)}x${sg(d)}x`:`${a}x${sg(k)}${sg(b)}x${sg(c)}x`;
+ const answer=level===3?result:poly([k,a+b+c]);
+ return ex('Redução','Reduz a expressão.',statement,answer,[['Identificam-se os termos semelhantes.',level===3?`(${a}${sg(b)}${sg(c)}${sg(d)})x${sg(k)}`:`(${a}${sg(b)}${sg(c)})x${sg(k)}`],['Somam-se os coeficientes.',answer]],{year:7,level,family:level===3?'reducao-cinco-termos':'reducao-quatro-termos',wrong:[poly([k,-a-b-c-d]),poly([-k,a+b+c+d])]});
+}
+function distributive7Advanced(level){
+ if(level===1)return distributive7(level);
+ const a=ri(2,6),b=ri(1,5),c=ri(2,6),d=ri(1,6),e=ri(1,5);
+ let statement,answer,first,family;
+ if(level===3){statement=`${a}(${b}x-${c})+${d}(${e}x+${b})-${c}x`;answer=poly([-a*c+d*b,a*b+d*e-c]);first=`${a*b}x-${a*c}+${d*e}x+${d*b}-${c}x`;family='distributiva-duas-expressoes'}
+ else{statement=`${a}(${b}x-${c})+${d}x-${e}`;answer=poly([-a*c-e,a*b+d]);first=`${a*b}x-${a*c}+${d}x-${e}`;family='distributiva-com-reducao'}
+ return ex('Propriedade distributiva','Desenvolve e reduz a expressão.',statement,answer,[['Aplica-se a distributiva, respeitando os sinais.',first],['Reduzem-se os termos semelhantes.',answer]],{year:7,level,family,wrong:[poly([a*c+d*b,a*b+d*e-c]),poly([-a*c-d*b,a*b+d*e-c])]});
+}
+function proof8Variety(level){
+ const kinds=level===1?['even','odd','consecutive','difference-odd']:level===2?['difference-odd','sum-three','consecutive','even-times','odd']:['sum-three','difference-odd','even-times','odd-square','consecutive-product'];
+ const kind=pick(kinds);if(['even','odd','consecutive'].includes(kind))return proof8(level);
+ const variants={
+ 'difference-odd':['Mostra que a diferença entre dois números ímpares é par.',`(2a+1)-(2b+1)=2(a-b)`,`2a+1\\text{ e }2b+1`],
+ 'sum-three':['Mostra que a soma de três números inteiros consecutivos é múltipla de 3.',`n+(n+1)+(n+2)=3(n+1)`,`n,\\ n+1,\\ n+2`],
+ 'even-times':['Mostra que o produto de um número par por qualquer número inteiro é par.',`(2a)b=2(ab)`,`2a\\text{ e }b`],
+ 'odd-square':['Mostra que o quadrado de um número ímpar é ímpar.',`(2n+1)^2=2(2n^2+2n)+1`,`2n+1`],
+ 'consecutive-product':['Mostra que o produto de dois números inteiros consecutivos é par.',`n(n+1)=2k\\text{ para algum inteiro }k`,`n\\text{ e }n+1`]
+ };
+ const [statement,answer,representation]=variants[kind];
+ const steps=kind==='consecutive-product'?[['Entre dois inteiros consecutivos, um é par.',`n\\text{ ou }n+1\\text{ é par}`],['O produto tem um fator par e, portanto, é par.',answer]]:[['Representam-se os números por expressões algébricas.',representation],['Desenvolve-se e coloca-se o fator adequado em evidência.',answer]];
+ return ex('Demonstrações','Representa algebricamente e justifica.',statement,answer,steps,{year:8,level,family:'demonstracao-'+kind,isText:true,wrong:[]});
+}
+function monomial8Advanced(level){
+ if(level===1)return monomial8(level);
+ const a=nz(-8,8),b=ri(1,4),c=ri(1,4),d=level===3?ri(1,3):0;
+ const statement=`${coef(a)}^{${b}}y^{${c}}${d?`z^{${d}}`:''}`,degree=b+c+d;
+ const kind=pick(['degree','coefficient','opposite']);
+ if(kind==='degree')return ex('Monómios','Determina o grau do monómio.',statement,String(degree),[['Somam-se os expoentes de todas as variáveis.',`${b}+${c}${d?`+${d}`:''}=${degree}`]],{year:8,level,family:'monomio-grau-multivariavel',numeric:degree,wrong:[String(b),String(c),String(Math.abs(a))]});
+ if(kind==='coefficient')return ex('Monómios','Indica o coeficiente do monómio.',statement,String(a),[['O coeficiente é o fator numérico.',String(a)]],{year:8,level,family:'monomio-coeficiente-multivariavel',numeric:a,wrong:[String(-a),String(degree)]});
+ const answer=`${coef(-a)}^{${b}}y^{${c}}${d?`z^{${d}}`:''}`;
+ return ex('Monómios','Escreve o monómio simétrico.',statement,answer,[['Troca-se apenas o sinal do coeficiente.',answer]],{year:8,level,family:'monomio-simetrico-multivariavel',wrong:[statement]});
+}
+function multiply8Advanced(level){
+ if(level===1)return multiply8Mixed(level);
+ const a=nz(-5,5),b=nz(-4,4),c=nz(-4,4),d=nz(-4,4);
+ const statement=level===3?`(${a}x+${b}y)(${c}x+${d}y)`:`(${a}x+${b})(${c}x+${d})`;
+ const answer=level===3?`${a*c}x^2${sg(a*d+b*c)}xy${sg(b*d)}y^2`:poly([b*d,a*d+b*c,a*c]);
+ const expansion=level===3?`${a*c}x^2${sg(a*d)}xy${sg(b*c)}xy${sg(b*d)}y^2`:`${a*c}x^2${sg(a*d)}x${sg(b*c)}x${sg(b*d)}`;
+ return ex('Multiplicação','Desenvolve e reduz.',statement,answer,[['Multiplicam-se todos os termos do primeiro fator pelos do segundo.',expansion],['Reduzem-se os termos semelhantes.',answer]],{year:8,level,family:level===3?'produto-dois-binomios-duas-variaveis':'produto-dois-binomios',wrong:[]});
+}
+function problem8Advanced(level){
+ if(level<3)return problem8Variety(level);
+ const a=ri(2,5),b=ri(1,5),c=ri(2,5),d=ri(1,5);
+ const outer=mul([a,1],[b,1]),inner=mul([c,1],[d,1]);
+ const answer=poly(sub(outer,inner));
+ const visual=svg(`<rect x="70" y="42" width="420" height="204" fill="#dce9ff" stroke="#315ee7" stroke-width="3"/><rect x="130" y="82" width="300" height="124" fill="white" stroke="#315ee7" stroke-width="3"/><text x="280" y="273" text-anchor="middle" font-size="17">exterior: (x+${a}) por (x+${b})</text><text x="280" y="150" text-anchor="middle" font-size="16">interior: (x+${c}) por (x+${d})</text>`,'Moldura com dimensões algébricas');
+ // As dimensões exteriores devem ser maiores para x>=0; garantir os parâmetros.
+ if(a<=c||b<=d)return problem8Variety(level);
+ return ex('Problemas','Determina e reduz a expressão da área da região colorida.',visual,answer,[['Calculam-se as duas áreas.',`(x+${a})(x+${b})-(x+${c})(x+${d})`],['Desenvolvem-se os produtos e reduzem-se os termos semelhantes.',answer]],{year:8,level,family:'problema-moldura-diferenca-produtos',visualHtml:visual,wrong:[]});
+}
+function problem7Safe(level){const r=problem7Variety(level);if(r.family!=='problema-lados-partilhados')return r;const svgText=r.visualHtml;const n=(svgText.match(/<rect /g)||[]).length;const count=Math.max(3,Math.min(7,n));const side=58,start=40,width=side*count;const graphic=svg(`<g fill="#dce9ff" stroke="#315ee7" stroke-width="2.5">${Array.from({length:count},(_,i)=>`<rect x="${start+i*side}" y="90" width="${side}" height="${side}"/>`).join('')}</g><text x="280" y="195" text-anchor="middle" font-size="18">lado de cada quadrado: x</text>`,'Fila de quadrados iguais unidos lado a lado');r.visualHtml=graphic;r.statement=graphic;return r}
+
+
+// V9 — novas famílias genuínas; dificuldade definida pela estrutura, não só pelos coeficientes.
+const V9={
+ number:n=>n<0?`(${n})`:String(n),
+ signed:(n,v='x')=>n===1?v:n===-1?`-${v}`:`${n}${v}`,
+ make:(topic,prompt,statement,answer,steps,year,level,family,other={})=>ex(topic,prompt,statement,String(answer),steps,{year,level,family,...other}),
+};
+function v9value7(l){
+ const kind=pick(l===1?['linear','constant','parenthesis']:l===2?['linear','parenthesis','two-values','difference']:['parenthesis','two-values','difference','nested']);
+ const a=ri(2,6),b=ri(1,7),c=ri(1,5),x=ri(1,5),z=x+ri(1,3);
+ let f,answer,steps,prompt='Calcula o valor numérico da expressão.',statement;
+ if(kind==='constant'){f=`${a}x+${b}`;answer=a*x+b;steps=[['Substitui-se x pelo valor indicado.',`${a}\\times${V9.number(x)}+${b}`]]}
+ else if(kind==='linear'){f=`${a}x-${b}`;answer=a*x-b;steps=[['Substitui-se x pelo valor indicado.',`${a}\\times${V9.number(x)}-${b}`]]}
+ else if(kind==='parenthesis'){f=`${a}(x+${b})`;answer=a*(x+b);steps=[['Calcula-se primeiro o valor do parêntesis.',`${a}(${V9.number(x)}+${b})`]]}
+ else if(kind==='difference'){f=`${a}(x-${b})+${c}x`;answer=a*(x-b)+c*x;steps=[['Substitui-se e aplica-se a distributiva.',`${a}(${V9.number(x)}-${b})+${c}\\times${V9.number(x)}`]]}
+ else if(kind==='nested'){f=`${a}(x-${b})+${c}(x+${b})`;answer=a*(x-b)+c*(x+b);steps=[['Substitui-se em cada parêntesis.',`${a}(${V9.number(x)}-${b})+${c}(${V9.number(x)}+${b})`]]}
+ else{f=`${a}(x+${b})`;answer=a*(x+b)-a*(z+b);prompt='Calcula a diferença entre os valores da expressão para os dois valores indicados.';statement=`P(x)=${f},\\quad x=${x}\\text{ e }x=${z}`;steps=[['Calculam-se separadamente os dois valores.',`P(${x})=${a}(${V9.number(x)}+${b}),\\quad P(${z})=${a}(${z}+${b})`]]}
+ statement??=`P(x)=${f},\\quad x=${x}`;
+ return V9.make('Valor numérico',prompt,statement,answer,[...steps,['Efetuam-se as operações e reduz-se.',String(answer)]],7,l,'v9-valor-'+kind,{numeric:answer,isText:false,wrong:[String(-answer),String(answer+1),String(answer-1)]});
+}
+function v9reduce7(l){
+ const kind=pick(l===1?['terms','terms','ordered']:l===2?['terms','ordered','two-variables']:['two-variables','parenthesis','three-groups','ordered']);
+ const a=ri(2,6),b=ri(1,5),c=ri(2,6),d=ri(1,5);
+ let statement,answer;
+ if(kind==='terms'){statement=`${a}x+${b}-${c}x+${d}`;answer=poly([b+d,a-c])}
+ if(kind==='ordered'){statement=`${a}x-${b}+${c}-${d}x+${b}x`;answer=poly([c-b,a-d+b])}
+ if(kind==='two-variables'){statement=`${a}x+${b}y-${c}x+${d}y`;answer=(a===c?'':V9.signed(a-c))+(a===c?`${b+d}y`:`+${b+d}y`)}
+ if(kind==='parenthesis'){statement=`${a}(x+${b})+${c}x-${d}`;answer=poly([a*b-d,a+c])}
+ if(kind==='three-groups'){statement=`${a}(x-${b})+${c}(x+${d})-${b}x`;answer=poly([-a*b+c*d,a+c-b])}
+ return V9.make('Redução','Reduz a expressão.',statement,answer,[['Agrupam-se os termos semelhantes, depois de eliminar os parênteses, se existirem.',statement],['Somam-se os coeficientes da mesma parte literal.',answer]],7,l,'v9-reducao-'+kind,{wrong:[]});
+}
+function v9distributive7(l){
+ const kind=pick(l===1?['single','with-constant']:l===2?['with-constant','with-x','two-parentheses']:['two-parentheses','three-parts','opposite-signs','with-x']);
+ const a=ri(2,6),b=ri(1,5),c=ri(2,5),d=ri(1,6),e=ri(1,5);
+ let statement,result;
+ if(kind==='single'){statement=`${a}(x+${b})`;result=[a*b,a]}
+ if(kind==='with-constant'){statement=`${a}(x-${b})+${d}`;result=[-a*b+d,a]}
+ if(kind==='with-x'){statement=`${a}(${b}x-${c})+${d}x-${e}`;result=[-a*c-e,a*b+d]}
+ if(kind==='two-parentheses'){statement=`${a}(x-${b})+${c}(x+${d})`;result=[-a*b+c*d,a+c]}
+ if(kind==='three-parts'){statement=`${a}(${b}x-${c})+${d}(x+${e})-${b}x`;result=[-a*c+d*e,a*b+d-b]}
+ if(kind==='opposite-signs'){statement=`${a}(${b}x-${c})+${d}(${e}-${b}x)`;result=[-a*c+d*e,a*b-d*b]}
+ const answer=poly(result);
+ return V9.make('Propriedade distributiva','Desenvolve e reduz a expressão.',statement,answer,[['Aplica-se a propriedade distributiva a todos os parênteses.',statement],['Reduzem-se os termos semelhantes.',answer]],7,l,'v9-distributiva-'+kind,{wrong:[]});
+}
+function v9equivalent7(l){
+ if(l===1)return equivalent7(l);
+ const kind=pick(l===2?['compare','missing','double']:['compare','missing','double','two-routes']);
+ const a=ri(2,5),b=ri(1,5),c=ri(1,5),d=ri(1,5);
+ let statement,answer,prompt='Desenvolve e reduz a expressão.';
+ if(kind==='compare'){statement=`${a}(x+${b})+${c}x-${a*b}`;answer=`${a+c}x`;prompt='Simplifica a expressão e indica uma expressão equivalente.'}
+ if(kind==='missing'){statement=`${a}(x+${b})+\\square=${a+c}x+${a*b+d}`;answer=`${c}x+${d}`;prompt='Determina a expressão que deve substituir o quadrado.'}
+ if(kind==='double'){statement=`${a}(x+${b})+${c}(x-${d})`;answer=poly([a*b-c*d,a+c])}
+ if(kind==='two-routes'){statement=`${a}(x+${b})+${c}(x+${d})-${b}x`;answer=poly([a*b+c*d,a+c-b]);prompt='Reduz a expressão por dois processos diferentes.'}
+ return V9.make('Expressões equivalentes',prompt,statement,answer,[['Eliminam-se os parênteses e identificam-se os termos semelhantes.',statement],['Obtém-se a expressão reduzida.',answer]],7,l,'v9-equivalencia-'+kind,{wrong:[]});
+}
+function v9monomial8(l){
+ const kind=pick(l===1?['degree','coefficient','opposite']:['degree','coefficient','opposite','product','quotient']);
+ const a=nz(-7,7),b=nz(-5,5),p=ri(1,l===3?4:2),q=l===1?0:ri(1,3),r=l===3?ri(1,2):0;
+ const variable=`x${p===1?'':`^{${p}}`}${q?`y${q===1?'':`^{${q}}`}`:''}${r?`z${r===1?'':`^{${r}}`}`:''}`;
+ const statement=V9.signed(a,variable),degree=p+q+r;
+ if(kind==='degree')return V9.make('Monómios','Determina o grau do monómio.',statement,degree,[['Somam-se os expoentes das variáveis.',`${p}${q?'+'+q:''}${r?'+'+r:''}=${degree}`]],8,l,'v9-monomio-grau',{numeric:degree,wrong:[String(p),String(q),String(Math.abs(a))]});
+ if(kind==='coefficient')return V9.make('Monómios','Indica o coeficiente do monómio.',statement,a,[['Identifica-se o fator numérico.',String(a)]],8,l,'v9-monomio-coeficiente',{numeric:a,wrong:[String(-a),String(degree)]});
+ if(kind==='opposite')return V9.make('Monómios','Escreve o monómio simétrico.',statement,V9.signed(-a,variable),[['Mantém-se a parte literal e troca-se o sinal do coeficiente.',V9.signed(-a,variable)]],8,l,'v9-monomio-simetrico');
+ const s=`${V9.signed(a,variable)}\\cdot ${V9.signed(b,'x')}`,ans=V9.signed(a*b,`x^{${p+1}}${q?`y${q===1?'':`^{${q}}`}`:''}${r?`z${r===1?'':`^{${r}}`}`:''}`);
+ if(kind==='product')return V9.make('Monómios','Multiplica os monómios e simplifica.',s,ans,[['Multiplicam-se os coeficientes e somam-se os expoentes das mesmas variáveis.',ans]],8,l,'v9-monomio-produto');
+ const den=nz(2,5),num=a*den,statement2=`\\frac{${V9.signed(num,`x^{${p+1}}${q?`y${q===1?'':`^{${q}}`}`:''}`)}}{${den}x}`;
+ return V9.make('Monómios','Simplifica o quociente de monómios.',statement2,V9.signed(a,`x${p===1?'':`^{${p}}`}${q?`y${q===1?'':`^{${q}}`}`:''}`),[['Dividem-se os coeficientes e subtraem-se os expoentes das variáveis iguais.',V9.signed(a,`x${p===1?'':`^{${p}}`}${q?`y${q===1?'':`^{${q}}`}`:''}`)]],8,l,'v9-monomio-quociente');
+}
+function v9proof8(l){
+ const kinds=l===1?['even-sum','odd-sum','consecutive-sum','odd-difference']:l===2?['odd-difference','consecutive-sum','even-product','three-consecutive','odd-sum']:['three-consecutive','consecutive-product','odd-square','even-product','odd-difference'];
+ const kind=pick(kinds);
+ const data={
+ 'even-sum':['Mostra que a soma de dois números pares é par.',`2a+2b=2(a+b)`],
+ 'odd-sum':['Mostra que a soma de dois números ímpares é par.',`(2a+1)+(2b+1)=2(a+b+1)`],
+ 'consecutive-sum':['Mostra que a soma de dois números inteiros consecutivos é ímpar.',`n+(n+1)=2n+1`],
+ 'odd-difference':['Mostra que a diferença entre dois números ímpares é par.',`(2a+1)-(2b+1)=2(a-b)`],
+ 'even-product':['Mostra que o produto de um número par por um inteiro é par.',`(2a)b=2(ab)`],
+ 'three-consecutive':['Mostra que a soma de três números inteiros consecutivos é múltipla de 3.',`n+(n+1)+(n+2)=3(n+1)`],
+ 'odd-square':['Mostra que o quadrado de um número ímpar é ímpar.',`(2n+1)^2=2(2n^2+2n)+1`],
+ 'consecutive-product':['Mostra que o produto de dois números inteiros consecutivos é par.',`n(n+1)=2k\\text{, para algum inteiro }k`]
+ };
+ const [statement,answer]=data[kind];
+ const steps=kind==='consecutive-product'?[['De dois inteiros consecutivos, um é par.',`n\\text{ ou }n+1\\text{ é par}`],['Logo, o produto tem um fator 2.',answer]]:[['Representam-se genericamente os inteiros envolvidos.',kind==='three-consecutive'?`n,\\ n+1,\\ n+2`:`2a,\\ 2b,\\ 2n+1\\text{ (conforme o caso)}`],['Reduz-se e interpreta-se a forma final.',answer]];
+ return V9.make('Demonstrações','Representa algebricamente e justifica.',statement,answer,steps,8,l,'v9-demonstracao-'+kind,{isText:true});
+}
+function v9multiplication8(l){
+ if(l===1)return multiply8(l);
+ const kind=pick(l===2?['binomial','mono','difference']:['two-variables','binomial','difference','three-terms']);
+ const a=ri(2,5),b=ri(1,5),c=ri(2,5),d=ri(1,5);
+ let statement,answer;
+ if(kind==='mono'){statement=`${a}x(${b}x-${c})`;answer=poly([0,-a*c,a*b])}
+ if(kind==='binomial'){statement=`(${a}x+${b})(${c}x-${d})`;answer=poly([-b*d,b*c-a*d,a*c])}
+ if(kind==='difference'){statement=`(${a}x-${b})(${c}x+${d})`;answer=poly([-b*d,a*d-b*c,a*c])}
+ if(kind==='two-variables'){statement=`(${a}x+${b}y)(${c}x-${d}y)`;answer=`${a*c}x^2${sg(b*c-a*d)}xy-${b*d}y^2`;if(b*c===a*d)answer=`${a*c}x^2-${b*d}y^2`}
+ if(kind==='three-terms'){statement=`(${a}x+${b})(${c}x^2+${d}x-${b})`;answer=poly([-b*b,b*d-a*b,a*d+b*c,a*c])}
+ return V9.make('Multiplicação','Desenvolve e reduz.',statement,answer,[['Aplica-se a propriedade distributiva, multiplicando cada termo pelos restantes.',statement],['Reduzem-se os termos do mesmo grau.',answer]],8,l,'v9-multiplicacao-'+kind);
+}
+function v9problem8(l){
+ if(l===1)return problem8Variety(l);
+ const kind=pick(l===2?['area','change','frame']:['frame','change','difference','area']);
+ const a=ri(2,6),b=ri(1,5),c=ri(1,4);
+ if(kind==='change'){const answer=poly([a*c,c]);return V9.make('Problemas',`A largura de um retângulo mede ${c} unidades e o comprimento mede x+${a}. Se a largura aumentar uma unidade, determina a expressão reduzida do aumento da área.`, '',poly([a,1]),[['A área aumenta uma faixa de largura 1.',`1(x+${a})`],['Reduz-se a expressão.',poly([a,1])]],8,l,'v9-problema-aumento-area',{isText:true})}
+ if(kind==='difference'){const answer=poly([a*b-b*c,a-c]);return V9.make('Problemas','Dois retângulos têm a mesma largura, x+'+b+', e comprimentos x+'+a+' e x+'+c+'. Determina a diferença entre as suas áreas.','',answer,[['Subtraem-se as áreas.',`(x+${b})(x+${a})-(x+${b})(x+${c})`],['Coloca-se o fator comum em evidência e reduz-se.',answer]],8,l,'v9-problema-diferenca-areas',{isText:true})}
+ return problem8Variety(l);
+}
+
+
+// V10 — famílias adicionais, mantendo os geradores e as resoluções existentes.
+function v10challenge7(l){
+ // 7.º ano: apenas fatores positivos imediatamente antes dos parênteses.
+ const a=ri(2,6),b=ri(1,5),c=ri(2,5),d=ri(1,5),e=ri(1,4);
+ const kind=pick(['dois-grupos','tres-grupos','distributiva-dupla','comparar-caminhos']);
+ let statement,answer,prompt='Desenvolve e reduz a expressão.';
+ if(kind==='dois-grupos'){
+  statement=`${a}(x+${b})+${c}(x-${d})+${e}x`;
+  answer=poly([a*b-c*d,a+c+e]);
+ }else if(kind==='tres-grupos'){
+  statement=`${a}(x+${b})+${c}(x-${d})+${e}(x+${b})`;
+  answer=poly([a*b-c*d+e*b,a+c+e]);
+ }else if(kind==='distributiva-dupla'){
+  statement=`${a}(${b}x-${c})+${d}(x-${e})+${c}x`;
+  answer=poly([-a*c-d*e,a*b+d+c]);
+ }else{
+  statement=`${a}(x+${b})+${c}(x-${d})+${e}x-${b}`;
+  answer=poly([a*b-c*d-b,a+c+e]);
+  prompt='Simplifica a expressão por dois processos diferentes.';
+ }
+ return V9.make('Expressões e propriedades',prompt,statement,answer,[
+  ['Aplica-se a distributiva usando apenas fatores positivos.',statement],
+  ['Agrupam-se os termos semelhantes e reduz-se a expressão.',answer]
+ ],7,l,'v11-7-'+kind);
+}
+function v10problems7(l){
+ const kind=pick(l===3?['bilhetes','sequencia','perimetro','custo-com-desconto','original']:['bilhetes','sequencia','perimetro','original','original']);
+ const a=ri(2,6),b=ri(1,5),c=ri(2,5);
+ if(kind==='original')return problem7Safe(l);
+ if(kind==='bilhetes'){
+  const answer=poly([b*c,a*c]);
+  return V9.make('Problemas','Escreve e reduz a expressão para a receita total.',`Um bilhete custa \\(${a}x+${b}\\) euros. Foram vendidos ${c} bilhetes.`,answer,[['Multiplica-se o preço de cada bilhete pelo número de bilhetes.',`${c}(${a}x+${b})`],['Aplica-se a distributiva.',answer]],7,l,'v10-7-problema-bilhetes',{isText:true});
+ }
+ if(kind==='sequencia'){
+  return V9.make('Problemas','Determina uma expressão para o termo indicado.',`Uma sequência começa em \\(${a}\\) e aumenta \\(${b}\\) unidades de um termo para o seguinte. Determina uma expressão para o termo de ordem \\(n\\), contando a partir de 1.`,`${b}n+${a-b}`,[['O termo de ordem n é o primeiro termo mais (n−1) vezes a razão.',`${a}+${b}(n-1)`],['Reduz-se a expressão do termo geral.',`${b}n+${a-b}`]],7,l,'v10-7-problema-sequencia',{isText:true});
+ }
+ if(kind==='perimetro'){
+  const answer=poly([2*b+2*c,2*a+2]);
+  return V9.make('Problemas','Escreve uma expressão reduzida para o perímetro.',`Um retângulo tem lados \\(${a}x+${b}\\) e \\(x+${c}\\).`,answer,[['O perímetro é o dobro da soma dos comprimentos dos lados.',`2(${a}x+${b})+2(x+${c})`],['Aplica-se a distributiva e reduz-se.',answer]],7,l,'v10-7-problema-perimetro',{isText:true});
+ }
+ const answer=poly([a*b-c,a]);
+ return V9.make('Problemas','Determina uma expressão reduzida para o preço final.',`Compram-se ${a} objetos a \\(x+${b}\\) euros cada. No total, aplica-se um desconto de ${c} euros.`,answer,[['Calcula-se o custo dos objetos e subtrai-se o desconto.',`${a}(x+${b})-${c}`],['Reduz-se a expressão.',answer]],7,l,'v10-7-problema-desconto',{isText:true});
+}
+function v10multiplication8(l){
+ if(l!==3)return v9multiplication8(l);
+ const kind=pick(['duplo-produto','produto-e-termos','produto-trinomio','original']);
+ if(kind==='original')return v9multiplication8(l);
+ const a=ri(2,4),b=ri(1,5),c=ri(2,4),d=ri(1,4),e=ri(1,4);
+ let statement,coeff;
+ if(kind==='duplo-produto'){
+  statement=`(${a}x+${b})(${c}x-${d})+(${e}x-${b})(x+${d})`;
+  coeff=[-b*d-b*d,b*c-a*d+e*d-b,a*c+e];
+ }else if(kind==='produto-e-termos'){
+  statement=`(${a}x-${b})(${c}x+${d})-${e}x(x-${b})`;
+  coeff=[-b*d,a*d-b*c+e*b,a*c-e];
+ }else{
+  statement=`(${a}x+${b})(${c}x^2-${d}x+${e})`;
+  coeff=[b*e,a*e-b*d,b*c-a*d,a*c];
+ }
+ const answer=poly(coeff);
+ return V9.make('Multiplicação','Desenvolve e reduz a expressão.',statement,answer,[
+ ['Efetuam-se os produtos aplicando a propriedade distributiva.',statement],
+ ['Agrupam-se os termos semelhantes e escreve-se o polinómio reduzido.',answer]
+ ],8,l,'v10-8-multiplicacao-'+kind);
+}
+function v10proof8(l){
+ if(l!==3)return v9proof8(l);
+ const kind=pick(['tres-impares','consecutivos-quadrados','pares-produto','original']);
+ if(kind==='original')return v9proof8(l);
+ const data={
+ 'tres-impares':['Mostra que a soma de três números ímpares é ímpar.',`(2a+1)+(2b+1)+(2c+1)=2(a+b+c+1)+1`],
+ 'consecutivos-quadrados':['Mostra que a diferença entre os quadrados de dois inteiros consecutivos é ímpar.',`(n+1)^2-n^2=2n+1`],
+ 'pares-produto':['Mostra que o produto de dois números pares é múltiplo de 4.',`(2a)(2b)=4ab`]
+ };
+ const [statement,answer]=data[kind];
+ return V9.make('Demonstrações','Representa algebricamente e justifica.',statement,answer,[
+ ['Representam-se os inteiros com variáveis inteiras e desenvolve-se a expressão.',answer],
+ ['A forma final demonstra a propriedade pretendida.',answer]
+ ],8,l,'v10-8-demonstracao-'+kind,{isText:true});
+}
+
+const maps={7:{linguagem:language7,valor:v9value7,reducao:(l)=>l===3&&Math.random()<0.65?v10challenge7(l):v9reduce7(l),distributiva:(l)=>l===3&&Math.random()<0.55?v10challenge7(l):v9distributive7(l),equivalencia:(l)=>l===3&&Math.random()<0.55?v10challenge7(l):v9equivalent7(l),problemas:v10problems7},8:{monomios:v9monomial8,adicao:polyAdd8Mixed,multiplicacao:v10multiplication8,escondidas:hidden8Mixed,demonstracoes:v10proof8,problemas:(l)=>{let r;for(let i=0;i<40;i++){r=v9problem8(l);if(!/demonstr|justifica|mostra que/i.test([r.topic,r.prompt,r.statement].join(' ')))return r}return r}},9:{desenvolver:develop9Mixed,identificar:identify9Mixed,fatorizar:factorize9Mixed,equivalencia:equivalent9MixedVariety}};
 const categoryLabels={7:{misto:'Treino misto',linguagem:'Linguagem algébrica',valor:'Valor numérico',reducao:'Redução de termos semelhantes',distributiva:'Propriedade distributiva',equivalencia:'Expressões equivalentes',problemas:'Problemas e figuras'},8:{misto:'Treino misto',monomios:'Monómios',adicao:'Adição e subtração',multiplicacao:'Multiplicação',escondidas:'Expressões escondidas',demonstracoes:'Demonstrações simples',problemas:'Problemas e figuras'},9:{misto:'Treino misto',desenvolver:'Desenvolver e reduzir',identificar:'Completar e reconhecer',fatorizar:'Fatorizar',equivalencia:'Seleção e análise de erros'}};
 const forbiddenZero=s=>/(?:\+|-)0(?![.,\d])|0x/.test(String(s||''));
-function generate(year,level,category='misto'){const m=maps[year],keys=Object.keys(m),key=category==='misto'?pick(keys):category,fn=m[key]||m[keys[0]];let r,guard=0;do{r=fn(level);guard++}while(guard<80&&[r.statement,r.answerTex,...(r.wrong||[])].some(forbiddenZero));r.category=key;r.categoryLabel=categoryLabels[year][key];return r}
+function generate(year,level,category='misto'){const m=maps[year],keys=Object.keys(m),key=category==='misto'?pick(keys):category,fn=m[key]||m[keys[0]];let r,guard=0;do{r=fn(level);guard++}while(guard<200&&([r.statement,r.answerTex,...(r.wrong||[])].some(forbiddenZero)||(year===7&&/(?:^|[^\w])-(?:\s*\d+)?\s*\(/.test(String(r.statement)))));r.category=key;r.categoryLabel=categoryLabels[year][key];return r}
 window.MathLabExpressions={generate,maps,categoryLabels,poly,add,sub,mul,val,shuffle};
 })();
