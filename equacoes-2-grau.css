@@ -1,1 +1,148 @@
 :root{--blue:#1749bd;--ink:#10213b;--line:#d8e1ef;--soft:#f3f7ff;--green:#12805c}*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}.platform-nav{max-width:1060px;margin:14px auto;padding:0 18px}.platform-nav a,footer a{color:var(--blue);font-weight:800;text-decoration:none}.platform-nav a:hover,footer a:hover{text-decoration:underline}header{background:linear-gradient(135deg,#123a9d,#2868e8);color:white;padding:28px max(20px,calc((100% - 1060px)/2));}header h1{margin:0;font-size:clamp(1.8rem,4vw,2.6rem)}header p{margin:.3rem 0}header span{font-size:.85rem;opacity:.85}main{max-width:1060px;margin:24px auto;padding:0 18px}h2{font-size:1.15rem;margin:26px 0 10px}.mode{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode button,.seg button,.choice,.actions button{border:1px solid var(--line);background:white;color:var(--ink);border-radius:12px;padding:13px;cursor:pointer;font-weight:700}.mode button.active,.seg button.active{background:var(--blue);color:white;border-color:var(--blue)}.cards{display:grid;gap:12px}.type-cards{grid-template-columns:1fr 1fr}.levels{grid-template-columns:repeat(3,1fr)}.choice{text-align:left;display:flex;flex-direction:column;gap:5px;min-height:105px}.choice span{font-weight:450;color:#53647d}.choice em{font-style:normal;color:var(--blue);font-size:1.1rem}.choice.active{outline:3px solid #90adff;background:var(--soft);border-color:var(--blue)}.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.primary{border:0!important;background:var(--blue)!important;color:white!important}.primary#new{width:100%;padding:15px;border-radius:12px;font-size:1rem;font-weight:800;margin-top:18px}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;margin-top:20px;box-shadow:0 8px 30px #183c7610}.hidden{display:none!important}#badges span{display:inline-block;background:#e8efff;color:#1749bd;padding:5px 10px;border-radius:99px;margin:0 6px 6px 0;font-size:.84rem;font-weight:750}.math{min-height:110px;display:grid;place-items:center;font-size:clamp(1.4rem,4vw,2.1rem);overflow:auto}.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.reveal{background:#effaf6;border-left:5px solid var(--green);padding:15px;border-radius:10px;margin-top:14px}.step{padding:8px 0;border-bottom:1px solid #dceae5}.test-option{display:block;width:100%;margin:8px 0;padding:12px;border:1px solid var(--line);background:white;border-radius:10px;text-align:left;cursor:pointer}.test-option.selected{background:#e9f0ff;border:2px solid var(--blue)}.progress{height:9px;background:#e2e8f2;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;background:var(--blue)}footer{text-align:center;padding:24px;color:#66758a}footer a{color:inherit}@media(max-width:720px){.type-cards,.levels,.seg,.actions{grid-template-columns:1fr}.choice{min-height:auto}}
+
+/* Interface unificada MathLab */
+.moduleHero{padding:26px 18px}.heroInner{max-width:1024px;margin:auto}.platform-nav{margin:16px auto 0}.platform-nav a{display:inline-block;border:1px solid #cbd9ee;border-radius:10px;background:white;padding:9px 14px;font-weight:500}.mode{grid-template-columns:repeat(3,minmax(0,1fr));margin:14px 0 24px}.choiceTitle{font-weight:700;color:var(--ink)!important}.choice.active .choiceTitle{color:var(--blue)!important}#sheetSettings label{display:block;margin:14px 0}select,input[type=number]{font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;margin-left:12px}.sheetTypes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sheetTypes label{background:#f7faff;border:1px solid var(--line);border-radius:12px;padding:12px}.sheetTypes input{width:74px}.sheetToolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.sheetToolbar button,#makeSheet,.testNav button,#backResult{padding:10px 14px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:white}.sheetToolbar .primary,#makeSheet{background:var(--blue);color:white}.paper{background:white;width:min(100%,210mm);min-height:297mm;margin:18px auto;padding:20mm 17mm;box-shadow:0 12px 35px #14284a25;color:#111;font:12pt/1.5 Georgia,serif}.paper h2{font-size:18pt;margin:10px 0}.paper h3{text-align:center;font:12pt Georgia,serif;margin:26px 0 16px}.paperHeader{border-bottom:1px solid #333;padding-bottom:15px}.paperBrand{font-size:9pt;color:#555}.studentLine{margin:20px 0 6px;font-size:10pt}.paperExercise{break-inside:avoid;margin:18px 0 24px}.paperMath{font-size:14pt}.answerSpace{height:40px}.paperSteps{padding:5px 14px;border-left:2px solid #ddd;font-size:11pt}.paperFooter{margin-top:40px;text-align:center;font-size:8pt;color:#666}.paper strong,.paper b,.paper mjx-container,.step strong{font-weight:400!important}.numberNav{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.numberNav button{border:1px solid #bbcbe2;background:white;border-radius:50%;width:35px;height:35px;cursor:pointer}.numberNav button.active{background:var(--blue);color:white}.numberNav button.answered{border:2px solid var(--blue)}.testOptions{margin:15px 0}.testNav{display:flex;gap:10px;justify-content:space-between;margin-top:18px}.reviewItem{border-top:1px solid var(--line);padding:18px 0}.reviewItem .step{font-weight:400}@media(max-width:720px){.mode{grid-template-columns:repeat(3,minmax(0,1fr))}.mode button{padding:9px 3px;font-size:12px}.sheetTypes{grid-template-columns:1fr}.paper{padding:12mm 9mm}}@page{size:A4;margin:16mm 14mm}@media print{body{background:white}header,.platform-nav,.mode,#freePanel,#testPanel,#sheetSettings,.sheetToolbar,footer{display:none!important}main{max-width:none;margin:0;padding:0}#sheetPanel,#sheetPreview{display:block!important}.paper{box-shadow:none;width:100%;min-height:0;padding:0;margin:0}.paperExercise{break-inside:avoid}}
+
+.verbalStatement{font:inherit;font-size:1.12rem;line-height:1.65;white-space:normal;overflow-wrap:anywhere;text-align:left;font-style:normal;margin:14px 0 20px}.paper .verbalStatement{font:12pt/1.5 Georgia,serif;margin:7px 0}.math:has(.verbalStatement){overflow-x:visible}.paperMath:has(.verbalStatement){font-size:12pt}.paperExercise .paperMath mjx-container{max-width:100%}
+
+/* V3 — Configuração unificada de fichas */
+.sheetTop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 22px}.sheetTop label{font-weight:600;margin:0!important}.sheetTop select{display:block;width:100%;margin:8px 0 0;background:#fff}.sheetHelp{color:#53637c}.topicGroup{border:1px solid #dce5f4;border-radius:15px;padding:17px 20px;margin:14px 0;background:#fbfcff}.topicGroup h3{font-size:1.08rem;margin:0 0 12px}.topicLine{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:9px 0;border-top:1px solid #edf1f8}.stepper{display:flex;align-items:center;gap:10px;flex-shrink:0}.stepper button{border:1px solid #d1dff1;background:white;border-radius:8px;min-width:36px;height:36px;cursor:pointer;font-size:1.3rem;color:#1647bb}.stepper output{min-width:25px;text-align:center;font-variant-numeric:tabular-nums}.sheetBottom{display:flex;align-items:center;justify-content:space-between;margin-top:20px}.sheetBottom strong{color:#1647bb}.paper .paperSteps mjx-container{font-weight:400!important}@media(max-width:720px){.sheetTop{grid-template-columns:1fr}.topicGroup{padding:12px}.topicLine{font-size:.9rem}}@media print{.sheetTop,.sheetBottom,.topicGroup{display:none!important}}
+
+/* V4 — interface comum MathLab, baseada em Funções/Equações */
+:root{--blue:#315ee7;--ink:#17243b;--line:#d8e2ef}
+body{background:#f4f7fb}.moduleHero{background:linear-gradient(125deg,#263f9e,#5b54d8 68%,#7568e8)}
+main{max-width:1120px}.heroInner{max-width:1080px}.platform-nav{max-width:1120px}
+.mode{background:#e9eefb;padding:7px;border-radius:17px;gap:8px;margin:16px 0 18px}
+.mode button{border:0;background:transparent;border-radius:9px;padding:14px 10px;font-size:1rem;color:#253a60}
+.mode button.active{background:var(--blue);color:white}
+#sheetSettings{padding:28px 30px 30px;box-shadow:0 5px 20px #17345a0d}
+.sheetTitle{text-align:center;font-size:1.55rem;margin:6px 0 28px}.sheetIntro{margin:0 0 20px}
+.sheetTop{margin:14px 0 30px}.sheetTop label{font-size:1rem;font-weight:750}.sheetTop select{font-weight:400;font-size:1rem;padding:12px 14px;border:2px solid #bfc6cd;border-radius:9px}
+.sheetSection{font-size:1.2rem;margin:27px 0 15px}
+.sheetTypeCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sheetTypeCard{display:flex!important;align-items:flex-start;gap:12px;border:2px solid var(--line);border-radius:14px;padding:18px 16px;cursor:pointer;margin:0!important;min-height:100px}
+.sheetTypeCard.selected{background:#eaf0ff;border-color:var(--blue)}.sheetTypeCard input{margin-top:6px;accent-color:var(--blue)}
+.sheetTypeCard strong{display:block;font-size:1rem;color:#233650}.sheetTypeCard small{display:block;color:#59697f;margin-top:5px;font-size:.85rem;line-height:1.35}
+.topicGroup{background:white;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:10px 0 16px;margin:8px 0}
+.topicGroup h4{font-size:1.04rem;margin:8px 0 6px}.topicLine{padding:9px 0}.stepper button{font-weight:400}
+.sheetBottom{padding-top:15px}.sheetBottom button{font-size:1rem;padding:12px 22px;border-radius:10px}
+.paper{font-weight:400}.paperMath mjx-container{font-weight:400!important}.paperSteps{font-weight:400!important}.paperSteps mjx-container{font-weight:400!important}
+.paperExercise{font-weight:400!important}.paperExercise .paperMath{font-size:12.5pt}.paperSteps{font-size:10.5pt}
+.paperSteps>div{margin:4px 0}.paperSteps mjx-container[display="true"]{margin:.35em 0!important}
+@media(max-width:720px){.sheetTypeCards,.sheetTop{grid-template-columns:1fr}#sheetSettings{padding:17px}.sheetTypeCard{min-height:0}.sheetTitle{font-size:1.3rem}}
+@media print{.paper{font-weight:400}.paperSteps{font-size:10pt}.paperSteps>div{break-inside:avoid}.paperExercise{break-inside:avoid}.paperFooter{font-weight:400}}
+/* V5 — alinhar com a referência Equações do 1.º grau */
+:root{--blue:#315ee7;--ink:#172b46}
+body{background:#f3f6fb}
+.moduleHero{background:linear-gradient(110deg,#263c9c,#6255dc);padding:23px 18px 30px}
+.platform-nav{max-width:1120px;margin:20px auto 12px}
+.platform-nav a{font-weight:500;padding:10px 16px}
+main{max-width:1160px;background:#fff;border-radius:18px;padding:26px 26px 36px;margin:14px auto 34px;box-shadow:0 12px 34px #18345112}
+.mode{margin:0 0 22px;border-radius:17px;padding:8px;background:#e9eefb}
+.mode button{font-size:1.02rem;border-radius:10px}
+#sheetPreview{border:1px solid #d7e2f1;border-radius:18px;padding:22px 24px 30px;background:white}
+.sheetToolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 22px}
+.sheetToolbar button{padding:14px 8px;font-size:1rem;font-weight:600}
+.paper{width:min(100%,210mm);min-height:297mm;border:1px solid #e0e3e9;padding:23mm 20mm;box-shadow:0 8px 26px #10284714;margin:0 auto;font-family:Arial,Helvetica,sans-serif;font-size:11pt}
+.paperHeader{border-bottom:1px solid #444;padding-bottom:15px}
+.paperHeader h2{font:normal 18pt/1.25 Arial,Helvetica,sans-serif;margin:0 0 10px}
+.paperBrand{display:none}
+.paperHeader>p{font:normal 11pt Arial,Helvetica,sans-serif;margin:0 0 20px}
+.paper h3{font:normal 12pt Arial,Helvetica,sans-serif}
+.paperExercise{font-weight:400!important}
+.paperMath{font-weight:400!important}
+.paperSteps{font-weight:400!important;font-size:10pt;line-height:1.55}
+.paperSteps>div{margin:5px 0}
+.paperSteps mjx-container,.paperMath mjx-container{font-weight:400!important}
+.paperFooter{font-size:8pt;margin:22px 0 0;padding:0;text-align:center}
+.testInputLabel{display:block;font-weight:600;margin:18px 0}
+.testInputLabel input{display:block;width:min(100%,360px);margin:8px 0 0;padding:13px;border:1px solid #b7c9e5;border-radius:10px;font:inherit}
+.testTF{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.testTF button{text-align:center}
+.testStatement{overflow-wrap:anywhere}
+@media(max-width:720px){main{margin:8px;padding:12px}#sheetPreview{padding:12px}.sheetToolbar{grid-template-columns:1fr 1fr}.sheetToolbar button{font-size:.85rem}.paper{padding:13mm 9mm}.testTF{grid-template-columns:1fr}}
+@media print{@page{size:A4;margin:14mm 15mm}main{background:white;box-shadow:none;border:0;margin:0;padding:0}#sheetPreview{border:0;padding:0}.paper{width:100%;min-height:0;border:0;box-shadow:none;margin:0;padding:0}.paperFooter{margin-top:18px}.paperExercise{break-inside:avoid}.paperSteps{font-size:10pt}}
+/* V6 — Modo Teste consistente com Equações do 1.º grau */
+#testBody{padding:16px 10px 6px;background:#fafbfe;border-radius:15px}
+.testHeading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 13px;font-size:1.05rem}
+.testBadge{display:inline-block;background:#eaf0ff;color:#1747ac;padding:7px 12px;border-radius:22px;font-weight:700}
+.testHeading strong{white-space:nowrap}
+#testBody .progress{height:10px;background:#e2e8f0;margin:0 0 26px}
+.testQuestion{min-height:220px}.testQuestion>p{font-size:1.08rem;line-height:1.55;margin:12px 0 20px}
+.testQuestion .testStatement{margin:22px auto 28px;text-align:center;font-size:1.25rem}
+#testBody .testOptions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 24px}
+#testBody .test-option{min-height:62px;display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid #bfcde1;border-radius:10px;background:#fff;color:#162b48;text-align:left;font-size:1.13rem}
+#testBody .test-option.selected{background:#eaf0ff;border:2px solid #315ee7}
+.optionLetter{display:grid;place-items:center;width:38px;height:38px;flex-shrink:0;border-radius:50%;background:#dfe9ff;color:#164ab5;font-weight:700}
+#testBody .numberNav{justify-content:center;gap:7px;margin:18px 0 20px}
+#testBody .numberNav button{width:42px;height:42px;border:1px solid #bfcee3;font-size:1rem;font-weight:600}
+#testBody .numberNav button.answered:not(.active){background:#e5f6ed;border-color:#37a878}
+#testBody .numberNav button.active{background:#315ee7;color:#fff;border-color:#315ee7}
+#testBody .testNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 0}
+#testBody .testNav button{background:#64748b;color:#fff;border:0;min-height:58px;font-size:1.06rem;font-weight:700}
+#testBody .testNav button:disabled{opacity:.48;cursor:not-allowed}
+#finishTestBtn,#reviewBtn{background:#315ee7!important}
+.testFillWrap{text-align:center;margin:36px auto 12px}
+.testFillWrap input{display:block;margin:auto;width:min(100%,340px);text-align:center;padding:15px;font:inherit;font-size:1.1rem;border:2px solid #b8c8db;border-radius:10px}
+.testFillWrap p{color:#65758b;font-size:.9rem}
+.testResult h2{font-size:1.3rem;margin:10px 0 28px}
+.testResult{text-align:center;padding:12px 0 10px}
+.testResult h2{text-align:left}.testScore{color:#20976d;font-size:3.6rem;font-weight:800;line-height:1.1}
+.testResult>p{font-size:1.08rem}.unansweredNote{font-size:.88rem!important;color:#68768b}
+.reviewTitle{margin:6px 0 24px}.reviewItem{border:1px solid #d7e2ef;border-left:6px solid #20976d;border-radius:12px;margin:16px 0;padding:18px;background:#fbfcff}
+.reviewItem.isWrong{border-left-color:#c63855}.reviewItem h3{font-size:1.08rem;margin:0 0 10px}
+.reviewStatement{text-align:center;margin:20px 0}.studentAnswer,.correctAnswer{border-radius:9px;padding:12px 14px;margin:10px 0;background:#edf1f6}
+.correctAnswer{background:#e5f6ed}.reviewHint{color:#ad2545;font-weight:600}.reviewSteps{text-align:center;margin:18px 0 0}.reviewSteps .step{margin:6px 0}
+#backResult{background:#315ee7;color:white;margin:16px 0}
+@media(max-width:650px){.testHeading{align-items:flex-start;font-size:.82rem}.testHeading strong{font-size:.82rem}#testBody .testOptions{grid-template-columns:1fr}#testBody .testNav{gap:5px}#testBody .testNav button{font-size:.83rem;padding:8px 4px}#testBody .numberNav button{width:34px;height:34px}}
+/* Ficha A4 — impressão mais limpa, sem negrito nos enunciados ou resoluções */
+.paper .paperMath,.paper .paperSteps,.paper .paperExercise,.paper .verbalStatement{font-weight:400!important}
+.paper .paperSteps mjx-container svg,.paper .paperMath mjx-container svg{font-weight:normal!important}
+.paperExercise{break-inside:avoid-page;page-break-inside:avoid}
+@media print{.paper{font-size:11pt}.paperSteps{font-size:9.5pt}.paperExercise{margin:14px 0 19px}.paperFooter{font-size:8pt}}
+
+/* V8: folha A4 com paginação compacta e sem negritos na matemática */
+.paperMath mjx-container,.paperSteps mjx-container{font-weight:400!important}
+.paperMath mjx-container svg,.paperSteps mjx-container svg{font-weight:400!important}
+.paperExercise{margin:12px 0 17px;break-inside:avoid-page}
+.paperFooter{break-before:avoid;page-break-before:avoid;margin-top:12px}
+@media print{.paper{min-height:0!important;padding:0!important}.paperExercise{margin:10px 0 14px}.paperFooter{margin-top:8px}.paperSteps{font-size:9pt}.paperMath{font-size:12pt}}
+
+/* V9: ficha legível e exercícios sem separação entre páginas */
+@media print{.paperExercise{break-inside:avoid;page-break-inside:avoid}.paper h3{break-after:avoid;page-break-after:avoid}.paperSteps{font-size:9.5pt}.paperMath{font-weight:400!important}}
+
+/* V10 — folha A4: compactação controlada e tipografia matemática sem negrito. */
+.paper .paperMath mjx-container, .paper .paperSteps mjx-container, .paper .paperMath mjx-container *, .paper .paperSteps mjx-container * {font-weight:400!important;}
+.paperExercise .paperMath{font-weight:400!important}
+@media print{
+  .paper{font-size:10.5pt!important;line-height:1.32!important}
+  .paperHeader{padding-bottom:9px!important}
+  .paper h3{margin:14px 0 10px!important}
+  .paperExercise{margin:7px 0 10px!important;break-inside:avoid;page-break-inside:avoid}
+  .paperMath{font-size:11.5pt!important;margin:4px 0!important}
+  .paperMath mjx-container[display="true"]{margin:0.45em 0!important}
+  .answerSpace{height:24px!important}
+  .paperFooter{margin:8px 0 0!important}
+  .paperSteps{font-size:9pt!important;line-height:1.2!important;padding:3px 10px!important}
+  .paperSteps mjx-container[display="true"]{margin:0.2em 0!important}
+  .paperExercise .verbalStatement{margin:3px 0!important}
+}
+
+/* V11 — fecho: impressão compacta, com margens regulares e sem negrito */
+.paper .paperMath,.paper .paperSteps,.paper .verbalStatement{font-weight:400!important}
+.paper .paperMath mjx-container svg,.paper .paperSteps mjx-container svg{font-weight:normal!important}
+@media print{
+ @page{size:A4;margin:12mm 14mm}
+ .paper{font-size:10pt!important;line-height:1.24!important}
+ .paperHeader{padding-bottom:7px!important}
+ .paperHeader h2{font-size:17pt!important}
+ .paper h3{margin:9px 0 7px!important}
+ .paperExercise{margin:5px 0 8px!important;break-inside:avoid!important}
+ .paperMath{font-size:11pt!important;margin:2px 0!important}
+ .paperMath mjx-container[display="true"]{margin:.25em 0!important}
+ .paperSteps{font-size:9pt!important;line-height:1.13!important;padding:2px 8px!important}
+ .paperSteps>div{margin:2px 0!important}
+ .paperSteps mjx-container[display="true"]{margin:.12em 0!important}
+ .answerSpace{height:17px!important}
+ .paperFooter{margin:4px 0 0!important}
+}
