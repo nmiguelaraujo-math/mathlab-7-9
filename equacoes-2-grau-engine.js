@@ -115,20 +115,26 @@ const sheetTopics=[
  {id:'concepts',name:'Seleção e análise de erros',description:'Identificar, escolher e corrigir.',items:[['errors','Identificação e correção de erros']]},
  {id:'problems',name:'Problemas',description:'Modelar e interpretar.',items:[['problems','Problemas']]}
 ];
+const incompleteSheetItems=[['direct','Equações incompletas diretas'],['parentheses','Equações incompletas com parênteses e redução'],['fractions','Equações incompletas com frações']];
+const completeSheetItems=[['notable','Casos notáveis'],['mixed','Equações completas mistas'],['productzero','Lei do anulamento do produto (com fatorização prévia)']];
+function sheetTopicsFor(kind){return sheetTopics.map(g=>g.id==='solve'?{...g,items:kind==='incomplete'?incompleteSheetItems:kind==='complete'?completeSheetItems:[...incompleteSheetItems,...completeSheetItems]}:g)}
+function sheetKindForTopic(id,choice,index){if(['direct','parentheses','fractions'].includes(id))return 'incomplete';if(['notable','mixed','productzero'].includes(id))return 'complete';return choice==='both'?(index%2?'complete':'incomplete'):choice}
 const sheetDefaults={notable:0,mixed:0,productzero:0,direct:0,parentheses:0,fractions:0,classification:0,errors:0,parameters:0,problems:0};
 const activeSheetGroups=new Set(['solve','concepts','problems']);
 let sheetItems=[],sheetSolutions=false;
 function renderSheetConfig(){
  $('#sheetPreview').classList.add('hidden');$('#sheetSettings').classList.remove('hidden');
+ const availableTopics=sheetTopicsFor($('#sheetKind').value);
  const cards=$('#sheetTypeCards');
- cards.innerHTML=sheetTopics.map(g=>`<label class="sheetTypeCard ${activeSheetGroups.has(g.id)?'selected':''}"><input type="checkbox" data-sheet-group="${g.id}" ${activeSheetGroups.has(g.id)?'checked':''}><span><strong>${g.name}</strong><small>${g.description}</small></span></label>`).join('');
+ cards.innerHTML=availableTopics.map(g=>`<label class="sheetTypeCard ${activeSheetGroups.has(g.id)?'selected':''}"><input type="checkbox" data-sheet-group="${g.id}" ${activeSheetGroups.has(g.id)?'checked':''}><span><strong>${g.name}</strong><small>${g.description}</small></span></label>`).join('');
  cards.querySelectorAll('[data-sheet-group]').forEach(el=>el.onchange=()=>{if(el.checked)activeSheetGroups.add(el.dataset.sheetGroup);else activeSheetGroups.delete(el.dataset.sheetGroup);renderSheetConfig()});
  const wrap=$('#sheetTopicControls');
- wrap.innerHTML=sheetTopics.filter(g=>activeSheetGroups.has(g.id)).map(g=>`<div class="topicGroup"><h4>${g.name}</h4>${g.items.map(([id,label])=>`<div class="topicLine"><span>${label}</span><div class="stepper"><button type="button" data-step="${id}" data-delta="-1" aria-label="Diminuir ${label}">−</button><output id="count-${id}">${sheetDefaults[id]}</output><button type="button" data-step="${id}" data-delta="1" aria-label="Aumentar ${label}">+</button></div></div>`).join('')}</div>`).join('');
+ wrap.innerHTML=availableTopics.filter(g=>activeSheetGroups.has(g.id)).map(g=>`<div class="topicGroup"><h4>${g.name}</h4>${g.items.map(([id,label])=>`<div class="topicLine"><span>${label}</span><div class="stepper"><button type="button" data-step="${id}" data-delta="-1" aria-label="Diminuir ${label}">−</button><output id="count-${id}">${sheetDefaults[id]}</output><button type="button" data-step="${id}" data-delta="1" aria-label="Aumentar ${label}">+</button></div></div>`).join('')}</div>`).join('');
  wrap.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const id=b.dataset.step,out=$('#count-'+id);sheetDefaults[id]=Math.max(0,Math.min(40,+out.textContent+(+b.dataset.delta)));out.textContent=sheetDefaults[id];updateSheetTotal()});
  updateSheetTotal();
 }
-function updateSheetTotal(){let n=sheetTopics.filter(g=>activeSheetGroups.has(g.id)).flatMap(g=>g.items).reduce((sum,[id])=>sum+sheetDefaults[id],0);$('#sheetTotal').textContent=n}
+$('#sheetKind').addEventListener('change',()=>{const allowed=new Set(sheetTopicsFor($('#sheetKind').value).flatMap(g=>g.items.map(([id])=>id)));for(const id of Object.keys(sheetDefaults)){if(!allowed.has(id))sheetDefaults[id]=0}renderSheetConfig()});
+function updateSheetTotal(){let n=sheetTopicsFor($('#sheetKind').value).filter(g=>activeSheetGroups.has(g.id)).flatMap(g=>g.items).reduce((sum,[id])=>sum+sheetDefaults[id],0);$('#sheetTotal').textContent=n}
 function sheetFamily(z){return z.family||z.training+'-'+z.kind}
 function balancedQuestion(kind,lev,training,used,families){
  let best=null,bestScore=Infinity;
@@ -477,17 +483,17 @@ function semanticFamily(f){
 }
 
 function generateSheet(){
- const counts=Object.fromEntries(sheetTopics.flatMap(g=>g.items.map(([id])=>[id,activeSheetGroups.has(g.id)?(sheetDefaults[id]||0):0])));
+ const counts=Object.fromEntries(sheetTopicsFor($('#sheetKind').value).flatMap(g=>g.items.map(([id])=>[id,activeSheetGroups.has(g.id)?(sheetDefaults[id]||0):0])));
  if(!Object.values(counts).some(Boolean)){alert('Seleciona pelo menos um exercício.');return}
  const lev=+$('#sheetLevel').value,kindChoice=$('#sheetKind').value;
  const used=new Set(),families=new Map();sheetItems=[];
  const chooseKind=(i)=>kindChoice==='both'?(i%2?'complete':'incomplete'):kindChoice;
- const entries=sheetTopics.filter(g=>activeSheetGroups.has(g.id)).flatMap(g=>g.items.map(([id,label])=>({id,label,group:g.name})));
+ const entries=sheetTopicsFor(kindChoice).filter(g=>activeSheetGroups.has(g.id)).flatMap(g=>g.items.map(([id,label])=>({id,label,group:g.name})));
  for(const {id,label,group} of entries){
   for(let i=0;i<counts[id];i++){
-   const kind=chooseKind(i+sheetItems.length);
+   const kind=sheetKindForTopic(id,kindChoice,i+sheetItems.length);
    // Select the closest supported internal family; distribute problems and error types automatically.
-   const actualKind=(id==='notable'||id==='mixed'||id==='productzero')?'complete':kind;
+   const actualKind=kind;
    const z=balancedTopicQuestion(actualKind,lev,id,used,families);
    if(z)sheetItems.push({...z,sheetGroup:group,sheetTopic:label});
   }
