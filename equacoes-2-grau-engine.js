@@ -52,7 +52,7 @@ function problemExtra(){
  let n=ri(3,12),prod=n*(n+1),z=formula(1,1,-prod,2);return textQ(`O produto de dois números naturais consecutivos é ${prod}. Quais são esses números?`,[`x(x+1)=${prod}`,...z.steps,`\\text{No contexto: }${n}\\text{ e }${n+1}.`],`${n}\\text{ e }${n+1}`,['Representa o menor número por x e o seguinte por x+1.'],'problema-consecutivos');
 }
 function statementHTML(z){return z.isText?`<p class="verbalStatement">${esc(z.statement)}</p>`:tex(z.statement,true)}
-function generate(){return state.training==='errors'?errorExtra():state.training==='problems'?(state.kind==='complete'?completeProblemV4(state.level):problemExtra()):state.kind==='incomplete'?incompleteExtra(state.level):completeV4(state.level,pick(['direct','parentheses','fractions']))}
+function generate(){return state.training==='errors'?errorExtra():state.training==='problems'?(state.kind==='complete'?completeProblemV4(state.level):problemExtra()):state.kind==='incomplete'?incompleteExtra(state.level):completeNew(state.level,'mixed')}
 
 function typeset(){try{window.MathJax?.typesetPromise?.()}catch(e){console.warn(e)}}
 function tex(s,display=false){return display?'\\['+s+'\\]':'\\('+s+'\\)'}
@@ -60,18 +60,27 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function makeQuestion(kind,level,training){const previous={...state};state.kind=kind;state.level=level;state.training=training;let z;try{z=generate()}finally{Object.assign(state,previous)}return {...z,kind,level,training}}
 function questionKey(z){return z.family+'|'+z.statement}
 function makeDistinct(kind,level,training,used){let z;for(let i=0;i<90;i++){z=makeQuestion(kind,level,training);if(!used.has(questionKey(z)))break}used.add(questionKey(z));return z}
-function setMode(mode){state.mode=mode;$$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));['free','sheet','test'].forEach(m=>$('#'+m+'Panel').classList.toggle('hidden',m!==mode));$('#exercise').classList.add('hidden');if(mode==='sheet')renderSheetConfig();if(mode==='test')startTest()}
+function setMode(mode){state.mode=mode;$$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));['free','sheet','test'].forEach(m=>$('#'+m+'Panel').classList.toggle('hidden',m!==mode));if(mode!=='free')$('#exercise').classList.add('hidden');if(mode==='free'){$$('#setup button').forEach(b=>b.disabled=false)}if(mode==='sheet')renderSheetConfig();if(mode==='test')renderTestConfig()}
 function render(){current=makeQuestion(state.kind,state.level,state.training);helpIndex=0;$('#exercise').classList.remove('hidden');$('#reveal').innerHTML='';$('#badges').innerHTML=`<span>9.º ano</span><span>${state.kind==='incomplete'?'Equação incompleta':'Equação completa'}</span><span>${['','Principiante','Intermédio','Especialista'][state.level]}</span>`;$('#prompt').textContent=current.prompt;$('#statement').innerHTML=statementHTML(current);typeset()}
 function showHelp(){let h=current.helps[Math.min(helpIndex,current.helps.length-1)];helpIndex++;$('#reveal').innerHTML=`<div class="reveal"><div>Ajuda ${Math.min(helpIndex,current.helps.length)}/${current.helps.length}</div><div>${h}</div></div>`;typeset()}
 function showSolution(){let html=current.steps.map((s,i)=>`<div class="step"><span>${i+1}.</span> ${tex(s,true)}</div>`).join('');$('#reveal').innerHTML=`<div class="reveal"><div>Resolução</div>${html}</div>`;typeset()}
 function updateLabels(){let c=state.kind==='complete';$('#level1').textContent=c?'Casos notáveis diretos':'Equações da forma ax² = 0 e ax² + c = 0';$('#level2').textContent=c?'Quadrados de binómios':'Fator comum e lei do anulamento do produto';$('#level3').textContent=c?'Coeficientes racionais e completamento do quadrado':'Redução, parênteses e frações'}
 $$('[data-group]').forEach(b=>b.onclick=()=>{let g=b.dataset.group;state[g]=g==='level'?+b.dataset.value:b.dataset.value;$$(`[data-group="${g}"]`).forEach(x=>x.classList.toggle('active',x===b));if(g==='kind')updateLabels()});$$('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));$('#new').onclick=$('#another').onclick=render;$('#help').onclick=showHelp;$('#solution').onclick=showSolution;
 const testState={items:[],answers:[],index:0,review:false};
+const testConfig={kind:'both',level:2,types:['solve','errors','problems']};
+function renderTestConfig(){
+ $('#testBody').innerHTML=`<div class="testConfig"><h2>Configurar modo teste</h2><p>Escolhe a dificuldade e os conteúdos. O teste terá 10 questões.</p><div class="testConfigGrid"><label>Dificuldade<select id="testLevel"><option value="1">Principiante</option><option value="2">Intermédio</option><option value="3">Especialista</option></select></label><label>Tipo de equações<select id="testKind"><option value="both">Global — completas e incompletas</option><option value="incomplete">Apenas incompletas</option><option value="complete">Apenas completas</option></select></label></div><h3>Tipos de questões</h3><div class="testCheckGrid"><label><input type="checkbox" data-test-type="solve"> Resolver equações</label><label><input type="checkbox" data-test-type="errors"> Seleção e análise de erros</label><label><input type="checkbox" data-test-type="problems"> Problemas</label></div><p id="testConfigWarning" class="testConfigWarning" aria-live="polite"></p><button id="beginTest" class="primary testStart">Começar teste de 10 questões</button></div>`;
+ $('#testLevel').value=String(testConfig.level);$('#testKind').value=testConfig.kind;
+ $$('[data-test-type]').forEach(x=>{x.checked=testConfig.types.includes(x.dataset.testType);x.onchange=()=>{testConfig.types=$$('[data-test-type]:checked').map(y=>y.dataset.testType)}});
+ $('#testLevel').onchange=e=>testConfig.level=+e.target.value;$('#testKind').onchange=e=>testConfig.kind=e.target.value;
+ $('#beginTest').onclick=()=>{if(!testConfig.types.length){$('#testConfigWarning').textContent='Seleciona pelo menos um tipo de questões.';return}startTest()};
+}
 function startTest(){
- const used=new Set();const modes=['mc','tf','mc','fill','mc','tf','mc','fill','mc','mc'];
+ const used=new Set(),modes=['mc','tf','mc','fill','mc','tf','mc','fill','mc','mc'];
+ const kinds=testConfig.kind==='both'?['incomplete','complete']:[testConfig.kind];
  testState.items=Array.from({length:10},(_,i)=>{
-  const training=(i===1||i===5)?'errors':i===8?'problems':'solve';
-  const z=makeDistinct(i%2===0?'incomplete':'complete',state.level,training,used);
+  const training=testConfig.types[i%testConfig.types.length];
+  const z=makeDistinct(kinds[i%kinds.length],testConfig.level,training,used);
   z.testFormat=modes[i];
   if(z.testFormat==='fill'&&!/^[-+]?\d+(?:[.,]\d+)?$/.test(z.answer.trim()))z.testFormat='mc';
   if(z.testFormat==='tf'&&z.answer!=='\\text{Falsa}'&&z.answer!=='\\text{Verdadeira}')z.testFormat='mc';
@@ -93,20 +102,20 @@ function showTest(){
  $('#testBody').innerHTML=`<div class="testHeading"><span class="testBadge">9.º ano · ${['','Principiante','Intermédio','Especialista'][z.level]} · ${z.kind==='incomplete'?'Equação incompleta':'Equação completa'}</span><strong>Questão ${i+1} de ${testState.items.length}</strong></div><div class="progress"><i style="width:${(i+1)/testState.items.length*100}%"></i></div><div class="testQuestion"><p>${esc(z.prompt)}</p><div class="math testStatement">${statementHTML(z)}</div>${input}</div><div class="numberNav">${testState.items.map((_,j)=>`<button data-goto="${j}" class="${j===i?'active':''} ${testState.answers[j]!==null&&testState.answers[j]!==''?'answered':''}" aria-label="Questão ${j+1}">${j+1}</button>`).join('')}</div><div class="testNav"><button id="prevTest" ${i===0?'disabled':''}>Anterior</button><button id="nextTest" ${i===testState.items.length-1?'disabled':''}>Seguinte</button><button id="finishTestBtn">Terminar teste</button></div>`;
  $$('[data-goto]').forEach(b=>b.onclick=()=>{testState.index=+b.dataset.goto;showTest()});
  $$('[data-choice]').forEach(b=>b.onclick=()=>{testState.answers[i]=b.dataset.choice;showTest()});
- $$('[data-value]').forEach(b=>b.onclick=()=>{testState.answers[i]=b.dataset.value;showTest()});
+ [...$('#testBody').querySelectorAll('[data-value]')].forEach(b=>b.onclick=()=>{testState.answers[i]=b.dataset.value;showTest()});
  const fill=$('#testFill');if(fill)fill.oninput=()=>{testState.answers[i]=fill.value;const nav=$$('[data-goto]')[i];nav.classList.toggle('answered',!!fill.value)};
  $('#prevTest').onclick=()=>{testState.index=Math.max(0,i-1);showTest()};
  $('#nextTest').onclick=()=>{testState.index=Math.min(testState.items.length-1,i+1);showTest()};
  $('#finishTestBtn').onclick=finishTest;typeset();
 }
-function finishTest(){testState.review=true;const score=testState.items.reduce((sum,z,i)=>sum+(correctTest(z,testState.answers[i])?1:0),0);const empty=testState.answers.filter(a=>a===null||a==='').length;$('#testBody').innerHTML=`<div class="testResult"><h2>Resultado do teste</h2><div class="testScore">${score}/${testState.items.length}</div><p>${score===testState.items.length?'Excelente! Respondeste corretamente a todas as questões.':'Revê os procedimentos e treina os erros identificados.'}</p>${empty?`<p class="unansweredNote">${empty} questões sem resposta.</p>`:''}<div class="testNav"><button id="reviewBtn">Rever respostas</button><button id="errorsBtn">Treinar os meus erros</button><button id="restartBtn">Novo teste</button></div></div>`;$('#reviewBtn').onclick=renderTestReview;$('#errorsBtn').onclick=()=>{const wrong=testState.items.filter((z,i)=>!correctTest(z,testState.answers[i]));if(!wrong.length){$('#testBody').insertAdjacentHTML('beforeend','<p>Não há respostas erradas para treinar.</p>');return}testState.items=wrong;testState.answers=Array(wrong.length).fill(null);testState.index=0;testState.review=false;showTest()};$('#restartBtn').onclick=startTest}
+function finishTest(){testState.review=true;const score=testState.items.reduce((sum,z,i)=>sum+(correctTest(z,testState.answers[i])?1:0),0);const empty=testState.answers.filter(a=>a===null||a==='').length;$('#testBody').innerHTML=`<div class="testResult"><h2>Resultado do teste</h2><div class="testScore">${score}/${testState.items.length}</div><p>${score===testState.items.length?'Excelente! Respondeste corretamente a todas as questões.':'Revê os procedimentos e treina os erros identificados.'}</p>${empty?`<p class="unansweredNote">${empty} questões sem resposta.</p>`:''}<div class="testNav"><button id="reviewBtn">Rever respostas</button><button id="errorsBtn">Treinar os meus erros</button><button id="restartBtn">Novo teste</button></div></div>`;$('#reviewBtn').onclick=renderTestReview;$('#errorsBtn').onclick=()=>{const wrong=testState.items.filter((z,i)=>!correctTest(z,testState.answers[i]));if(!wrong.length){$('#testBody').insertAdjacentHTML('beforeend','<p>Não há respostas erradas para treinar.</p>');return}testState.items=wrong;testState.answers=Array(wrong.length).fill(null);testState.index=0;testState.review=false;showTest()};$('#restartBtn').onclick=renderTestConfig}
 function renderTestReview(){let html='<h2 class="reviewTitle">Revisão das respostas</h2>';testState.items.forEach((z,i)=>{const selected=testState.answers[i],correct=correctTest(z,selected);html+=`<article class="reviewItem ${correct?'isCorrect':'isWrong'}"><h3>Questão ${i+1} · ${z.family||'Equação do 2.º grau'}</h3><p>${esc(z.prompt)}</p><div class="reviewStatement">${statementHTML(z)}</div><div class="studentAnswer"><strong>A tua resposta:</strong> ${answerLabel(z,selected)}</div>${!correct?'<p class="reviewHint">Confirma os cálculos e os procedimentos utilizados.</p>':''}<div class="correctAnswer"><strong>Resposta correta:</strong> ${tex(z.answer)}</div><div class="reviewSteps">${z.steps.map(t=>`<div class="step">${tex(t,true)}</div>`).join('')}</div></article>`});html+='<button id="backResult" class="backResult">Voltar ao resultado</button>';$('#testBody').innerHTML=html;$('#backResult').onclick=finishTest;typeset()}
 const sheetTopics=[
- {id:'solve',name:'Resolver equações',description:'Procedimentos e conjunto-solução.',items:[['direct','Equações diretas e fatorização'],['parentheses','Parênteses e casos notáveis'],['fractions','Frações e transformações algébricas']]},
- {id:'concepts',name:'Seleção e análise de erros',description:'Identificar, escolher e corrigir.',items:[['classification','Classificação e soluções'],['errors','Identificação e correção de erros'],['parameters','Equações com parâmetros']]},
+ {id:'solve',name:'Resolver equações',description:'Procedimentos e conjunto-solução.',items:[['notable','Casos notáveis'],['mixed','Equações completas mistas'],['productzero','Lei do anulamento do produto (com fatorização prévia)']]},
+ {id:'concepts',name:'Seleção e análise de erros',description:'Identificar, escolher e corrigir.',items:[['errors','Identificação e correção de erros']]},
  {id:'problems',name:'Problemas',description:'Modelar e interpretar.',items:[['problems','Problemas']]}
 ];
-const sheetDefaults={direct:4,parentheses:2,fractions:2,classification:2,errors:2,parameters:1,problems:5};
+const sheetDefaults={notable:0,mixed:0,productzero:0,direct:0,parentheses:0,fractions:0,classification:0,errors:0,parameters:0,problems:0};
 const activeSheetGroups=new Set(['solve','concepts','problems']);
 let sheetItems=[],sheetSolutions=false;
 function renderSheetConfig(){
@@ -134,6 +143,8 @@ function balancedQuestion(kind,lev,training,used,families){
 }
 // V4: os tópicos de configuração têm geradores reais, não são apenas etiquetas.
 function topicQuestion(kind,lev,id){
+ if(id==='notable'||id==='mixed')return completeNew(lev,id);
+ if(id==='productzero')return productZeroNew(lev);
  if(id==='problems')return specialistProblemV8(kind,lev);
  if(id==='classification'){
   const a=ri(1,6),b=ri(1,7),c=ri(1,9),f=kind==='complete'?'complete':pick(['incomplete','impossible']);
@@ -260,8 +271,106 @@ function completeSpecialistV9(id){
  }
  z.family='v9-completa-reduzida';return z;
 }
+
+// V13: equações construídas a partir de raízes exatas, com estruturas didáticas.
+// Nas completas mistas, 80% completamento e 20% casos notáveis (uma só seleção).
+function completeNew(level,method){
+ const isNotable=method==='notable'||(method==='mixed'&&Math.random()<.20);
+ let a,b,c,roots,statement,steps,ans,tag,shape;
+ if(isNotable){
+  const m=level===1?1:ri(1,level===2?3:5),n=nz(-7,7),k=ri(2,level===3?9:6);
+  a=m*m;b=2*m*n;c=n*n-k*k;
+  if(!c)return completeNew(level,method);
+  roots=[(-n-k)/m,(-n+k)/m];
+  const left=`(${cf(m)}${sg(n)})^2`;
+  shape=level===1?'direto':level===2?pick(['deslocacao','quadrado']):pick(['quadrado','diferenca','dois-membros']);
+  if(shape==='direto')statement=`${left}=${k*k}`;
+  else if(shape==='deslocacao')statement=`${left}-${k*k}=0`;
+  else if(shape==='quadrado')statement=`${left}=${k*k}`;
+  else if(shape==='diferenca')statement=`${left}-${k*k}=0`;
+  else if(shape==='dois-membros')statement=`${left}-(${k}x+${k*k})=-${k}x`;
+  else statement=`${left}=${k*k}`;
+  // The rational variant must have the same denominator on both sides.
+  if(shape==='racional'){let d=ri(2,4);statement=`\\frac{${left}}{${d}}=\\frac{${k*k}}{${d}}`}
+  const rootTex=[frac(-n-k,m),frac(-n+k,m)].sort((u,v)=>evalFrac(u)-evalFrac(v));
+  ans=set([...new Set(rootTex)]);
+  steps=[statement,...(statement===`${left}=${k*k}`?[]:[`${left}=${k*k}`]),`${left}-${k*k}=0`,`(${cf(m)}${sg(n)}-${k})(${cf(m)}${sg(n)}+${k})=0`,`${cf(m)}${sg(n)}=${k}\\;\\text{ou}\\;${cf(m)}${sg(n)}=-${k}`,ans];
+  tag='caso-notavel';
+ }else{
+  // Prefer rational roots; use completion of square as the required method.
+  let r1,r2,d1,d2,n1,n2;
+  if(Math.random()<.84){d1=pick([1,1,1,2,3]);d2=pick([1,1,1,2,3]);n1=nz(-5,5);n2=nz(-5,5);r1=n1/d1;r2=n2/d2;
+   if(r1===r2||r1===-r2)return completeNew(level,method);
+   a=d1*d2;b=-(n1*d2+n2*d1);c=n1*n2;
+  }else{a=ri(1,3);b=nz(-7,7);c=nz(-6,6);if(b*b-4*a*c>=0&&Number.isInteger(Math.sqrt(b*b-4*a*c)))return completeNew(level,method)}
+  if(!a||!b||!c)return completeNew(level,method);
+  const canonical=poly(a,b,c);
+  shape=level===1?'canonica':level===2?pick(['canonica','dois-membros','produto']):pick(['produto','dois-membros','quadrado','produto','dois-membros']);
+  if(shape==='canonica')statement=`${canonical}=0`;
+  
+  if(shape==='dois-membros'){const h=ri(2,5),t=level===3?nz(-5,5):0;statement=t?`${poly(a,b+t,c+h)}=${cf(t)}${sg(h)}`:`${poly(a,b,c+h)}=${h}`}
+  if(shape==='produto'){
+   const t=nz(-3,3),u=ri(1,3);
+   // u(x+t)(x-t) + (a-u)x² + bx + (c+u t²) = canonical.
+   const A=a-u,C=c+u*t*t;
+   if(!A||!C)return completeNew(level,method);
+   const tail=(A?`${A<0?'-':'+'}${Math.abs(A)===1?'':Math.abs(A)}x^2`:'')+(b?`${b<0?'-':'+'}${Math.abs(b)===1?'':Math.abs(b)}x`:'')+(C?sg(C):'');
+   statement=`${u===1?'':u}(x${sg(t)})(x${sg(-t)})${tail}=0`;
+  }
+  if(shape==='quadrado'){
+   const t=nz(-3,3),u=ri(1,2),A=a-u,B=b-2*u*t,C=c-u*t*t;
+   if(!A||!B||!C)return completeNew(level,method);
+   const tail=(A?`${A<0?'-':'+'}${Math.abs(A)===1?'':Math.abs(A)}x^2`:'')+(B?`${B<0?'-':'+'}${Math.abs(B)===1?'':Math.abs(B)}x`:'')+(C?sg(C):'');
+   statement=`${u===1?'':u}(x${sg(t)})^2${tail}=0`;
+  }
+  if(shape==='fracao'){let d=pick([2,3,4]);statement=`\\frac{${canonical}}{${d}}=0`}
+  const z=formula(a,b,c,level);
+  ans=z.answer;
+  steps=[statement,...(statement===`${canonical}=0`?[]:[`${canonical}=0`]),...z.steps.slice(1)];
+  tag='completamento';
+ }
+ const z=q(statement,steps,ans,['Simplifica os dois membros e reduz os termos semelhantes.','Identifica o método adequado depois de obter a forma canónica.'],`v13-${tag}-${shape}`);
+ z.canonical={a,b,c};z.method=tag;z.expectedRoots=roots||[];
+ return z;
+}
+function productZeroNew(level){
+ const u=ri(1,4),v=nz(-5,5),w=ri(1,4),t=nz(-5,5);
+ const f=`(${cf(u)}${sg(v)})`,g=`(${cf(w)}${sg(t)})`;
+ let statement,steps,shape,second=t;
+ if(level===1){shape='produto-direto';statement=`${f}${g}=0`;steps=[statement,`${cf(u)}${sg(v)}=0\\;\\text{ou}\\;${cf(w)}${sg(t)}=0`]}
+ else if(level===2){
+  shape='fator-comum';const h=ri(1,4);second=t+h;
+  statement=`${f}${g}+${h}${f}=0`;
+  steps=[statement,`${f}(${cf(w)}${sg(second)})=0`,`${cf(u)}${sg(v)}=0\\;\\text{ou}\\;${cf(w)}${sg(second)}=0`];
+ }else{
+  shape=pick(['diferenca-quadrados','fator-comum']);
+  if(shape==='diferenca-quadrados'&&(u===w||v===t||v===-t))return productZeroNew(level);
+  if(shape==='diferenca-quadrados'){
+   const A=`(${cf(u+w)}${v+t?sg(v+t):''})`,B=`(${u-w?cf(u-w):''}${v-t?sg(v-t):''})`;
+   statement=`${A}^2-${B}^2=0`;
+   steps=[statement,`(${A}-${B})(${A}+${B})=0`,`4${f}${g}=0`,`${f}${g}=0`,`${cf(u)}${sg(v)}=0\\;\\text{ou}\\;${cf(w)}${sg(t)}=0`];
+  }else{
+   // Construção substituída abaixo por uma fatorização com fator comum.
+   shape='fator-comum';
+  }
+ }
+ // Roots for the specialist common-factor case are obtained from the actual linear factor.
+ if(level===3&&shape==='fator-comum'){
+  // Use a clean factor-common exercise with a genuine simplification.
+  const h=ri(2,4),shift=ri(1,3);second=t+shift;
+  statement=`${h}${f}${g}+${h*shift}${f}=0`;
+  steps=[statement,`${h}${f}(${cf(w)}${sg(second)})=0`,`${f}(${cf(w)}${sg(second)})=0`,`${cf(u)}${sg(v)}=0\\;\\text{ou}\\;${cf(w)}${sg(second)}=0`];
+ }
+ const rootList=[frac(-v,u),frac(-second,w)].sort((a,b)=>evalFrac(a)-evalFrac(b));
+ const ans=set([...new Set(rootList)]);
+ steps.push(ans);
+ return q(statement,steps,ans,['Identifica um fator comum ou uma diferença de quadrados.','Aplica a lei do anulamento do produto após fatorizar.'],`v13-produto-${shape}`);
+}
+function validateNew(z){if(!z.canonical)return true;const {a,b,c}=z.canonical;return !!(a&&b&&c)}
 function completeV4(lev,id){
- if(lev===3)return completeSpecialistV9(id);
+ if(id==='notable'||id==='mixed')return completeNew(lev,id);
+ if(id==='productzero')return productZeroNew(lev);
+ if(lev===3)return completeNew(lev,'mixed');
  let m=lev===1?1:ri(1,4),n=nz(-7,7),k=ri(1,8);
  if(id==='parentheses'){
   const z=notable(m,n,k,lev);z.family='completa-caso-notavel';
@@ -348,7 +457,7 @@ function balancedTopicQuestion(kind,lev,id,used,families){
  for(let attempt=0;attempt<140;attempt++){
   const previous={...state};state.kind=kind;state.level=lev;let z;
   try{z=topicQuestion(kind,lev,id)}finally{Object.assign(state,previous)}
-  if(!validateQuadratic(z))continue;
+  if(!validateQuadratic(z)||!validateNew(z))continue;
   const family=sheetFamily(z),key=questionKey(z);
   const sem=semanticFamily(family);
   const score=(used.has(key)?100000:0)+(families.get(family)||0)*300+(families.get('semantic:'+sem)||0)*170+Math.random()*4;
@@ -368,7 +477,7 @@ function semanticFamily(f){
 }
 
 function generateSheet(){
- const counts=Object.fromEntries(Object.keys(sheetDefaults).map(id=>[id,activeSheetGroups.has(sheetTopics.find(g=>g.items.some(it=>it[0]===id)).id)?sheetDefaults[id]:0]));
+ const counts=Object.fromEntries(sheetTopics.flatMap(g=>g.items.map(([id])=>[id,activeSheetGroups.has(g.id)?(sheetDefaults[id]||0):0])));
  if(!Object.values(counts).some(Boolean)){alert('Seleciona pelo menos um exercício.');return}
  const lev=+$('#sheetLevel').value,kindChoice=$('#sheetKind').value;
  const used=new Set(),families=new Map();sheetItems=[];
@@ -378,7 +487,8 @@ function generateSheet(){
   for(let i=0;i<counts[id];i++){
    const kind=chooseKind(i+sheetItems.length);
    // Select the closest supported internal family; distribute problems and error types automatically.
-   const z=balancedTopicQuestion(kind,lev,id,used,families);
+   const actualKind=(id==='notable'||id==='mixed'||id==='productzero')?'complete':kind;
+   const z=balancedTopicQuestion(actualKind,lev,id,used,families);
    if(z)sheetItems.push({...z,sheetGroup:group,sheetTopic:label});
   }
  }
@@ -392,7 +502,7 @@ function renderSheet(){
  let html=`<div class="paperHeader"><div class="paperBrand">MathLab 7–9 · Matemática · 9.º ano</div><h2>Ficha de trabalho — Equações do 2.º grau</h2><p>9.º ano · ${['','Principiante','Intermédio','Especialista'][+$('#sheetLevel').value]}</p><div class="studentLine">Nome: ___________________________ Turma: ______ Data: ____ / ____ / ______</div></div>`;
  sheetItems.forEach((z,i)=>{
   if(grouped&&z.sheetGroup!==last){html+=`<h3>${z.sheetGroup}</h3>`;last=z.sheetGroup}
-  html+=`<article class="paperExercise"><div>${i+1}. ${esc(z.prompt)}</div><div class="paperMath">${statementHTML(z)}</div>${sheetSolutions?`<div class="paperSteps">${z.steps.filter((step,j)=>j===0||step!==z.steps[j-1]).map(step=>`<div>${tex(step,true)}</div>`).join('')}</div>`:'<div class="answerSpace"></div>'}</article>`;
+  html+=`<article class="paperExercise"><div>${i+1}. ${esc(z.prompt)}</div><div class="paperMath">${statementHTML(z)}</div>${sheetSolutions?`<div class="paperSteps">${z.steps.filter((step,j)=>step!==z.steps[j-1]&&!(j===0&&step===z.statement)).map(step=>`<div>${tex(step,true)}</div>`).join('')}</div>`:'<div class="answerSpace"></div>'}</article>`;
  });
  html+='<div class="paperFooter">© 2026 — Nuno Araújo · MathLab 7–9</div>';
  $('#paper').innerHTML=html;$('#toggleSolutions').textContent=sheetSolutions?'Ocultar soluções':'Ver soluções';typeset();
