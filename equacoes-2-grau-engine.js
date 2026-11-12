@@ -52,14 +52,14 @@ function problemExtra(){
  let n=ri(3,12),prod=n*(n+1),z=formula(1,1,-prod,2);return textQ(`O produto de dois números naturais consecutivos é ${prod}. Quais são esses números?`,[`x(x+1)=${prod}`,...z.steps,`\\text{No contexto: }${n}\\text{ e }${n+1}.`],`${n}\\text{ e }${n+1}`,['Representa o menor número por x e o seguinte por x+1.'],'problema-consecutivos');
 }
 function statementHTML(z){return z.isText?`<p class="verbalStatement">${esc(z.statement)}</p>`:tex(z.statement,true)}
-function generate(){return state.training==='errors'?errorExtra():state.training==='problems'?(state.kind==='complete'?completeProblemV4(state.level):problemExtra()):state.kind==='incomplete'?incompleteExtra(state.level):completeNew(state.level,'mixed')}
+function generate(){return state.training==='errors'?errorExtra():state.training==='problems'?(state.kind==='complete'?completeProblemV4(state.level):problemExtra()):state.kind==='incomplete'?incompleteDiverseV141(state.level,pick(['direct','parentheses','fractions'])):completeDiverseV141(state.level,'mixed')}
 
 function typeset(){try{window.MathJax?.typesetPromise?.()}catch(e){console.warn(e)}}
 function tex(s,display=false){return display?'\\['+s+'\\]':'\\('+s+'\\)'}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function makeQuestion(kind,level,training){const previous={...state};state.kind=kind;state.level=level;state.training=training;let z;try{z=generate()}finally{Object.assign(state,previous)}return {...z,kind,level,training}}
 function questionKey(z){return z.family+'|'+z.statement}
-function makeDistinct(kind,level,training,used){let z;for(let i=0;i<90;i++){z=makeQuestion(kind,level,training);if(!used.has(questionKey(z)))break}used.add(questionKey(z));return z}
+function makeDistinct(kind,level,training,used){let z;for(let i=0;i<90;i++){z=makeQuestion(kind,level,training);if(!used.has(questionKey(z))&&!used.has('solution:'+(z.solutionKey||z.answer)))break}used.add(questionKey(z));used.add('solution:'+(z.solutionKey||z.answer));return z}
 function setMode(mode){state.mode=mode;$$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));['free','sheet','test'].forEach(m=>$('#'+m+'Panel').classList.toggle('hidden',m!==mode));if(mode!=='free')$('#exercise').classList.add('hidden');if(mode==='free'){$$('#setup button').forEach(b=>b.disabled=false)}if(mode==='sheet')renderSheetConfig();if(mode==='test')renderTestConfig()}
 function render(){current=makeQuestion(state.kind,state.level,state.training);helpIndex=0;$('#exercise').classList.remove('hidden');$('#reveal').innerHTML='';$('#badges').innerHTML=`<span>9.º ano</span><span>${state.kind==='incomplete'?'Equação incompleta':'Equação completa'}</span><span>${['','Principiante','Intermédio','Especialista'][state.level]}</span>`;$('#prompt').textContent=current.prompt;$('#statement').innerHTML=statementHTML(current);typeset()}
 function showHelp(){let h=current.helps[Math.min(helpIndex,current.helps.length-1)];helpIndex++;$('#reveal').innerHTML=`<div class="reveal"><div>Ajuda ${Math.min(helpIndex,current.helps.length)}/${current.helps.length}</div><div>${h}</div></div>`;typeset()}
@@ -144,12 +144,12 @@ function balancedQuestion(kind,lev,training,used,families){
   if(score<bestScore){best=z;bestScore=score}
   if(!used.has(key)&&!families.has(family)&&!families.has('semantic:'+semantic))break;
  }
- if(best){used.add(questionKey(best));families.set(sheetFamily(best),(families.get(sheetFamily(best))||0)+1)}
+ if(best){used.add(questionKey(best));if(best.solutionKey||((best.answer||'').startsWith('S=')))used.add('solution:'+(best.solutionKey||best.answer));families.set(sheetFamily(best),(families.get(sheetFamily(best))||0)+1)}
  return best;
 }
 // V4: os tópicos de configuração têm geradores reais, não são apenas etiquetas.
 function topicQuestion(kind,lev,id){
- if(id==='notable'||id==='mixed')return completeNew(lev,id);
+ if(id==='notable'||id==='mixed')return completeDiverseV141(lev,id);
  if(id==='productzero')return productZeroNew(lev);
  if(id==='problems')return specialistProblemV8(kind,lev);
  if(id==='classification'){
@@ -164,7 +164,7 @@ function topicQuestion(kind,lev,id){
   return q(`${a}x^2+(m-${k})x=0`,[`m-${k}=0`,`m=${k}`],`m=${k}`,['O coeficiente do termo em x tem de ser zero.'],'parametro-incompleta','Para que valor de m desaparece o termo em x?');
  }
  if(id==='errors')return kind==='complete'?completeErrorV10():errorExtra();
- if(kind==='incomplete')return lev===3?incompleteSpecialistV10(id):incompleteSolveV7(lev,id);
+ if(kind==='incomplete')return incompleteDiverseV141(lev,id);
  return completeV4(lev,id);
 }
 function incompleteSolveV7(lev,id){
@@ -206,6 +206,88 @@ function completeErrorV10(){
  if(f==='sign')return q(`(x+${p})^2=${k*k}\\Rightarrow x=-${p}+${k}`,[`x+${p}=${k}\\;\\text{ou}\\;x+${p}=-${k}`,`x=${-p+k}\\;\\text{ou}\\;x=${-p-k}`,set([`${-p-k}`,`${-p+k}`])],'\\text{Falsa}',['Uma igualdade de quadrados pode dar duas soluções.'],'v10-erro-raizes','A resolução está correta? Justifica.');
  if(f==='square-root')return q(`(x-${p})^2=${k*k}\\Rightarrow x=${p+k}\\;\\text{ou}\\;x=${p-k}`,[`x-${p}=${k}\\;\\text{ou}\\;x-${p}=-${k}`,set([`${p-k}`,`${p+k}`]),'\\text{A transformação apresentada é verdadeira.}'],'\\text{Verdadeira}',['Isola x em cada um dos dois casos.'],'v10-correto-raizes','A resolução está correta? Justifica.');
  return q(`${p}x^2+${2*p*k}x+${p*k*k}=0\\Rightarrow(x+${k})^2=0`,[`${p}(x^2+${2*k}x+${k*k})=0`,`(x+${k})^2=0`,`x=-${k}`],'\\text{Verdadeira}',['Divide pelo coeficiente comum e identifica o quadrado.'],'v10-correto-fator-comum','A resolução está correta? Justifica.');
+}
+// Frações genuínas: denominadores diferentes, simplificação verificada por coeficientes.
+// V13.9 — termos fracionários distribuídos, em vez de membros inteiros sobre uma fração.
+// Cada família é construída com coeficientes exatos; a redução final é validada.
+function incompleteFractionsV139(level){
+ const templates=level===1?['product','mixed']:level===2?['product','mixed','two-products','squares','binomial-linear','binomial-constant','two-binomials']:['product','mixed','two-products','squares','binomial-linear','binomial-constant','two-binomials'];
+ for(let tries=0;tries<1200;tries++){
+  const kind=pick(templates),d=ri(2,level===3?8:6),e=ri(2,level===3?9:7);
+  if(d===e||gcd(d,e)!==1)continue;
+  const m=ri(1,level===3?5:3),n=ri(1,level===3?5:3),p=nz(-5,5),r=nz(-5,5),k=nz(-4,4);
+  if(gcd(m,d)!==1||gcd(n,e)!==1)continue;
+  let lhs,rhs,A,B,C,den=d*e;
+  // A, B e C são coeficientes de den*(membro esquerdo - membro direito).
+  if(kind==='product'){
+   lhs=`\\frac{${m}}{${d}}x(x${sg(p)})${k<0?'-':'+'}${Math.abs(k)===1?'x':Math.abs(k)+'x'}`;
+   rhs=`\\frac{${cf(n)}}{${e}}`;
+   A=m*e;B=m*p*e+k*den-n*d;C=0;
+  }else if(kind==='mixed'){
+   lhs=`\\frac{${cf(m,'x^2')}}{${d}}${k<0?'-':'+'}${Math.abs(k)===1?'x':Math.abs(k)+'x'}`;
+   rhs=`\\frac{${n}}{${e}}x(x${sg(p)})`;
+   A=m*e-n*d;B=k*den-n*p*d;C=0;
+  }else if(kind==='two-products'){
+   lhs=`\\frac{${m}}{${d}}x(x${sg(p)})${k<0?'-':'+'}${Math.abs(k)===1?'x':Math.abs(k)+'x'}`;
+   rhs=`\\frac{${n}}{${e}}x(x${sg(r)})`;
+   A=m*e-n*d;B=m*p*e+k*den-n*r*d;C=0;
+  }else if(kind==='squares'){
+   // Os termos lineares anulam-se por identidade, restando ax²+c=0.
+   const t=ri(1,level===3?7:4),u=ri(1,level===3?7:4);
+   lhs=`\\frac{${m}}{${d}}(x${sg(t)})(x-${t})${k<0?'-':'+'}${Math.abs(k)===1?'x^2':Math.abs(k)+'x^2'}`;
+   rhs=`\\frac{${cf(n,'x^2')}}{${e}}+${u}`;
+   A=m*e+k*den-n*d;B=0;C=-m*t*t*e-u*den;
+  }
+  // V13.10: quadrados de binómios, com frações apenas em alguns termos.
+  // Coeficientes exatos calculados após multiplicação pelo m.m.c. (d*e).
+  if(kind==='binomial-linear'){
+   // (m/d)(x+p)^2 + kx = (n/e)x² + (m p²/d) + (n/e)x
+   // Redução: (me-nd)x² + (2mpe+kde-nd)x = 0.
+   lhs=`\\frac{${m}}{${d}}(x${sg(p)})^2${k<0?'-':'+'}${Math.abs(k)===1?'x':Math.abs(k)+'x'}`;
+   rhs=`\\frac{${cf(n,'x^2')}}{${e}}+\\frac{${m*p*p}}{${d}}+\\frac{${cf(n)}}{${e}}`;
+   A=m*e-n*d;B=2*m*p*e+k*den-n*d;C=0;
+  }else if(kind==='binomial-constant'){
+   // (m/d)(x+p)^2 - (n/e)x(x+r) = (2mp/d - nr/e)x + u
+   // Redução: (me-nd)x² + (mp²e-ude) = 0.
+   const u=ri(1,level===3?9:5);
+   const lin=2*m*p*e-n*r*d;
+   if(lin===0)continue;
+   const sign=lin<0?'-':'';
+   const linear=frac(Math.abs(lin),den);
+   lhs=`\\frac{${m}}{${d}}(x${sg(p)})^2-\\frac{${n}}{${e}}x(x${sg(r)})`;
+   rhs=`${sign}${linear==='1'?'':linear}x+${u}`;
+   A=m*e-n*d;B=0;C=m*p*p*e-u*den;
+  }else if(kind==='two-binomials'){
+   // Dois quadrados; a parcela linear adicional é escolhida para a cancelar.
+   const lin=2*(m*p*e-n*r*d);
+   if(!lin)continue;
+   const sign=lin<0?'-':'';
+   const linear=frac(Math.abs(lin),den);
+   lhs=`\\frac{${m}}{${d}}(x${sg(p)})^2-\\frac{${n}}{${e}}(x${sg(r)})^2`;
+   rhs=`${sign}${linear==='1'?'':linear}x`;
+   A=m*e-n*d;B=0;C=m*p*p*e-n*r*r*d;
+  }
+  if(!A||Math.abs(A)>120||Math.abs(B)>160||Math.abs(C)>240)continue;
+  if(kind!=='zero'&&B===0&&C===0)continue;
+  if(B&&C)continue; // Incompleta APÓS redução, sem exceções.
+  const g=gcd(gcd(Math.abs(A),Math.abs(B)),Math.abs(C));
+  let a=A/g,b=B/g,c=C/g;
+  if(Math.abs(a)>24||Math.abs(b)>45||Math.abs(c)>100)continue;
+  if(b&&Math.abs(b/a)>12)continue;
+  if(c&&Math.abs(c/a)>36)continue;
+  if(c&&level===1&&-c/a<=0)continue;
+  if(c&&level===2&&(-c/a<=0||!Number.isInteger(Math.sqrt(-c/a))))continue;
+  let roots=[],extra=[];
+  if(b){const root=frac(-b,a);roots=['0',root];extra=[`x(${cf(a)}${sg(b)})=0`,`x=0\\;\\text{ou}\\;x=${root}`];}
+  else if(c){const ratio=-c/a;extra.push(`x^2=${frac(-c,a)}`);
+   if(ratio<0)extra.push('\\text{Não existem soluções reais.}');
+   else{const gg=gcd(Math.abs(c),Math.abs(a)),num=Math.abs(c)/gg,dd=Math.abs(a)/gg,sn=Math.sqrt(num),sd=Math.sqrt(dd);const root=Number.isInteger(sn)&&Number.isInteger(sd)?frac(sn,sd):`\\sqrt{${frac(-c,a)}}`;roots=[`-${root}`,root];extra.push(`x=-${root}\\;\\text{ou}\\;x=${root}`);}
+  }else{roots=['0'];extra=['x^2=0','x=0'];}
+  const answer=set(roots),statement=`${lhs}=${rhs}`;
+  const steps=[`\\text{Multiplicando ambos os membros por }${den}:`,`${poly(A,B,C)}=0`,...(g!==1?[`${poly(a,b,c)}=0`]:[]),...extra,answer];
+  return q(statement,steps,answer,['Desenvolve apenas os produtos necessários.','Elimina os denominadores, respeitando todos os termos.','Reduz a equação e identifica o tipo de incompleta.'],`v139-inc-fracoes-${kind}`);
+ }
+ return incompleteFractionsV138(level);
 }
 function incompleteSpecialistV10(id){
  const family=id==='direct'?pick(['rational','factor','zero','irrational']):id==='parentheses'?pick(['square-difference','binomial-product','reduced','parentheses']):pick(['two-fractions','fraction-both','fraction-factor','rational']);
@@ -289,7 +371,7 @@ function completeNew(level,method){
   if(!c)return completeNew(level,method);
   roots=[(-n-k)/m,(-n+k)/m];
   const left=`(${cf(m)}${sg(n)})^2`;
-  shape=level===1?'direto':level===2?pick(['deslocacao','quadrado']):pick(['quadrado','diferenca','dois-membros']);
+  shape=level===1?'direto':level===2?pick(['deslocacao','quadrado']):pick(['quadrado','diferenca']);
   if(shape==='direto')statement=`${left}=${k*k}`;
   else if(shape==='deslocacao')statement=`${left}-${k*k}=0`;
   else if(shape==='quadrado')statement=`${left}=${k*k}`;
@@ -372,9 +454,9 @@ function productZeroNew(level){
  steps.push(ans);
  return q(statement,steps,ans,['Identifica um fator comum ou uma diferença de quadrados.','Aplica a lei do anulamento do produto após fatorizar.'],`v13-produto-${shape}`);
 }
-function validateNew(z){if(!z.canonical)return true;const {a,b,c}=z.canonical;return !!(a&&b&&c)}
+function validateNew(z){if(!z.canonical)return true;const {a,b,c}=z.canonical;return !!(a&&(z.incomplete?(!b||!c):(b&&c)))}
 function completeV4(lev,id){
- if(id==='notable'||id==='mixed')return completeNew(lev,id);
+ if(id==='notable'||id==='mixed')return completeDiverseV141(lev,id);
  if(id==='productzero')return productZeroNew(lev);
  if(lev===3)return completeNew(lev,'mixed');
  let m=lev===1?1:ri(1,4),n=nz(-7,7),k=ri(1,8);
@@ -458,19 +540,25 @@ function validateQuadratic(z){
  const roots=[...z.answer.matchAll(/\\frac\{(-?\d+)\}\{(\d+)\}|(?<![\d{])-?\d+(?![\d}])/g)].map(x=>x[1]!==undefined?Number(x[1])/Number(x[2]):Number(x[0]));
  return roots.length>0&&roots.every(x=>Math.abs(a*x*x+b*x+c)<1e-7);
 }
+function resultType(z){if(z.incomplete){const {b,c}=z.canonical;return !b&&!c?'zero':!c?'zero-e-outra':z.solutionKey==='empty'?'sem-solucao':z.solutionKey?.includes('sqrt')||z.solutionKey?.includes('\\sqrt')?'irracionais':'simetricas'}if(z.solutionKey)return z.solutionKey.includes('\\sqrt')?'irracionais':'racionais';return z.answer.includes('\\varnothing')?'sem-solucao':'outras'}
 function balancedTopicQuestion(kind,lev,id,used,families){
  let best=null,bestScore=Infinity;
  for(let attempt=0;attempt<140;attempt++){
   const previous={...state};state.kind=kind;state.level=lev;let z;
   try{z=topicQuestion(kind,lev,id)}finally{Object.assign(state,previous)}
   if(!validateQuadratic(z)||!validateNew(z))continue;
-  const family=sheetFamily(z),key=questionKey(z);
+  const family=sheetFamily(z),key=questionKey(z),solKey=z.solutionKey||((z.answer||'').startsWith('S=')?z.answer:null);
   const sem=semanticFamily(family);
-  const score=(used.has(key)?100000:0)+(families.get(family)||0)*300+(families.get('semantic:'+sem)||0)*170+Math.random()*4;
+  const pattern=z.structureKey||family;
+  const repeatedRoot=solKey&&solKey!=='0'&&solKey!=='empty'&&used.has('solution:'+solKey);
+  const countPattern=families.get('structure:'+pattern)||0;
+  const countSemantic=families.get('semantic:'+sem)||0;
+  const countSolutionType=families.get('result:'+resultType(z))||0;
+  const score=(used.has(key)?1e8:0)+(repeatedRoot?1e7:0)+countPattern*3500+countSemantic*350+countSolutionType*900+(families.get(family)||0)*500+Math.random()*5;
   if(score<bestScore){best=z;bestScore=score}
   if(score<5)break;
  }
- if(best){const f=sheetFamily(best),sem=semanticFamily(f);used.add(questionKey(best));families.set(f,(families.get(f)||0)+1);families.set('semantic:'+sem,(families.get('semantic:'+sem)||0)+1)}
+ if(best){const f=sheetFamily(best),sem=semanticFamily(f);used.add(questionKey(best));if(best.solutionKey||((best.answer||'').startsWith('S=')))used.add('solution:'+(best.solutionKey||best.answer));families.set(f,(families.get(f)||0)+1);families.set('semantic:'+sem,(families.get('semantic:'+sem)||0)+1);const pattern=best.structureKey||f;families.set('structure:'+pattern,(families.get('structure:'+pattern)||0)+1);families.set('result:'+resultType(best),(families.get('result:'+resultType(best))||0)+1)}
  return best;
 }
 function semanticFamily(f){
@@ -482,6 +570,162 @@ function semanticFamily(f){
  return f;
 }
 
+
+// V13.11 — equações construídas a partir da forma canónica e de raízes controladas.
+// Os coeficientes dos dois membros são obtidos por identidades algébricas exatas.
+function diverseRat(n,d=1){return frac(n,d)}
+function diverseSigned(n,d=1){return n<0?'-'+diverseRat(-n,d):'+'+diverseRat(n,d)}
+function diverseTerm(n,d,v,first=false){
+ if(!n)return '';
+ const sign=n<0?'-':first?'':'+';
+ const abs=diverseRat(Math.abs(n),d);
+ return sign+(v&&abs==='1'?'':abs)+v;
+}
+function diversePoly(a,b,c,d=1){
+ const pieces=[diverseTerm(a,d,'x^2',true),diverseTerm(b,d,'x',!a),diverseTerm(c,d,'',!a&&!b)].filter(Boolean);
+ return pieces.join('')||'0';
+}
+function diverseSolution(A,B,C){
+ if(A===0)throw Error('Não é equação do segundo grau');
+ if(B===0&&C===0)return {roots:['0'],key:'0',kind:'zero'};
+ if(C===0){const r=-B/A, f=diverseRat(-B,A),roots=r<0?[f,'0']:['0',f];return {roots,key:'0|'+diverseRat(-B,A),kind:'factor'};}
+ if(B!==0)throw Error('Equação completa na categoria incompletas');
+ const sq=-C/A;
+ if(sq<0)return {roots:[],key:'empty',kind:'empty'};
+ const rn=Math.sqrt(sq),d=ri(1,1);
+ const num=Math.abs(C),den=Math.abs(A),rootN=Math.sqrt(num),rootD=Math.sqrt(den);
+ let positive;
+ if(Number.isInteger(rootN)&&Number.isInteger(rootD))positive=diverseRat(rootN,rootD);
+ else if(Number.isInteger(rn))positive=String(rn);
+ else {let g=gcd(num,den),n=num/g,m=den/g;positive=m===1?`\\sqrt{${n}}`:`\\sqrt{\\frac{${n}}{${m}}}`;}
+ return {roots:['-'+positive,positive],key:'±'+positive,kind:'square'};
+}
+function diverseIncCanonical(level){
+ const type=pick(level===1?['factor','square','zero']:level===2?['factor','factor','square','irrational','empty','zero']:['factor','factor','square','irrational','empty','zero']);
+ let A,B=0,C=0;
+ if(type==='factor'){
+  let d=level===1?1:pick([1,2,3,4,5]),n=nz(level===1?-7:-11,level===1?7:11);
+  if(gcd(Math.abs(n),d)>1&&level===3)n+=n>0?1:-1;
+  A=d*pick([1,1,2]),B=-n*(A/d);
+ }else if(type==='square'){
+  let d=level===1?1:pick([1,2,3,4]),n=ri(1,level===1?7:9);
+  A=d*d;C=-n*n;
+ }else if(type==='irrational'){
+  A=pick([1,2,3,4,5]);C=-pick([2,3,5,6,7,10,11]);
+  if(Number.isInteger(Math.sqrt(-C/A)))C=-7;
+ }else if(type==='empty'){
+  A=pick([1,2,3,4]);C=pick([1,2,3,5,7]);
+ }else{A=pick([1,2,3,4,5]);}
+ return {A,B,C,type};
+}
+// Intermediate development of the products/cases notables before collecting terms.
+function developmentV141(shape,t,u,d,statement){
+ const sq=`(${diversePoly(1,2*t,t*t)})`;
+ const prod=`(${diversePoly(1,t+u,t*u)})`;
+ if(shape==='square'||shape==='binomial'||shape==='fraction-square'||shape==='fraction-mixed'||shape==='fraction-distributed'||shape==='fraction-terms'||shape==='distributed')
+  return statement.replace(`(x${sg(t)})^2`,sq);
+ if(shape==='product'||shape==='fraction-product'||shape==='fraction-products'||shape==='mixed-sides'||shape==='two-products')
+  return statement.replace(`(x${sg(t)})(x${sg(u)})`,prod);
+ return null;
+}
+function incompleteDiverseV141(level,id){
+ const {A,B,C,type}=diverseIncCanonical(level),sol=diverseSolution(A,B,C);
+ const t=nz(-4,4),u=nz(-3,3),d=pick([2,3,4]),e=pick([2,3,5]);
+ let shape,statement;
+ const modes=id==='direct'?(level===1?['direct','sides']:level===3?['binomial','product','square','fraction-product','fraction-distributed','fraction-mixed','fraction-sides']:['direct','sides']):id==='parentheses'?(level===1?['factor','sides']:['binomial','square','product','fraction-product','fraction-square','fraction-distributed']):level===1?['fraction-single','fraction-mixed']:['fraction-mixed','fraction-product','fraction-sides','fraction-distributed','fraction-square'];
+ shape=pick(modes);
+ if(shape==='direct')statement=`${diversePoly(A,B,C)}=0`;
+ if(shape==='sides')statement=`${diversePoly(A+u,B+t,C+t)}=${diversePoly(u,t,t)}`;
+ if(shape==='decimal'){
+  const D=pick([2,4,5,10]);statement=`${diversePoly(A*D,B*D,C*D,10)}=${diversePoly(0,0,0)}`;
+  // The displayed decimal coefficients must be exactly equivalent to the canonical coefficients.
+  statement=`${diversePoly(A,B,C)}=0`;
+ }
+ if(shape==='factor')statement=`${diversePoly(A,B,C)}+${t}x=${t}x`;
+ if(shape==='binomial')statement=`(x${sg(t)})(x${sg(-t)})+${diversePoly(A-1,B,C+t*t)}=0`;
+ if(shape==='square')statement=`(x${sg(t)})^2+${diversePoly(A-1,B-2*t,C-t*t)}=0`;
+ if(shape==='product')statement=`(x${sg(t)})(x${sg(u)})=${diversePoly(1-A,t+u-B,t*u-C)}`;
+ if(shape==='fraction-single')statement=`${diversePoly(A,B,C,d)}=0`;
+ if(shape==='fraction-mixed'){
+  // (x+t)^2/d + (u/e)x - RHS = (A x²+B x+C)/d
+  // Avoid floating point coefficients in exact algebra: put the extra fractional x term on the right.
+  // Mix a whole polynomial and fractions, preserving the canonical equation exactly.
+  statement=`\\frac{(x${sg(t)})^2}{${d}}+${diversePoly(A*d-1,B*d-2*t,C*d-t*t,d)}=0`;
+ }
+ if(shape==='fraction-square'){
+  // x² coefficient after subtraction: (1/d + (A*d-1)/d) = A.
+  // Integer coefficient construction, no decimal fractions.
+  statement=`\\frac{(x${sg(t)})^2}{${d}}+${diversePoly(A*d-1,B*d-2*t,C*d-t*t,d)}=0`;
+ }
+ if(shape==='fraction-product')statement=`\\frac{(x${sg(t)})(x${sg(u)})}{${d}}+${diversePoly(A*d-1,B*d-t-u,C*d-t*u,d)}=0`;
+ if(shape==='fraction-distributed'){
+  // (x+t)^2/d + ux/e + Q(x) = 0, with Q chosen to leave exactly Ax²+Bx+C.
+  // The fractional linear term has a denominator independent of the square.
+  const L=d*e;
+  const qa=A*L-e,qb=B*L-2*t*e-u*d,qc=C*L-t*t*e;
+  statement=`\\frac{(x${sg(t)})^2}{${d}}${diverseTerm(u,e,'x')}+${diversePoly(qa,qb,qc,L)}=0`;
+ }
+ if(shape==='fraction-sides'){
+  const h=ri(1,4),v=ri(1,4);
+  statement=`${diversePoly(A*d+h,B*d+v,C*d,d)}=${diversePoly(h,v,0,d)}`;
+ }
+ // Make fractional constructions genuinely distributed: terms with integer and rational coefficients.
+ if(shape==='fraction-mixed'||shape==='fraction-square'){
+  const h=ri(1,4);
+  statement=`\\frac{(x${sg(t)})^2}{${d}}${diverseTerm(h,1,'x')}=${diversePoly(1-A*d,2*t+h*d-B*d,t*t-C*d,d)}`;
+ }
+ statement=statement.replace(/\+\-/g,'-').replace(/\-\-/g,'+').replace(/\+\+/g,'+');
+ const answer=set(sol.roots);
+ const expanded=developmentV141(shape,t,u,d,statement);
+ const steps=[statement,...(expanded&&expanded!==statement?[`\\Longleftrightarrow\\;${expanded}`]:[]),`\\Longleftrightarrow\\;${diversePoly(A,B,C)}=0`];
+ if(sol.kind==='factor')steps.push(`x(${diverseTerm(A,1,'x',true)}${diverseTerm(B,1,'')})=0`);
+ if(sol.kind==='square'||sol.kind==='empty')steps.push(`x^2=${diverseRat(-C,A)}`);
+ if(sol.kind==='zero')steps.push('x^2=0');
+ if(sol.kind==='empty')steps.push('\\text{Um quadrado não pode ser negativo em }\\mathbb{R}.');
+ if(sol.kind==='factor')steps.push(`${diverseTerm(A,1,'x',true)}${diverseTerm(B,1,'')}=0\\;\\text{ou}\\;x=0`);
+ if(sol.roots.length)steps.push(sol.roots.map(r=>`x=${r}`).join('\\;\\text{ou}\\;'));
+ steps.push(answer);
+ statement=statement.replace(/(^|[=+(])-1x(?![\\w^])/g,'$1-x').replace(/(^|[=+(])1x(?![\\w^])/g,'$1x');
+ const z=q(statement,steps,answer,['Desenvolve os produtos e elimina os denominadores, se necessário.','Reduz à forma canónica e identifica o termo que falta.'],`v141-inc-${id}-${shape}-${type}`);
+ z.canonical={a:A,b:B,c:C};z.solutionKey=sol.key;z.incomplete=true;z.structureKey='inc-'+shape+'-'+sol.kind;
+ return z;
+}
+function completeDiverseV141(level,id){
+ if(level!==3)return completeNew(level,id);
+ if(id==='notable')return completeNew(level,id);
+ // Casos notáveis continuam a representar uma minoria nas equações mistas.
+ if(Math.random()<.08)return completeNew(level,'notable');
+ const n1=nz(-7,7),n2=nz(-7,7),d1=pick([1,1,2,3,4]),d2=pick([1,1,2,3,4]);
+ const A=d1*d2,B=-(n1*d2+n2*d1),C=n1*n2;
+ if(!A||!B||!C||n1*d2===n2*d1||n1*d2===-n2*d1)return completeDiverseV141(level,id);
+ const shape=pick(['fraction-terms','square','product','fraction-products','two-products','distributed','mixed-sides','two-sides']);
+ const t=nz(-4,4),u=nz(-4,4),d=pick([2,3,4,5]);
+ let statement;
+ if(shape==='mixed-sides'){const v=nz(-5,5),w=nz(-5,5);statement=`(x${sg(t)})(x${sg(u)})+${diversePoly(A-1,B-t-u+v,C-t*u+w)}=${diversePoly(0,v,w)}`;}
+ if(shape==='two-sides')statement=`${diversePoly(A+u,B+t,C+u)}=${diversePoly(u,t,u)}`;
+ if(shape==='fraction-terms')statement=`\\frac{(x${sg(t)})^2}{${d}}${diverseTerm(u,1,'x')}=${diversePoly(1-A*d,2*t+u*d-B*d,t*t-C*d,d)}`;
+ if(shape==='square')statement=`(x${sg(t)})^2+${diversePoly(A-1,B-2*t,C-t*t)}=0`;
+ if(shape==='product')statement=`(x${sg(t)})(x${sg(u)})=${diversePoly(1-A,t+u-B,t*u-C)}`;
+ if(shape==='fraction-products')statement=`\\frac{(x${sg(t)})(x${sg(u)})}{${d}}+${diversePoly(A*d-1,B*d-t-u,C*d-t*u,d)}=0`;
+ if(shape==='two-products'){
+  // Product on each side; the canonical polynomial is preserved by coefficient subtraction.
+  const v=nz(-4,4),w=nz(-4,4);
+  statement=`(x${sg(t)})(x${sg(u)})-(x${sg(v)})(x${sg(w)})+${diversePoly(A,B-t-u+v+w,C-t*u+v*w)}=0`;
+ }
+ if(shape==='distributed'){
+  // Rational terms with distinct denominators, plus a polynomial term.
+  const e=pick([3,5,7]);
+  const L=d*e;
+  statement=`\\frac{(x${sg(t)})^2}{${d}}${diverseTerm(u,e,'x')}+${diversePoly(A*L-e,B*L-2*t*e-u*d,C*L-t*t*e,L)}=0`;
+ }
+ statement=statement.replace(/\+\-/g,'-').replace(/\-\-/g,'+').replace(/\+\+/g,'+');
+ const z=formula(A,B,C,level),answer=z.answer;
+ const expanded=developmentV141(shape,t,u,d,statement);
+ const steps=[statement,...(expanded&&expanded!==statement?[`\\Longleftrightarrow\\;${expanded}`]:[]),`\\Longleftrightarrow\\;${diversePoly(A,B,C)}=0`,...z.steps.slice(1)];
+ const item=q(statement,steps,answer,['Desenvolve os produtos e reduz os termos semelhantes.','Obtém a forma canónica e completa o quadrado.'],`v141-com-${shape}`);
+ item.canonical={a:A,b:B,c:C};item.structureKey='complete-'+shape;item.solutionKey=[diverseRat(n1,d1),diverseRat(n2,d2)].sort((a,b)=>evalFrac(a)-evalFrac(b)).join('|');
+ return item;
+}
 function generateSheet(){
  const counts=Object.fromEntries(sheetTopicsFor($('#sheetKind').value).flatMap(g=>g.items.map(([id])=>[id,activeSheetGroups.has(g.id)?(sheetDefaults[id]||0):0])));
  if(!Object.values(counts).some(Boolean)){alert('Seleciona pelo menos um exercício.');return}
@@ -503,12 +747,13 @@ function generateSheet(){
  }
  sheetSolutions=false;$('#sheetSettings').classList.add('hidden');$('#sheetPreview').classList.remove('hidden');renderSheet();
 }
+function cleanMathStep(v){return String(v).replace(/x\+0(?![0-9])/g,'x').replace(/x-0(?![0-9])/g,'x').replace(/\\mathbf\{([^{}]*)\}/g,'$1')}
 function renderSheet(){
  const grouped=$('#sheetOrganization').value==='group';let last='';
  let html=`<div class="paperHeader"><div class="paperBrand">MathLab 7–9 · Matemática · 9.º ano</div><h2>Ficha de trabalho — Equações do 2.º grau</h2><p>9.º ano · ${['','Principiante','Intermédio','Especialista'][+$('#sheetLevel').value]}</p><div class="studentLine">Nome: ___________________________ Turma: ______ Data: ____ / ____ / ______</div></div>`;
  sheetItems.forEach((z,i)=>{
   if(grouped&&z.sheetGroup!==last){html+=`<h3>${z.sheetGroup}</h3>`;last=z.sheetGroup}
-  html+=`<article class="paperExercise"><div>${i+1}. ${esc(z.prompt)}</div><div class="paperMath">${statementHTML(z)}</div>${sheetSolutions?`<div class="paperSteps">${z.steps.filter((step,j)=>step!==z.steps[j-1]&&!(j===0&&step===z.statement)).map(step=>`<div>${tex(step,true)}</div>`).join('')}</div>`:'<div class="answerSpace"></div>'}</article>`;
+  html+=`<article class="paperExercise"><div>${i+1}. ${esc(z.prompt)}</div><div class="paperMath">${statementHTML(z)}</div>${sheetSolutions?`<div class="paperSteps">${z.steps.filter((step,j)=>step!==z.steps[j-1]&&!(j===0&&step===z.statement)).map(step=>`<div>${tex(cleanMathStep(step),true)}</div>`).join('')}</div>`:'<div class="answerSpace"></div>'}</article>`;
  });
  html+='<div class="paperFooter">© 2026 — Nuno Araújo · MathLab 7–9</div>';
  $('#paper').innerHTML=html;$('#toggleSolutions').textContent=sheetSolutions?'Ocultar soluções':'Ver soluções';typeset();

@@ -157,3 +157,16 @@ main{max-width:1160px;background:#fff;border-radius:18px;padding:26px 26px 36px;
   .paperSteps{font-size:9.5pt!important;line-height:1.25!important}
   .paper .paperMath,.paper .paperSteps,.paper .paperMath *, .paper .paperSteps *{font-weight:400!important}
 }
+
+/* V13.12 — tipografia consistente e enunciados legíveis */
+body,.paper,.paper .verbalStatement{font-family:Aptos,Arial,Helvetica,sans-serif!important}
+.paperExercise,.paperSteps,.paperMath{font-weight:400!important}
+.paperMath{font-size:12pt!important}
+.paperSteps{line-height:1.35!important}
+@media print{.paperExercise{break-inside:avoid}.answerSpace{min-height:65px}}
+
+/* V13.13: composição matemática em CHTML, tipografia sem peso artificial. */
+.paper mjx-container[jax="CHTML"],.paper mjx-container[jax="CHTML"] *{font-weight:400!important}
+.paperMath{font-size:1.07rem;line-height:1.5}
+.paperSteps{font-size:.92rem;line-height:1.55}
+@media print{.paperMath{font-size:11pt}.paperSteps{font-size:9.5pt}}
