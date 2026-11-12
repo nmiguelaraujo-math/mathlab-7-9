@@ -541,24 +541,51 @@ function validateQuadratic(z){
  return roots.length>0&&roots.every(x=>Math.abs(a*x*x+b*x+c)<1e-7);
 }
 function resultType(z){if(z.incomplete){const {b,c}=z.canonical;return !b&&!c?'zero':!c?'zero-e-outra':z.solutionKey==='empty'?'sem-solucao':z.solutionKey?.includes('sqrt')||z.solutionKey?.includes('\\sqrt')?'irracionais':'simetricas'}if(z.solutionKey)return z.solutionKey.includes('\\sqrt')?'irracionais':'racionais';return z.answer.includes('\\varnothing')?'sem-solucao':'outras'}
+function exactRootSignature(z){
+ if(z.canonical&&z.canonical.a){
+  const {a,b,c}=z.canonical;
+  const g=gcd(gcd(Math.abs(a),Math.abs(b)),Math.abs(c))||1;
+  const sign=a<0?-1:1;
+  return [a,b,c].map(v=>sign*v/g).join(':');
+ }
+ return z.solutionKey||z.answer||'';
+}
+function solutionSignature(z){
+ if(z.canonical&&z.canonical.a){
+  const {a,b,c}=z.canonical;
+  if(b===0&&c===0)return 'roots:zero';
+  if(c===0)return 'roots:0,'+frac(-b,a);
+  if(b===0){const sq=-c/a;if(sq<0)return 'roots:empty';
+   return 'roots:symmetric:'+frac(-c,a);}
+  const D=b*b-4*a*c;
+  if(D<0)return 'roots:empty';
+  const g=gcd(gcd(Math.abs(a),Math.abs(b)),Math.abs(c))||1;
+  const sign=a<0?-1:1;
+  return 'roots:quadratic:'+([a,b,c].map(v=>sign*v/g).join(':'));
+ }
+ return 'roots:'+ (z.solutionKey||z.answer||'');
+}
 function balancedTopicQuestion(kind,lev,id,used,families){
  let best=null,bestScore=Infinity;
  for(let attempt=0;attempt<140;attempt++){
   const previous={...state};state.kind=kind;state.level=lev;let z;
   try{z=topicQuestion(kind,lev,id)}finally{Object.assign(state,previous)}
   if(!validateQuadratic(z)||!validateNew(z))continue;
+  if(id==='mixed'&&z.method==='caso-notavel'&&(families.get('mixed-notable')||0)>=Math.floor(((families.get('mixed-total')||0)+1)/5))continue;
+  if(used.has('solution:'+solutionSignature(z)))continue;
   const family=sheetFamily(z),key=questionKey(z),solKey=z.solutionKey||((z.answer||'').startsWith('S=')?z.answer:null);
   const sem=semanticFamily(family);
   const pattern=z.structureKey||family;
-  const repeatedRoot=solKey&&solKey!=='0'&&solKey!=='empty'&&used.has('solution:'+solKey);
+  const rootSignature=solutionSignature(z);
+  const repeatedRoot=used.has('solution:'+rootSignature);
   const countPattern=families.get('structure:'+pattern)||0;
   const countSemantic=families.get('semantic:'+sem)||0;
   const countSolutionType=families.get('result:'+resultType(z))||0;
-  const score=(used.has(key)?1e8:0)+(repeatedRoot?1e7:0)+countPattern*3500+countSemantic*350+countSolutionType*900+(families.get(family)||0)*500+Math.random()*5;
+  const score=(used.has(key)?1e8:0)+(repeatedRoot?1e9:0)+countPattern*3500+countSemantic*350+countSolutionType*900+(families.get(family)||0)*500+Math.random()*5;
   if(score<bestScore){best=z;bestScore=score}
   if(score<5)break;
  }
- if(best){const f=sheetFamily(best),sem=semanticFamily(f);used.add(questionKey(best));if(best.solutionKey||((best.answer||'').startsWith('S=')))used.add('solution:'+(best.solutionKey||best.answer));families.set(f,(families.get(f)||0)+1);families.set('semantic:'+sem,(families.get('semantic:'+sem)||0)+1);const pattern=best.structureKey||f;families.set('structure:'+pattern,(families.get('structure:'+pattern)||0)+1);families.set('result:'+resultType(best),(families.get('result:'+resultType(best))||0)+1)}
+ if(best){if(id==='mixed'){families.set('mixed-total',(families.get('mixed-total')||0)+1);if(best.method==='caso-notavel')families.set('mixed-notable',(families.get('mixed-notable')||0)+1)}const f=sheetFamily(best),sem=semanticFamily(f);used.add(questionKey(best));used.add('solution:'+solutionSignature(best));families.set(f,(families.get(f)||0)+1);families.set('semantic:'+sem,(families.get('semantic:'+sem)||0)+1);const pattern=best.structureKey||f;families.set('structure:'+pattern,(families.get('structure:'+pattern)||0)+1);families.set('result:'+resultType(best),(families.get('result:'+resultType(best))||0)+1)}
  return best;
 }
 function semanticFamily(f){
@@ -690,16 +717,49 @@ function incompleteDiverseV141(level,id){
  z.canonical={a:A,b:B,c:C};z.solutionKey=sol.key;z.incomplete=true;z.structureKey='inc-'+shape+'-'+sol.kind;
  return z;
 }
+function notableSpecialistV151(){
+ // All cases have canonical m²x²+2mnx+(n²-k²)=0, with nonzero b and c.
+ const m=pick([1,1,2,3]),n=nz(-5,5),k=ri(2,7);
+ if(n*n===k*k)return notableSpecialistV151();
+ const a=m*m,b=2*m*n,c=n*n-k*k;
+ const L=`(${cf(m)}${sg(n)})^2`,P=`${poly(a,b,n*n)}`;
+ const variants=['expanded','square','difference','factorized'];
+ const shape=pick(variants);
+ let statement,steps;
+ if(shape==='expanded'){
+  statement=`${poly(a,b,c)}=0`;
+  steps=[statement,`${P}=${k*k}`,`${L}=${k*k}`];
+ }else if(shape==='square'){
+  statement=`${L}=${k*k}`;steps=[statement];
+ }else if(shape==='difference'){
+  statement=`${L}-${k*k}=0`;steps=[statement,`${L}=${k*k}`];
+ }else{
+  statement=`(${cf(m)}${sg(n-k)})(${cf(m)}${sg(n+k)})=0`;
+  steps=[statement];
+ }
+ // Solve directly via square roots, without returning to the previous equation.
+ const r1=frac(-n-k,m),r2=frac(-n+k,m);
+ const roots=[r1,r2].sort((u,v)=>evalFrac(u)-evalFrac(v));
+ const answer=set([...new Set(roots)]);
+ if(shape==='factorized')steps.push(`${cf(m)}${sg(n-k)}=0\\;\\text{ou}\\;${cf(m)}${sg(n+k)}=0`);
+ else steps.push(`${cf(m)}${sg(n)}=${k}\\;\\text{ou}\\;${cf(m)}${sg(n)}=-${k}`);
+ steps.push(
+   `x=${r1}\\;\\text{ou}\\;x=${r2}`,answer);
+ const z=q(statement,steps,answer,['Isola o quadrado do binómio.','Usa a igualdade de quadrados ou as duas raízes quadradas.'],`v151-notable-${shape}`);
+ z.canonical={a,b,c};z.structureKey='notable-'+shape;
+ z.solutionKey=roots.join('|');z.method='caso-notavel';
+ return z;
+}
 function completeDiverseV141(level,id){
  if(level!==3)return completeNew(level,id);
- if(id==='notable')return completeNew(level,id);
+ if(id==='notable')return notableSpecialistV151();
  // Casos notáveis continuam a representar uma minoria nas equações mistas.
- if(Math.random()<.08)return completeNew(level,'notable');
- const n1=nz(-7,7),n2=nz(-7,7),d1=pick([1,1,2,3,4]),d2=pick([1,1,2,3,4]);
+ if(Math.random()<.12)return notableSpecialistV151();
+ const n1=nz(-5,5),n2=nz(-5,5),d1=pick([1,1,2,3]),d2=pick([1,1,2,3]);
  const A=d1*d2,B=-(n1*d2+n2*d1),C=n1*n2;
  if(!A||!B||!C||n1*d2===n2*d1||n1*d2===-n2*d1)return completeDiverseV141(level,id);
  const shape=pick(['fraction-terms','square','product','fraction-products','two-products','distributed','mixed-sides','two-sides']);
- const t=nz(-4,4),u=nz(-4,4),d=pick([2,3,4,5]);
+ const t=nz(-3,3),u=nz(-3,3),d=pick([2,3,4]);
  let statement;
  if(shape==='mixed-sides'){const v=nz(-5,5),w=nz(-5,5);statement=`(x${sg(t)})(x${sg(u)})+${diversePoly(A-1,B-t-u+v,C-t*u+w)}=${diversePoly(0,v,w)}`;}
  if(shape==='two-sides')statement=`${diversePoly(A+u,B+t,C+u)}=${diversePoly(u,t,u)}`;
@@ -719,6 +779,7 @@ function completeDiverseV141(level,id){
   statement=`\\frac{(x${sg(t)})^2}{${d}}${diverseTerm(u,e,'x')}+${diversePoly(A*L-e,B*L-2*t*e-u*d,C*L-t*t*e,L)}=0`;
  }
  statement=statement.replace(/\+\-/g,'-').replace(/\-\-/g,'+').replace(/\+\+/g,'+');
+ if([...statement.matchAll(/-?\d+/g)].some(m=>Math.abs(Number(m[0]))>55))return completeDiverseV141(level,id);
  const z=formula(A,B,C,level),answer=z.answer;
  const expanded=developmentV141(shape,t,u,d,statement);
  const steps=[statement,...(expanded&&expanded!==statement?[`\\Longleftrightarrow\\;${expanded}`]:[]),`\\Longleftrightarrow\\;${diversePoly(A,B,C)}=0`,...z.steps.slice(1)];
