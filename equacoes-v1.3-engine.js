@@ -273,6 +273,43 @@ function problem(year,level,structure='misto'){
  if(f==='percurso'){const v1=pick([3,4,5]),v2=v1+pick([2,3]),t=ri(3,8),extra=ri(6,20),total=(v1+v2)*t+extra;return normal(`Dois percursos totalizam ${total} km. No primeiro percorrem-se ${v1} km por etapa; no segundo, ${v2} km por etapa. Além disso, há um trajeto adicional de ${extra} km. Se ambos têm o mesmo número de etapas, quantas etapas tem cada percurso?`,[`${v1}x+${v2}x+${extra}=${total}`,`${v1+v2}x=${total-extra}`,`x=${t}`],t,1,'problema-percurso','Escolhe uma incógnita comum');}
  const packs=ri(3,10),each=ri(4,12),used=ri(5,Math.min(20,packs*each-1)),left=packs*each-used;return normal(`Foram compradas ${packs} embalagens com o mesmo número de unidades. Depois de se utilizarem ${used}, sobraram ${left}. Quantas unidades tinha cada embalagem?`,[`${packs}x-${used}=${left}`,`${packs}x=${left+used}`,`x=${each}`],each,1,'problema-compras','Resolve o problema através de uma equação');
 }
+// Equações com solução racional não inteira, construídas com aritmética exata.
+function fractionalCalculation(structure='sem'){
+ // Aritmética racional exata: todos os cálculos intermédios são inteiros.
+ const den=pick([2,3,4,5,6]),num=nz(-11,11);
+ if(num%den===0)return fractionalCalculation(structure);
+ const xtex=frac(num,den),p=nz(-4,4),m=ri(1,3);
+ if(structure==='sem'){
+  const a=den*m,b=nz(-8,8),rhs=m*num+b;
+  return normal(`${coef(a)} ${sign(b)}=${rhs}`,[`${coef(a)}=${rhs} ${sign(-b)}`,`${coef(a)}=${rhs-b}`,`x=${xtex}`],num,den,'ambos-membros');
+ }
+ if(structure==='com'){
+  const k=ri(2,5),a=den*m-k,c=m*num+k*p;
+  if(a===0)return fractionalCalculation(structure);
+  return normal(`${factor(k)}(x ${sign(p)}) ${sign(a)}x=${c}`,[`${coef(k)} ${sign(k*p)} ${sign(a)}x=${c}`,`${coef(k+a)} ${sign(k*p)}=${c}`,`${coef(k+a)}=${c-k*p}`,`x=${xtex}`],num,den,'parenteses');
+ }
+ if(structure==='denom'){
+  const d1=pick([2,3,4,5]),d2=pick([2,3,4,5,6].filter(d=>d!==d1));
+  const a=ri(1,5),b=nz(-5,5);
+  // (ax+b)/d1 = c/d2, c é uma fração reduzida exata.
+  const right=frac(d2*(a*num+b*den),den*d1);
+  const numerator=a*num+b*den;
+  return normal(`\\frac{${coef(a)} ${sign(b)}}{${d1}}=${frac(numerator,den*d1)}`,
+   [`${coef(a)} ${sign(b)}=${right}\\cdot ${d1}`,`${coef(a)}=${frac(numerator,den)} ${sign(-b)}`,`${coef(a)}=${frac(a*num,den)}`,`x=${xtex}`],num,den,'fracoes');
+ }
+ const d1=pick([2,3,4,5]),d2=pick([2,3,4,5,6].filter(d=>d!==d1)),k=ri(2,5);
+ const rhs=frac(k*d2*(num+p*den),den*d1);
+ return normal(`\\frac{${factor(k)}(x ${sign(p)})}{${d1}}=${frac(k*(num+p*den),den*d1)}`,
+  [`${factor(k)}(x ${sign(p)})=${frac(k*(num+p*den),den)}`,`${coef(k)} ${sign(k*p)}=${frac(k*(num+p*den),den)}`,`${coef(k)}=${frac(k*num,den)}`,`x=${xtex}`],num,den,'varias-operacoes');
+}
+function tidyEquationText(t){
+ return String(t).replace(/\((-?\d*)\(x\)\)/g,'$1x')
+ .replace(/\b(\d+)\(x\)/g,'$1x').replace(/-\s*(\d+)\(x\)/g,'-$1x')
+ .replace(/\\frac\{(-?\d+)\(x\)\}/g,'\\frac{$1x}')
+ .replace(/\(x\)/g,'x').replace(/\+\s*-/g,'- ').replace(/-\s*-/g,'+ ')
+ .replace(/\s+/g,' ').trim();
+}
+
 function generate(year,level,type,structure='misto'){
  const requestedStructure=structure;
  const simpleY=()=>simple(year,level),parenthesesY=()=>parentheses(year,level),classifyY=()=>classify(year,level);
@@ -300,6 +337,14 @@ function generate(year,level,type,structure='misto'){
  const choices=type==='misto'?[...calculation,...selectionPool,()=>problem(year,level,requestedStructure)]:map[type];
  const forbidden=s=>/(?:\+|-)\s*0(?![.,\d])|0x/.test(String(s||''));
  let result,guard=0;do{result=pick(choices)(level);guard++}while(guard<80&&forbidden(result.question));
+ if(type==='calculo'&&year>=8&&Math.random()<.48){
+  const candidate=fractionalCalculation(structure);
+  if(candidate && !forbidden(candidate.question))result=candidate;
+ }
+ if(result && !String(result.family).startsWith('problema')){
+  result.question=tidyEquationText(result.question);
+  result.steps=result.steps.map(tidyEquationText);
+ }
  return result;
 }
 function render(ex){
