@@ -22,7 +22,7 @@ a{color:inherit}
 .skip{position:absolute;left:-9999px}.skip:focus{left:12px;top:12px;z-index:10;background:#fff;padding:10px;border-radius:8px}
 .site-header{background:linear-gradient(125deg,#102b55 0%,#1769e0 72%,#2a85e9 100%);color:#fff}
 .topbar{max-width:1120px;margin:auto;padding:14px 20px 10px;display:flex;justify-content:space-between;align-items:center;gap:18px}
-.brand{display:flex;align-items:center;gap:12px}.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:#fff;color:#145ea9;font-size:1.32rem;font-weight:900;box-shadow:0 8px 22px #07172d38}.brand h1{margin:0;font-size:clamp(1.35rem,4vw,2rem);line-height:1}.brand p{margin:5px 0 0;opacity:.9;font-size:.9rem}.version{font-size:.78rem;font-weight:750;border:1px solid #ffffff66;border-radius:999px;padding:5px 10px;white-space:nowrap}
+.brand{display:flex;align-items:center;gap:12px}.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:#fff;color:#145ea9;font-size:1.32rem;font-weight:900;box-shadow:0 8px 22px #07172d38}.brand h1{margin:0;font-size:clamp(1.35rem,4vw,2rem);line-height:1}.brand p{margin:5px 0 0;opacity:.9;font-size:.9rem}
 .hero{max-width:1120px;margin:auto;padding:12px 20px 24px;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(250px,.55fr);gap:28px;align-items:center}
 .hero h2{font-size:clamp(1.9rem,5vw,3.05rem);line-height:1.04;margin:0 0 10px;letter-spacing:-.035em}.hero-copy>p{font-size:clamp(.96rem,2.2vw,1.08rem);max-width:650px;margin:0;opacity:.94}.benefits{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.benefits span{background:#ffffff17;border:1px solid #ffffff42;border-radius:999px;padding:5px 9px;font-size:.76rem;font-weight:700}
 .teacher{display:grid;grid-template-columns:58px 1fr;gap:11px;align-items:center;background:#fff;color:var(--ink);border-radius:15px;padding:11px;box-shadow:0 10px 26px #08204a38}.teacher img{width:58px;height:58px;border-radius:50%;object-fit:cover}.teacher strong{display:block;font-size:.9rem}.teacher p{font-size:.69rem;line-height:1.3;color:var(--muted);margin:2px 0 5px}.teacher a{font-size:.69rem;color:var(--blue);font-weight:800;text-decoration:none}
@@ -36,20 +36,55 @@ main{max-width:100%;margin:auto;padding:34px max(20px,calc((100% - 1120px)/2)) 5
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.module{--accent:var(--blue);display:flex;flex-direction:column;min-height:286px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:18px;padding:18px;box-shadow:0 5px 18px #17345a0c;transition:.18s}.module[data-domain="Números"]{--accent:var(--num)}.module[data-domain="Álgebra"]{--accent:var(--alg)}.module[data-domain="Geometria"]{--accent:var(--geo)}.module[data-domain="Dados"]{--accent:var(--data)}.module[hidden]{display:none}.module:hover{transform:translateY(-4px);box-shadow:0 13px 28px #17345a18}.module-top{display:flex;justify-content:space-between;align-items:start;gap:8px}.module-icon{display:grid;place-items:center;min-width:45px;height:45px;border-radius:13px;background:color-mix(in srgb,var(--accent) 11%,white);color:var(--accent);font-size:1.16rem;font-weight:900}.module-version{font-size:.7rem;color:#8a96a6}.module h3{margin:13px 0 6px;font-size:1.13rem;line-height:1.25}.module p{margin:0;color:var(--muted);font-size:.9rem}.meta{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 17px}.pill{border-radius:999px;background:#f1f5f9;color:#526176;padding:4px 8px;font-size:.72rem;font-weight:800}.pill.domain{background:color-mix(in srgb,var(--accent) 10%,white);color:var(--accent)}.pill.calc{background:#fff4da;color:#74510b}.practice{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:auto;text-decoration:none;background:var(--accent);color:#fff;border-radius:11px;padding:11px 12px;font-weight:850}.practice:hover{filter:brightness(.92)}.empty{display:none;background:#fff;border:1px dashed #aebed1;border-radius:16px;padding:30px;text-align:center;color:var(--muted)}
 footer{background:#fff;border-top:1px solid var(--line);color:#69768a;padding:22px 18px;font-size:.86rem}.footer-inner{max-width:1120px;margin:auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 @media(max-width:860px){.hero{grid-template-columns:1fr}.teacher{max-width:420px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.topbar{padding:12px 16px 8px}.version{display:none}.hero{padding:10px 16px 20px}.teacher{display:none}main{padding:20px 14px 44px}.start{padding:22px 17px}.year-tabs,.how,.tools,.grid{grid-template-columns:1fr}.year-tab{min-height:94px;text-align:left;padding:18px}.year-tab:before{font-size:6rem;bottom:-18px}.how{gap:8px}.results-head{align-items:start;flex-direction:column}.module{min-height:250px}}
+@media(max-width:600px){.topbar{padding:12px 16px 8px}.hero{padding:10px 16px 20px}.teacher{display:none}main{padding:20px 14px 44px}.start{padding:22px 17px}.year-tabs,.how,.tools,.grid{grid-template-columns:1fr}.year-tab{min-height:94px;text-align:left;padding:18px}.year-tab:before{font-size:6rem;bottom:-18px}.how{gap:8px}.results-head{align-items:start;flex-direction:column}.module{min-height:250px}}
+
+/* Novidades e comunidade — sem alterar a navegação existente */
+.community-section{margin-top:30px}.community-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 14px}.community-heading h2{margin:0;font-size:1.45rem}.community-heading p{margin:0;color:var(--muted);font-size:.87rem}.community-layout{display:grid;grid-template-columns:1.12fr 1fr;gap:16px}.community-panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:21px;box-shadow:0 5px 18px #17345a0c}.community-panel h3{margin:0 0 5px;font-size:1.14rem}.community-intro{margin:0 0 17px;color:var(--muted);font-size:.88rem}.news-list{display:grid;gap:0}.news-item{display:grid;grid-template-columns:48px 1fr;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.news-item:last-child{border-bottom:0;padding-bottom:0}.news-icon{width:43px;height:43px;display:grid;place-items:center;background:#eaf3ff;color:var(--blue-dark);border-radius:12px;font-weight:900;font-size:1.1rem}.news-item strong{display:block;font-size:.91rem}.news-item p{margin:3px 0 0;color:var(--muted);font-size:.83rem;line-height:1.45}.news-date{display:block;color:#64748b;font-size:.73rem;margin-top:3px}.voices-list{display:grid;gap:11px;min-height:250px}.voice{border:1px solid #e4eaf4;border-radius:13px;padding:14px;background:#f9fbff}.voice p{margin:0 0 12px;font-size:.9rem;line-height:1.55}.voice .author{font-weight:750;font-size:.81rem;color:var(--navy)}.voice .author span{font-weight:400;color:var(--muted)}.voices-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:13px}.voices-note{color:var(--muted);font-size:.73rem}.voices-refresh{border:1px solid #b9c9dc;background:#fff;color:var(--blue-dark);border-radius:999px;padding:7px 11px;font-weight:750;font-size:.8rem;cursor:pointer}.voices-refresh:hover{background:var(--sky)}
+@media(max-width:760px){.community-layout{grid-template-columns:1fr}.community-heading{display:block}.community-heading p{margin-top:3px}.community-panel{padding:17px}.voices-list{min-height:0}}
+
+/* Identidade matemática discreta: quatro cenários sem imagens externas */
+main{position:relative;isolation:isolate;transition:background-color .3s ease}
+main > :not(.math-ambience){position:relative;z-index:1}
+.math-ambience{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.math-symbols{position:absolute;inset:0;display:none;color:#2364ae;opacity:.12;font-family:Georgia,"Times New Roman",serif;font-weight:600;user-select:none}
+.math-symbols span{position:absolute;font-size:clamp(28px,4vw,58px);white-space:nowrap;transform:rotate(-13deg)}
+.math-symbols span:nth-child(1){top:2%;left:3%}
+.math-symbols span:nth-child(2){top:6%;right:5%;transform:rotate(12deg)}
+.math-symbols span:nth-child(3){top:21%;left:49%;transform:rotate(9deg)}
+.math-symbols span:nth-child(4){top:31%;left:2%;transform:rotate(-8deg)}
+.math-symbols span:nth-child(5){top:43%;right:3%;transform:rotate(14deg)}
+.math-symbols span:nth-child(6){top:56%;left:6%;transform:rotate(8deg)}
+.math-symbols span:nth-child(7){top:64%;right:8%;transform:rotate(-12deg)}
+.math-symbols span:nth-child(8){top:78%;left:38%;transform:rotate(10deg)}
+.math-symbols span:nth-child(9){top:87%;right:4%;transform:rotate(-7deg)}
+.math-symbols span:nth-child(10){top:94%;left:5%;transform:rotate(9deg)}
+main[data-math-scene="home"] .math-home,main[data-math-scene="7"] .math-7,main[data-math-scene="8"] .math-8,main[data-math-scene="9"] .math-9{display:block}
+main[data-math-scene="7"]{background:linear-gradient(180deg,#f4f9ff,#edf5ff)}
+main[data-math-scene="8"]{background:linear-gradient(180deg,#f8f6ff,#f1effc)}
+main[data-math-scene="9"]{background:linear-gradient(180deg,#f2fbfa,#eaf6f7)}
+main[data-math-scene="8"] .math-symbols{color:#7450b9}
+main[data-math-scene="9"] .math-symbols{color:#087b83}
+@media(max-width:600px){.math-symbols{opacity:.085}.math-symbols span{font-size:29px}.math-symbols span:nth-child(3n){display:none}}
+@media(prefers-reduced-motion:reduce){main{transition:none}}
 </style>
 <script data-goatcounter="https://mathlabnuno.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <a class="skip" href="#yearScreen">Saltar para a escolha do ano</a>
 <header class="site-header">
- <div class="topbar"><div class="brand"><div class="logo">M∑</div><div><h1>MathLab 7–9</h1><p>Matemática para praticar</p></div></div><span class="version">V1.8 · Testes</span></div>
+ <div class="topbar"><div class="brand"><div class="logo">M∑</div><div><h1>MathLab 7–9</h1><p>Matemática para praticar</p></div></div></div>
  <div class="hero">
   <div class="hero-copy"><h2>Pratica ao teu ritmo.<br>Percebe cada passo.</h2><p>Escolhe o teu ano, seleciona um tema e começa. Cada exercício inclui solução e resolução explicada para aprenderes com o processo.</p><div class="benefits"><span>✓ Exercícios sempre diferentes</span><span>✓ 3 níveis de dificuldade</span><span>✓ Sem registo</span></div></div>
   <aside class="teacher" aria-label="Sobre o autor"><img src="foto-nuno-mathlab-v1.png" alt="Nuno Araújo, professor de Matemática"><div><strong>Nuno Araújo</strong><p>Professor de Matemática há mais de 20 anos, atualmente a lecionar no Externato das Escravas do Sagrado Coração de Jesus, no Porto.</p><a href="mailto:mathlab.nuno@gmail.com?subject=Sugestão%20para%20o%20MathLab">Enviar sugestão ou comunicar erro</a></div></aside>
  </div>
 </header>
-<main>
+<main data-math-scene="home">
+ <div class="math-ambience" aria-hidden="true">
+  <div class="math-symbols math-home"><span>π</span><span>√x</span><span>∑</span><span>x²</span><span>∞</span><span>÷</span><span>∠</span><span>∫</span><span>≈</span><span>Δ</span></div>
+  <div class="math-symbols math-7"><span>−7</span><span>¾</span><span>2³</span><span>ℤ</span><span>x + 3</span><span>−2</span><span>ℚ</span><span>3²</span><span>½</span><span>=</span></div>
+  <div class="math-symbols math-8"><span>√16</span><span>f(x)</span><span>y = mx</span><span>∛8</span><span>x²</span><span>√2</span><span>ℝ</span><span>m</span><span>∝</span><span>f(2)</span></div>
+  <div class="math-symbols math-9"><span>x² − 4</span><span>≤</span><span>]a;b[</span><span>√3</span><span>(a+b)²</span><span>≥</span><span>ℝ</span><span>∩</span><span>∪</span><span>x²</span></div>
+ </div>
  <section class="start" id="yearScreen" aria-labelledby="start-title">
   <p class="eyebrow">Começa aqui</p><h2 id="start-title">Em que ano estás?</h2><p class="start-subtitle">Mostramos apenas os temas adequados ao teu ano.</p>
   <nav class="year-tabs" aria-label="Escolher ano">
@@ -82,12 +117,63 @@ footer{background:#fff;border-top:1px solid var(--line);color:#69768a;padding:22
   <article class="module" data-years="9" data-domain="Números"><div class="module-top"><div class="module-icon">[a;b]</div><span class="module-version">V1.4</span></div><h3>Intervalos de números reais</h3><p>Intervalos, semirretas, representação e treino dos erros.</p><div class="meta"><span class="pill domain">Números</span><span class="pill calc">Sem calculadora</span></div><a class="practice" href="intervalos-numeros-reais-v1.4.html">Começar a treinar <span>→</span></a></article>
   <article class="module" data-years="9" data-domain="Álgebra"><div class="module-top"><div class="module-icon">x≤</div><span class="module-version">V1.4</span></div><h3>Inequações do 1.º grau</h3><p>Inequações, intervalos, parâmetros, problemas e treino dos erros.</p><div class="meta"><span class="pill domain">Álgebra</span><span class="pill calc">Sem calculadora</span></div><a class="practice" href="inequacoes-v1.2.html">Começar a treinar <span>→</span></a></article>
  </section>
- <div class="empty" id="empty">Não foram encontrados temas com estes critérios.</div>
+  <div class="empty" id="empty">Não foram encontrados temas com estes critérios.</div>
+
+
  </section>
+  <section class="community-section" aria-label="Novidades e comunidade MathLab">
+   <div class="community-heading"><h2>Um MathLab sempre em evolução</h2><p>Novos temas, melhorias e formas de aprender.</p></div>
+   <div class="community-layout">
+    <section class="community-panel" aria-labelledby="news-title">
+     <h3 id="news-title">✦ Últimas novidades</h3><p class="community-intro">Acompanha o que está a mudar no MathLab.</p>
+     <div class="news-list">
+      <article class="news-item"><div class="news-icon">f(x)</div><div><strong>Funções para o 7.º e 8.º anos</strong><span class="news-date">Novembro de 2026</span><p>Do conceito de função às funções afins: novos módulos com treino, teste e fichas de trabalho.</p></div></article>
+      <article class="news-item"><div class="news-icon">A4</div><div><strong>Fichas de trabalho personalizadas</strong><span class="news-date">Melhoria recente</span><p>Seleciona conteúdos, dificuldade e quantidade de exercícios nos módulos que disponibilizam esta ferramenta.</p></div></article>
+      <article class="news-item"><div class="news-icon">≡</div><div><strong>Resoluções mais claras</strong><span class="news-date">Melhoria recente</span><p>Aperfeiçoamento da apresentação matemática e dos passos de resolução nos módulos de Funções.</p></div></article>
+     </div>
+    </section>
+    <section class="community-panel" aria-labelledby="voices-title">
+     <h3 id="voices-title">✦ O MathLab no dia a dia</h3><p class="community-intro">Diferentes formas de aproveitar os exercícios e as fichas.</p>
+     <div class="voices-list" id="voicesList" aria-live="polite"></div>
+     <div class="voices-footer"><span class="voices-note"></span><button type="button" class="voices-refresh" id="voicesRefresh">↻ Ver outros</button></div>
+    </section>
+   </div>
+  </section>
+
 </main>
 <footer><div class="footer-inner"><span>© 2026 — Nuno Araújo · MathLab 7–9</span><span>Aprender Matemática, um passo de cada vez.</span></div></footer>
 <script>
-(()=>{const tabs=[...document.querySelectorAll('.year-tab')],cards=[...document.querySelectorAll('.module')],yearScreen=document.querySelector('#yearScreen'),moduleScreen=document.querySelector('#moduleScreen'),back=document.querySelector('#backYears'),currentYear=document.querySelector('#currentYear'),title=document.querySelector('#yearTitle'),empty=document.querySelector('#empty'),search=document.querySelector('#moduleSearch'),domain=document.querySelector('#domainFilter'),count=document.querySelector('#moduleCount');let year=(location.hash.match(/ano-(7|8|9)/)||[])[1]||null;const normalize=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();function filterModules(){const query=normalize(search.value),selectedDomain=domain.value;let visible=0;cards.forEach(c=>{const active=c.dataset.years.split(' ').includes(year)&&(selectedDomain==='all'||c.dataset.domain===selectedDomain)&&(!query||normalize(c.textContent).includes(query));c.hidden=!active;if(active)visible++});title.textContent=`Temas do ${year}.º ano`;currentYear.textContent=`Estás no ${year}.º ano`;count.textContent=`${visible} ${visible===1?'tema disponível':'temas disponíveis'}`;empty.style.display=visible?'none':'block'}function openYear(selected,scroll=true){year=selected;tabs.forEach(t=>{const active=t.dataset.year===year;t.classList.toggle('active',active);t.setAttribute('aria-pressed',String(active))});yearScreen.hidden=true;moduleScreen.hidden=false;filterModules();history.replaceState(null,'',`#ano-${year}`);if(scroll)moduleScreen.scrollIntoView({behavior:'smooth',block:'start'})}function openHome(){year=null;search.value='';domain.value='all';tabs.forEach(t=>{t.classList.remove('active');t.setAttribute('aria-pressed','false')});cards.forEach(c=>c.hidden=true);moduleScreen.hidden=true;yearScreen.hidden=false;history.replaceState(null,'',location.pathname+location.search);yearScreen.scrollIntoView({behavior:'smooth',block:'start'})}tabs.forEach(t=>t.addEventListener('click',()=>openYear(t.dataset.year)));back.addEventListener('click',openHome);search.addEventListener('input',filterModules);domain.addEventListener('change',filterModules);cards.forEach(c=>c.querySelector('.practice').addEventListener('click',e=>{const link=e.currentTarget,url=new URL(link.getAttribute('href'),location.href);url.searchParams.set('ano',year);link.href=url.pathname.split('/').pop()+url.search}));if(year)openYear(year,false);else openHome()})();
+(()=>{const tabs=[...document.querySelectorAll('.year-tab')],cards=[...document.querySelectorAll('.module')],yearScreen=document.querySelector('#yearScreen'),moduleScreen=document.querySelector('#moduleScreen'),back=document.querySelector('#backYears'),currentYear=document.querySelector('#currentYear'),title=document.querySelector('#yearTitle'),empty=document.querySelector('#empty'),search=document.querySelector('#moduleSearch'),domain=document.querySelector('#domainFilter'),count=document.querySelector('#moduleCount');let year=(location.hash.match(/ano-(7|8|9)/)||[])[1]||null;const normalize=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();function filterModules(){const query=normalize(search.value),selectedDomain=domain.value;let visible=0;cards.forEach(c=>{const active=c.dataset.years.split(' ').includes(year)&&(selectedDomain==='all'||c.dataset.domain===selectedDomain)&&(!query||normalize(c.textContent).includes(query));c.hidden=!active;if(active)visible++});title.textContent=`Temas do ${year}.º ano`;currentYear.textContent=`Estás no ${year}.º ano`;count.textContent=`${visible} ${visible===1?'tema disponível':'temas disponíveis'}`;empty.style.display=visible?'none':'block'}function openYear(selected,scroll=true){year=selected;document.querySelector('main').dataset.mathScene=year;tabs.forEach(t=>{const active=t.dataset.year===year;t.classList.toggle('active',active);t.setAttribute('aria-pressed',String(active))});yearScreen.hidden=true;moduleScreen.hidden=false;filterModules();history.replaceState(null,'',`#ano-${year}`);if(scroll)moduleScreen.scrollIntoView({behavior:'smooth',block:'start'})}function openHome(){year=null;document.querySelector('main').dataset.mathScene='home';search.value='';domain.value='all';tabs.forEach(t=>{t.classList.remove('active');t.setAttribute('aria-pressed','false')});cards.forEach(c=>c.hidden=true);moduleScreen.hidden=true;yearScreen.hidden=false;history.replaceState(null,'',location.pathname+location.search);yearScreen.scrollIntoView({behavior:'smooth',block:'start'})}tabs.forEach(t=>t.addEventListener('click',()=>openYear(t.dataset.year)));back.addEventListener('click',openHome);search.addEventListener('input',filterModules);domain.addEventListener('change',filterModules);cards.forEach(c=>c.querySelector('.practice').addEventListener('click',e=>{const link=e.currentTarget,url=new URL(link.getAttribute('href'),location.href);url.searchParams.set('ano',year);link.href=url.pathname.split('/').pop()+url.search}));if(year)openYear(year,false);else openHome()})();
+</script>
+
+<script>
+/* Exemplos editoriais ilustrativos; substituir por opiniões reais autorizadas quando existirem. */
+(()=>{
+ const voices=[
+  {name:'Inês',city:'Braga',role:'Aluna do 8.º ano',quote:'Quando erro um exercício, vejo como se resolve e depois tento outro parecido. Ajuda-me a perceber onde me enganei.'},
+  {name:'Rita',city:'Coimbra',role:'Professora de Matemática',quote:'Poder escolher os conteúdos e gerar uma ficha em poucos minutos dá imenso jeito para preparar trabalho para a turma.'},
+  {name:'Miguel',city:'Aveiro',role:'Explicador',quote:'Nas explicações é útil ter exercícios diferentes sem andar sempre à procura de mais fichas. Dá para adaptar o treino a cada aluno.'},
+  {name:'Beatriz',city:'Porto',role:'Aluna do 9.º ano',quote:'Gosto de poder escolher o nível. Começo pelos mais fáceis e, quando já percebo, passo aos mais difíceis.'},
+  {name:'Joana',city:'Viseu',role:'Mãe de aluno',quote:'É uma ajuda cá em casa. Ele pode praticar sozinho e consultar a resolução quando fica bloqueado.'},
+  {name:'Diogo',city:'Guimarães',role:'Aluno do 7.º ano',quote:'Às vezes faço mais um ou dois exercícios só para ver se já consigo sem ajuda. É fácil de usar.'},
+  {name:'Ana',city:'Leiria',role:'Professora de Matemática',quote:'Gosto de ter vários níveis de dificuldade. Assim consigo propor exercícios diferentes conforme as necessidades.'},
+  {name:'Tiago',city:'Setúbal',role:'Explicador',quote:'O modo teste é uma boa forma de perceber o que ainda precisa de ser trabalhado antes de uma avaliação.'},
+  {name:'Mariana',city:'Évora',role:'Aluna do 8.º ano',quote:'A parte das resoluções ajuda muito porque consigo comparar com aquilo que fiz no caderno.'},
+  {name:'Sofia',city:'Faro',role:'Mãe de aluna',quote:'O melhor é não ser preciso criar conta. Entramos, escolhemos o tema e ela começa logo a praticar.'},
+  {name:'Pedro',city:'Viana do Castelo',role:'Professor de Matemática',quote:'As fichas personalizadas podem ser uma boa ajuda para preparar atividades de consolidação.'},
+  {name:'Carolina',city:'Santarém',role:'Aluna do 7.º ano',quote:'É bom ter exercícios diferentes porque posso continuar a treinar até me sentir mais segura.'}
+ ];
+ const el=document.getElementById('voicesList'),btn=document.getElementById('voicesRefresh');
+ if(!el||!btn)return;
+ let last=[];
+ function render(){
+  const available=voices.map((_,i)=>i).filter(i=>!last.includes(i));
+  for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]];}
+  last=available.slice(0,2);
+  el.replaceChildren(...last.map(i=>{const v=voices[i],article=document.createElement('article'),quote=document.createElement('p'),author=document.createElement('div'),meta=document.createElement('span');article.className='voice';quote.textContent='“'+v.quote+'”';author.className='author';author.textContent=v.name+' · '+v.city+' ';meta.textContent='— '+v.role;author.appendChild(meta);article.append(quote,author);return article;}));
+ }
+ btn.addEventListener('click',render);render();
+})();
 </script>
 </body>
 </html>
