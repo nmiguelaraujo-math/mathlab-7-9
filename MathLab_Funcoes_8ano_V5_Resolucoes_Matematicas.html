@@ -1,0 +1,762 @@
+<!DOCTYPE html><html lang="pt-PT"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MathLab — Funções · 8.º ano — V1</title><!-- V17: diversidade cognitiva, modelos afins e distribuição curricular -->
+<style>
+:root{--blue:#315ee7;--ink:#17243b;--line:#d8e2ef;--muted:#59697f;--bg:#f4f7fb}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 92% 2%,#e5eaff,transparent 28rem),var(--bg);font:16px Aptos,Arial,Helvetica,sans-serif;color:var(--ink)}.nav{background:white;border-bottom:1px solid var(--line);padding:12px max(20px,calc((100vw - 1080px)/2));display:flex;justify-content:space-between;gap:12px}.nav b{color:#2448ad}.hero{background:linear-gradient(125deg,#263f9e,#5b54d8 68%,#7568e8);color:white;padding:32px max(20px,calc((100vw - 1080px)/2))}.hero h1{font-size:clamp(30px,5vw,48px);margin:0}.hero p{color:#e6e8ff;margin:7px 0}.wrap{max-width:1080px;margin:auto;padding:18px 20px 60px}.tabs{display:flex;gap:8px;background:#e9eefb;padding:7px;border-radius:15px;margin-bottom:18px}.tabs button{flex:1;background:transparent;color:#253a60;border:0}.tabs button.active{background:var(--blue);color:white}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:18px;box-shadow:0 5px 20px #17345a0d}h2{margin:0 0 16px;font-size:21px}h3{margin:22px 0 12px;font-size:17px}.pill{background:#eef3ff;color:#2448ad;border-radius:99px;padding:5px 10px;font-weight:700;font-size:13px}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.choice{background:white;color:var(--ink);border:2px solid var(--line);text-align:left;border-radius:12px;padding:15px;min-height:82px}.choice strong,.choice small{display:block}.choice small{color:var(--muted);margin-top:4px}.choice.active{background:#eaf0ff;border-color:var(--blue)}button{cursor:pointer;font:inherit;border-radius:10px;padding:11px 16px;border:1px solid var(--line);background:white;color:var(--ink);font-weight:650}button.primary{background:var(--blue);color:white;border-color:var(--blue)}button:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.muted{color:var(--muted)}.statement{font-size:19px;line-height:1.7;margin:18px 0}.math{font-family:Aptos,Arial,Helvetica,sans-serif;font-size:1.16em}.answer{display:flex;gap:10px;align-items:center;flex-wrap:wrap}input,select{font:inherit;padding:11px;border:1px solid #b9c7d6;border-radius:9px;max-width:100%}input[type=text]{width:260px}.feedback{margin-top:14px;padding:13px;border-radius:9px;background:#f0f8f5;color:#225a47}.bad{background:#fff1f2;color:#8d283a}.hidden{display:none!important}.graph{width:100%;max-width:540px;display:block;margin:10px auto;border:1px solid #e2e8f0;border-radius:12px;background:white}.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.options button{text-align:left}.options button.selected{background:#eaf0ff;border-color:var(--blue)}.sectionline{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}.small{font-size:13px}.function-table{border-collapse:collapse;margin:14px 0;width:min(100%,540px);table-layout:fixed;text-align:center}.function-table th,.function-table td{border:1.5px solid #8ea3c1;padding:13px 8px;min-width:60px}.function-table th{background:#edf2ff;width:70px}.function-table .missing{background:#fff8e6;color:#73551a;font-weight:700}.worksheet .item{margin:20px 0;break-inside:avoid}.worksheet .graph{max-width:400px;max-height:240px}.graph{height:auto}.worksheet .function-table{max-width:500px}.statement mjx-container{font-size:110%!important}.worksheet .item p{margin:5px 0}.worksheet .blank{height:60px;border-bottom:1px solid #ddd}.worksheet header{text-align:center;border-bottom:1px solid #555;padding-bottom:12px}.worksheet .meta{display:flex;justify-content:space-between;gap:12px;margin:12px 0}.worksheet footer{margin-top:25px;font-size:10px;text-align:center;color:#666}label{display:inline-flex;align-items:center;gap:8px}.settings{display:flex;gap:14px;flex-wrap:wrap;align-items:center}.settings select{min-width:140px}.notice{background:#f7faff;border:1px solid #cbd9ee;border-radius:12px;padding:12px;margin-bottom:16px}.tag{display:inline-block;font-size:12px;background:#eaf0ff;border-radius:5px;padding:4px 7px;color:#2448ad}.testscore{font-size:35px;color:#225a47;font-weight:800}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:700px){.choices{grid-template-columns:1fr}.options{grid-template-columns:1fr}.panel{padding:15px}.nav span{display:none}}@page{size:A4;margin:22mm 19mm 20mm}@media print{body{background:white}.nav,.hero,.tabs,.wrap>.panel:not(.worksheet),.print-hide{display:none!important}.wrap{padding:0;max-width:none}.worksheet{border:0;box-shadow:none;padding:0;margin:0}.worksheet .blank{height:75px}.function-table{border-collapse:collapse;margin:14px 0;width:min(100%,540px);table-layout:fixed;text-align:center}.function-table th,.function-table td{border:1.5px solid #8ea3c1;padding:13px 8px;min-width:60px}.function-table th{background:#edf2ff;width:70px}.function-table .missing{background:#fff8e6;color:#73551a;font-weight:700}.worksheet .item{margin:22px 0}button{display:none!important}}
+ 
+/* Uniformização MathLab: treino, teste e fichas */
+.tabs{background:#e8edfc;border-radius:17px;padding:6px;gap:8px}.tabs button{border:0;border-radius:9px;font-weight:650;padding:14px}.tabs button.active{background:#315ee7;color:white}
+.statement,.worksheet .item,.review-card,.test-choice,.function-table,.feedback{font-weight:400!important}
+.statement strong,.statement b,.worksheet strong,.worksheet b,.review-card strong,.review-card b,.feedback strong,.feedback b{font-weight:400!important}
+.function-table th,.function-table .missing{font-weight:400!important}
+.test-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.progress{height:9px;background:#e5e9f1;border-radius:9px;overflow:hidden}.progress>div{height:100%;background:#315ee7;transition:width .2s}.test-body{min-height:185px;padding:16px 0}.test-nav{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:16px 0}.test-nav button{width:37px;height:37px;border-radius:50%;padding:0;font-weight:500}.test-nav button.active{background:#315ee7;color:white;border-color:#315ee7}.test-nav button.answered:not(.active){background:#e7efff;border-color:#9ab5ee}.test-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.test-actions button{background:#64748b;color:white;border:0}.test-actions button.primary{background:#315ee7}.test-choice{border:1px solid #b9c9df;border-radius:8px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:10px}.test-choice.selected{border-color:#315ee7;background:#edf2ff}.test-choice .letter{display:inline-grid;place-items:center;min-width:29px;height:29px;border-radius:50%;background:#e1eaff;color:#2154ae}.result{text-align:center;padding:20px 0}.result .score{font-size:52px;color:#209567;font-weight:700}.result-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.result-buttons button{background:#64748b;color:white}.result-buttons button:first-child{background:#315ee7}.review-card{border:1px solid #d5dfed;border-left:5px solid #c13e58;border-radius:12px;padding:16px;margin:12px 0}.review-card.ok{border-left-color:#21966b}.review-answer{background:#eef1f5;border-radius:7px;padding:10px;margin:12px 0}.review-correct{background:#e6f5ec;border-radius:7px;padding:10px;margin:10px 0}.review-steps{padding-left:23px;line-height:1.9}.sheet-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sheet-controls label{display:flex;flex-direction:column;align-items:stretch;font-size:14px}.sheet-controls select{width:100%}.sheet-group{padding:15px;border:2px solid #d8e2f0;border-radius:12px;display:flex;align-items:flex-start;gap:8px;cursor:pointer}.sheet-group.active{border-color:#315ee7;background:#eaf0ff}.sheet-group small{display:block;color:#64748b;font-size:12px;margin-top:4px}.sheet-count-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #e0e6f0}.counter{display:flex;gap:7px;align-items:center}.counter button{width:33px;height:33px;padding:0}.counter input{width:55px;text-align:center;padding:7px}.sheet-total{text-align:right;font-weight:650;margin:16px 0}.sheet-toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:20px}.sheet-toolbar button{background:#64748b;color:white;border:0}.sheet-toolbar button.primary{background:#315ee7}.worksheet{width:min(100%,794px);min-height:1123px;margin:0 auto 30px;background:#fff;box-shadow:0 8px 25px #00000017;border:1px solid #e5e5e5;border-radius:0;padding:72px 70px;color:#101827;font-family:Arial,Helvetica,sans-serif;font-size:14px}.worksheet header{text-align:left;border-bottom:1px solid #666;padding-bottom:28px}.worksheet header h2{font-size:20px;font-weight:500;margin:0 0 9px}.worksheet header p{font-size:13px;margin:0}.worksheet .meta{margin:25px 0 38px;display:flex;justify-content:space-between;font-size:12px;gap:14px}.worksheet .item strong,.worksheet .item b,.worksheet .solution-item strong,.worksheet .solution-item b{font-weight:400!important}.worksheet mjx-container,.sheet-solutions mjx-container{font-weight:400!important}.worksheet .item{font-size:14px;line-height:1.7;margin:22px 0 26px;break-inside:avoid;page-break-inside:avoid}.worksheet .itemnum{margin-right:8px}.worksheet .section-title{text-align:center;font-weight:400;margin:28px 0 22px}.worksheet .blank{height:64px;border:0}.worksheet .graph{max-width:400px;max-height:230px}.worksheet .function-table{font-size:13px}.worksheet footer{font-size:10px;margin-top:45px}.sheet-solutions{break-before:page;page-break-before:always}.sheet-solutions h2{font-weight:500}.worksheet .sheet-solutions p{font-size:13px}.worksheet .sheet-solutions{font-size:12px}.hidden-print{display:none}
+@media(max-width:700px){.sheet-controls{grid-template-columns:1fr}.sheet-toolbar{grid-template-columns:1fr 1fr}.test-actions button{padding:10px 4px;font-size:12px}.worksheet{padding:28px 18px;min-height:0}.result-buttons{grid-template-columns:1fr}}
+@media print{@page{size:A4;margin:23mm 19mm 20mm}body{background:white}.nav,.hero,.tabs,#config,#train,#test,#sheet,.print-hide{display:none!important}.wrap{max-width:none;padding:0}.worksheet{display:block!important;box-shadow:none;border:0;width:100%;min-height:0;margin:0;padding:0;font-size:12pt}.worksheet header h2{font-size:16pt}.worksheet .item{font-size:11pt}.worksheet .blank{height:82px}.worksheet .graph{max-width:350px;max-height:200px}.hidden-print{display:none!important}}
+
+/* MathLab Funções V18.1 — posição do regresso e tipografia sem negritos */
+.solution-item{font-weight:400!important;break-inside:avoid;page-break-inside:avoid;margin:14px 0}.solution-item ol{line-height:1.55;padding-left:22px;margin:5px 0}.solution-item p{margin:5px 0}.sheet-solutions{padding-top:15px}
+.return-nav{margin:0 0 15px}.return-nav a{display:inline-flex;align-items:center;padding:9px 14px;border:1px solid #cbd9ee;border-radius:10px;background:#fff;color:#2448ad;text-decoration:none;font-size:14px;font-weight:400}.return-nav a:hover{background:#edf3ff;text-decoration:underline}
+#train,#test,#sheet,#worksheet,#config,.worksheet .item,.worksheet .itemnum,.worksheet .meta,.worksheet .section-title,.worksheet .sheet-solutions,.review-card,.review-card *,.feedback,.feedback *,#question,#response,#testarea .statement,#testarea .review-answer,#testarea .review-correct{font-weight:400!important}
+#train strong,#train b,#test strong,#test b,#sheet strong,#sheet b,#worksheet strong,#worksheet b{font-weight:400!important}
+#worksheet .function-table th,#testarea .function-table th{font-weight:400!important}#worksheet mjx-container svg,#worksheet mjx-container{font-weight:400!important}
+@media print{.return-nav{display:none!important}}
+
+/* V9: apresentação matemática e impressão limpa */
+.worksheet mjx-container,.worksheet mjx-container *{font-weight:400!important}
+.worksheet .item{margin:15px 0 18px;line-height:1.55}
+.worksheet .blank{height:27px}
+.worksheet .graph{max-height:195px}
+.worksheet .solution-item{break-inside:avoid;page-break-inside:avoid;margin:9px 0 14px}
+.worksheet .solution-item ol{margin:5px 0 0;padding-left:24px;line-height:1.6}
+@media print{@page{size:A4;margin:17mm 18mm 19mm}.worksheet .item{margin:16px 0 20px}.worksheet .graph{max-height:175px}.worksheet .blank{height:46px}body{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+.worksheet .item mjx-container,.worksheet .solution-item mjx-container{font-weight:400!important}.worksheet .solution-item{break-inside:avoid;page-break-inside:avoid;margin:9px 0 12px}.worksheet .solution-item ol{margin-top:5px}.worksheet .solution-item li{line-height:1.65;margin:3px 0}.worksheet .itemnum{font-weight:400!important}
+@media print{.worksheet .solution-item{break-inside:avoid}.worksheet .item{break-inside:avoid}.worksheet .sheet-solutions{padding-top:10mm}}
+
+/* V15 — conclusão do 7.º ano: teste configurável e ficha inicial vazia */
+.test-choice{font-size:17px;min-height:64px;background:#fff}
+.test-choice:focus-within{outline:2px solid #315ee7;outline-offset:2px}
+.test-body>.statement{font-size:18px}
+.test-body>.options{margin:25px 0}
+.test-body>label{display:flex;flex-direction:column;align-items:center;gap:12px;margin:30px auto}
+.test-body input[type=text]{width:min(100%,350px);text-align:center;font-size:19px;padding:16px}
+.test-nav button.answered:not(.active){background:#e5f5ec;border-color:#32a474}
+.worksheet .item{orphans:3;widows:3}
+@media print{.worksheet .item,.worksheet .solution-item{break-inside:avoid;page-break-inside:avoid}.worksheet .sheet-solutions{break-before:page;page-break-before:always}}
+.sheet-controls label{font-weight:400}.sheet-controls select:disabled{background:#f2f4f7;color:#8b95a5}
+@media print{.worksheet .sheet-solutions.hidden-print{display:none!important}.worksheet footer{break-inside:avoid}}
+
+/* V18.1: uniform A4 spacing, with readable answer space and no bold in statements */
+.worksheet .item{margin:13px 0 15px}.worksheet .blank{height:34px}.worksheet .section-title{margin:20px 0 12px}
+@media print{.worksheet .item{margin:12px 0 15px}.worksheet .blank{height:38px}.worksheet .meta{margin-bottom:22px}.worksheet .graph{max-height:165px}}
+/* V3 — tipografia uniforme, incluindo a impressão */
+body,.worksheet,.feedback,.review-card,.function-table,.statement,.sheet-solutions{font-family:Aptos,Arial,Helvetica,sans-serif!important}
+.worksheet .item,.worksheet .solution-item,.feedback{font-weight:400!important}
+.worksheet mjx-container,.feedback mjx-container{font-family:inherit;font-weight:400!important}
+@media print{.worksheet,.worksheet *:not(mjx-container):not(mjx-container *){font-family:Aptos,Arial,Helvetica,sans-serif}}
+
+/* V4 — tipografia editorial coerente, matemática legível e ritmo vertical */
+:root{--text-font:Aptos,"Segoe UI",Arial,Helvetica,sans-serif}
+body,button,input,select,.statement,.feedback,.worksheet,.review-card,.test-body,.function-table{font-family:var(--text-font)!important}
+body{font-size:16px;line-height:1.55;letter-spacing:0}
+.statement{font-size:18px;line-height:1.85;margin:22px 0 24px;overflow-wrap:break-word}
+.statement mjx-container,.feedback mjx-container,.worksheet mjx-container{font-size:1em!important;vertical-align:baseline}
+.statement mjx-container{margin:0 .13em!important}
+#question{max-width:100%;padding:2px 0 7px}
+#question+.graph,#graphbox{margin-top:10px}
+#train .options{margin:26px 0 22px;gap:12px}
+#train .options button,#train .test-choice{min-height:66px;line-height:1.55;padding:16px 18px}
+#train .actions{margin-top:20px;gap:10px}
+#train .feedback{margin-top:18px;padding:16px 18px;font-size:15px;line-height:1.75}
+.feedback ol,.review-steps{margin:12px 0 0;padding-left:25px;line-height:1.9}
+.feedback li,.review-steps li{padding-left:3px;margin:6px 0}
+#response{margin-top:12px}
+#response label{line-height:1.55}
+.function-table th,.function-table td{font-weight:400;line-height:1.6}
+.worksheet{font-family:var(--text-font)!important;line-height:1.65}
+.worksheet .item{font-size:14px;line-height:1.85;margin:18px 0 20px}
+.worksheet .item mjx-container{margin:0 .09em!important}
+.worksheet .function-table th,.worksheet .function-table td{font-size:13px}
+.worksheet .solution-item li{line-height:1.8;margin:5px 0}
+@media print{.worksheet .item{margin:15px 0 18px}.worksheet .blank{height:44px}.worksheet .item,.worksheet .solution-item{break-inside:avoid;page-break-inside:avoid}}
+</style></head><body><div class="nav"><span>MathLab · 7–9</span><span>Pratica hoje. Supera-te amanhã.</span></div><div class="hero"><h1>Funções</h1><p>Funções afins — 8.º ano · Progressão a partir do 7.º ano</p></div><main class="wrap"><nav class="return-nav print-hide" aria-label="Navegação MathLab"><a id="backToMathlab" href="index.html#ano-8">← Regressar ao MathLab · 8.º ano</a></nav><div class="notice print-hide" style="margin-bottom:14px"><a href="funcoes-7ano.html" style="font-weight:600;color:#2448ad">↶ Recorda — Funções do 7.º ano</a><p class="muted small" style="margin:5px 0 0">Revê o conceito de função, as funções lineares, a proporcionalidade direta, tabelas e gráficos. Depois regressa a esta página.</p></div><div class="tabs print-hide"><button class="active" data-tab="treino">Treino livre</button><button data-tab="ficha">Criar ficha</button><button data-tab="teste">Modo teste</button></div>
+<section id="config" class="panel print-hide"><div class="notice"><span>8.º ano · Funções afins e progressão</span><div class="muted small">Funções afins, declive, ordenada na origem, representações, parâmetros, modelos e argumentação. Usa «Recorda» para rever o 7.º ano.</div></div><h2>1. Escolhe o nível</h2><div class="choices" id="levels"><button class="choice" data-level="1"><strong>Principiante</strong><small>Reconhecer e calcular</small></button><button class="choice active" data-level="2"><strong>Intermédio</strong><small>Relacionar representações</small></button><button class="choice" data-level="3"><strong>Especialista</strong><small>Raciocínio e várias etapas</small></button></div><h3>2. Escolhe o modo</h3><div class="choices" id="families"><button class="choice active" data-family="misto"><strong>Treino Misto</strong><small>Todas as famílias</small></button><button class="choice" data-family="conceitos"><strong>Conceitos e Cálculo</strong><small>Domínio, tabelas, constantes e expressões</small></button><button class="choice" data-family="graficos"><strong>Gráficos e aplicações</strong><small>Gráficos, modelos e problemas</small></button></div><div class="sectionline"><label><input type="checkbox" id="extra"> Incluir desafios de aprofundamento</label><p class="muted small">Opcional e desativado por predefinição. Apenas no nível Especialista. O conteúdo extra surge identificado.</p></div></section>
+<section id="train" class="panel print-hide"><div class="settings"><span class="pill" id="qtag">Treino · Intermédio</span><span class="muted small" id="familytag"></span></div><div id="question" class="statement"></div><div id="graphbox"></div><div id="response"></div><div class="actions"><button class="primary" id="check">Verificar</button><button id="solution">Ver resolução</button><button id="next">Novo exercício</button></div><div id="feedback" class="hidden feedback" aria-live="polite"></div></section>
+<section id="test" class="panel print-hide hidden"><div id="testintro"><h2>Modo teste</h2><p class="muted">Configura o teste de 10 questões. Podes navegar livremente e rever as respostas antes de terminar.</p><div class="sheet-controls"><label>Nível de dificuldade<select id="testlevel"><option value="1">Principiante</option><option value="2" selected>Intermédio</option><option value="3">Especialista</option></select></label><label>Conteúdos<select id="testmode"><option value="misto">Todos os conteúdos</option><option value="conceitos">Conceitos e cálculo</option><option value="graficos">Gráficos e aplicações</option></select></label><label>Desafios de aprofundamento<select id="testextra" disabled><option value="no">Não incluir</option><option value="yes">Incluir (Especialista)</option></select></label></div><div class="actions"><button class="primary" id="teststart">Iniciar teste</button></div></div><div id="testarea"></div></section>
+<section id="sheet" class="panel print-hide hidden"><div id="sheetconfig"><h2 style="text-align:center">Criar ficha de trabalho</h2><p>Define a composição da ficha. Os exercícios usam os mesmos geradores do treino livre.</p><div class="sheet-controls"><label>Ano<select disabled><option>8.º ano</option></select></label><label>Grau de dificuldade<select id="sheetlevel"><option value="1">Principiante</option><option value="2" selected>Intermédio</option><option value="3">Especialista</option></select></label><label>Organização<select id="sheetorder"><option value="group">Agrupar por tipo</option><option value="mix">Misturar exercícios</option></select></label></div><h3>1. Tipos de exercício</h3><div id="sheetgroups" class="choices"></div><h3>2. Número de questões</h3><div id="sheetcounts"></div><div class="sheet-total" id="sheettotal"></div><label class="small"><input id="withanswers" type="checkbox"> Incluir soluções na impressão</label><div class="actions"><button class="primary" id="make">Gerar ficha</button></div></div><div id="sheetpreview" class="hidden"><div class="sheet-toolbar"><button id="reconfigure">Alterar configuração</button><button id="regenerate">Gerar outra ficha</button><button id="togglesolutions">Ver soluções</button><button class="primary" id="print">Imprimir / Guardar PDF</button></div></div></section>
+<section id="worksheet" class="panel worksheet hidden"></section></main>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']]},chtml:{scale:0.95}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><script>
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let level=2,mode='misto',tab='treino',current=null,history=[],sheet=[],test=[],ti=0,answers=[];
+const modes7={misto:['dominio','imagem','objeto','tabela','constante','ponto','expressao','expr_tabela','expr_dois_pontos','proporcao','comparar','grafico','geometria','geom_duas','geom_base','geom_inverso','grafico_comparar','funcao_finita','contexto','modelo_afim','tabela_afim','interpretar_funcao','comparar_tabelas','erro','diagrama','quadrado'],conceitos:['dominio','imagem','objeto','tabela','constante','ponto','expressao','expr_tabela','expr_dois_pontos','proporcao','comparar','modelo_afim','tabela_afim','interpretar_funcao','comparar_tabelas','erro','diagrama','expr_dois_pontos','expr_tabela','quadrado'],graficos:['grafico','geometria','geom_duas','geom_base','geom_inverso','grafico_comparar','funcao_finita','contexto','modelo_afim','tabela_afim','interpretar_funcao','ponto','comparar','diagrama']};
+const modes={misto:['afim_expressao','afim_tabela','afim_pontos','afim_grafico','parametros','classificar','modelacao','comparar_custos','inverter','justificar_afim','erro_afim','variacao','intersecao_afim','triangulo_afim','paralelas_afim'],conceitos:['afim_expressao','afim_tabela','afim_pontos','parametros','classificar','inverter','justificar_afim','erro_afim','variacao','paralelas_afim'],graficos:['afim_grafico','afim_tabela','modelacao','comparar_custos','parametros','justificar_afim','intersecao_afim','triangulo_afim','paralelas_afim']};
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pick=a=>a[ri(0,a.length-1)],fmt=n=>Number.isInteger(n)?String(n):String(+n.toFixed(5)).replace('.',','),num=v=>{let t=String(v).trim().replace(',','.');if(/^[-+]?\d+(?:\.\d+)?\/[-+]?\d+(?:\.\d+)?$/.test(t)){let [a,b]=t.split('/').map(Number);return b?a/b:NaN}return Number(t)},eq=(a,b)=>Number.isFinite(a)&&Math.abs(a-b)<1e-4;
+const levels=['','Principiante','Intermédio','Especialista'];
+const math=x=>'\\('+x+'\\)',sg=n=>n<0?'-'+Math.abs(n):'+'+n;
+const coef=()=>pick(level===1?[1,2,3,4]:level===2?[-4,-3,-2,2,3,4]:[-4,-3,-2,-1.5,-0.5,0.5,1.5,2,2.5,3,4]);
+const nonzero=(a,b)=>{let n=ri(a,b);while(!n)n=ri(a,b);return n};
+const differentFrom=(v,choices)=>pick(choices.filter(n=>n!==v));
+const linearText=k=>k===1?'x':k===-1?'-x':fmt(k)+'x';
+const nice=x=>String(x).replace('.',',');
+function q(kind,prompt,answer,steps,opts={}){return {kind,prompt,answer,steps,...opts,key:kind+'|'+prompt.replace(/\s/g,'')}}
+function table(xs,ys,hide=[]){return {xs,ys,hide}}
+function exactFraction(value){
+ if(!Number.isFinite(value))return String(value);
+ for(let den=1;den<=48;den++){
+  const n=Math.round(value*den);
+  if(Math.abs(n/den-value)<1e-9){
+   const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+   const d=gcd(n,den);return den/d===1?String(n/d):`${n/d}/${den/d}`;
+  }
+ }
+ return Number(value.toFixed(4)).toString().replace('.',',');
+}
+function exactMath(value){const t=exactFraction(value);return t.includes('/')?math('\\frac{'+t.replace('/','}{')+'}'):math(t);}
+function geometryStep(value){return exactFraction(value).replace('.',',');}
+function getQ(kind){
+ let a,b,c,x,y,z,pts,arr,sol;
+ switch(kind){
+ case 'dominio':{
+  arr=[ri(-7,-3),ri(-2,1),ri(2,6)];return q(kind,`Considera uma função cujo domínio é ${math('D_f=\\{'+arr.join(';')+'\\}')}. Quantos objetos tem?`,3,['O domínio é o conjunto dos objetos.','Há três elementos distintos.']);}
+ case 'imagem':{
+  a=coef();x=ri(-4,4);return q(kind,`A função linear é definida por ${math('f(x)='+linearText(a))}. Determina ${math('f('+x+')')}.`,a*x,[`Substituir x por ${x}.`,`${fmt(a)} × (${x}) = ${fmt(a*x)}.`]);}
+ case 'objeto':{
+  a=coef();x=ri(-5,5);return q(kind,`Na função ${math('f(x)='+linearText(a))}, determina o objeto cuja imagem é ${math(fmt(a*x))}.`,x,[`Resolver ${fmt(a)}x = ${fmt(a*x)}.`,`x = ${x}.`]);}
+ case 'constante':{
+  a=nonzero(-6,6);x=ri(-7,7);return q(kind,`A função ${math('f(x)='+a)} é constante. Determina ${math('f('+x+')')}.`,a,['A imagem é sempre a mesma, independentemente do objeto.',`f(${x}) = ${a}.`]);}
+ case 'tabela':{
+  a=coef();x=ri(-4,4);let xs=[x-2,x-1,x,x+1],ys=xs.map(v=>a*v);
+  let v=ri(0,2);
+  if(v===0)return q(kind,`Completa a célula em falta na tabela de proporcionalidade direta. Qual é a imagem de ${math(String(x))}?`,a*x,[`A constante é ${fmt(a)}.`,`f(${x}) = ${fmt(a*x)}.`],{table:table(xs,ys,[2])});
+  if(v===1){let j=pick([0,1,3]);return q(kind,`A tabela representa uma função linear. Determina a constante de proporcionalidade direta.`,a,[`Para x ≠ 0, calcular f(x)/x.`,`k = ${fmt(a)}.`],{table:table(xs,ys)});}
+  return q(kind,`A tabela representa uma função linear. Qual é o objeto cuja imagem é ${fmt(ys[2])}?`,x,[`A função tem constante ${fmt(a)}.`,`Resolver ${fmt(a)}x = ${fmt(ys[2])}.`],{table:table(xs,ys)});}
+ case 'ponto':{
+  a=coef();x=pick([-4,-3,-2,2,3,4]);y=a*x;let v=ri(0,1);
+  return q(kind,`O ponto ${math('A('+x+';'+fmt(y)+')')} pertence ao gráfico de uma função linear ${math('f(x)=kx')}. ${v?'Determina o coeficiente de x na expressão algébrica.':'Determina a constante de proporcionalidade direta.'}`,a,[`Como A pertence ao gráfico, ${fmt(y)} = k × (${x}).`,`k = ${fmt(y)}/${x} = ${fmt(a)}.`]);}
+ case 'expressao':{
+  a=coef();x=pick([-4,-3,-2,2,3,4]);y=a*x;
+  return q(kind,`Uma função linear passa pela origem e pelo ponto ${math('P('+x+';'+fmt(y)+')')}. Escreve a sua expressão algébrica, na forma ${math('f(x)=kx')}.`,a,[`A função linear tem a forma f(x)=kx.`,`k = ${fmt(y)}/${x} = ${fmt(a)}.`,`Logo, f(x) = ${linearText(a)}.`],{answerType:'expression'});}
+ case 'expr_tabela':{
+  const k=coef(),xs=pick([[1,2,3,4],[-2,-1,0,1],[2,4,6,8]]),ys=xs.map(v=>k*v);
+  return q(kind,`Os valores da tabela pertencem a uma função linear f. Determina a expressão algébrica de f.`,k,[`Numa função linear, f(x)=kx.`,`Para um objeto não nulo, k=f(x)/x=${fmt(k)}.`,`Portanto, f(x)=${linearText(k)}.`],{table:table(xs,ys),answerType:'expression'});
+ }
+ case 'expr_dois_pontos':{
+  const k=coef(),x1=pick([-3,-2,2,3]);let x2=x1+pick([2,3,4]);
+  if(x2===0)x2+=2;
+  return q(kind,`Os pontos ${math('A('+x1+';'+fmt(k*x1)+')')} e ${math('B('+x2+';'+fmt(k*x2)+')')} pertencem ao gráfico de uma função linear f. Determina a expressão algébrica de f e confirma-a usando os dois pontos.`,k,[`Sendo f(x)=kx, o ponto A permite calcular k=${fmt(k*x1)}/(${x1})=${fmt(k)}.`,`Confirmação com B: ${fmt(k)}×(${x2})=${fmt(k*x2)}.`,`Logo, f(x)=${linearText(k)}.`],{answerType:'expression'});
+ }
+ case 'proporcao':{
+  a=coef();let xs=[1,2,3,4],ys=xs.map(v=>a*v),bad=ri(0,1);if(bad){ys[3]+=pick([-2,-1,1,2]);}
+  return q(kind,`Os dados da tabela representam uma situação de proporcionalidade direta?`,bad?'Não':'Sim',[`Numa proporcionalidade direta, os quocientes f(x)/x são constantes.`,bad?'O último quociente é diferente dos restantes.':'Todos os quocientes são iguais.'],{table:table(xs,ys),answerType:'choice',choices:['Sim','Não']});}
+ case 'comparar':{
+  a=coef();b=coef();while(a===b)b=coef();x=pick([2,3,4]);return q(kind,`Duas funções lineares verificam ${math('f('+x+')='+fmt(a*x))} e ${math('g('+x+')='+fmt(b*x))}. Qual é a diferença entre as respetivas constantes de proporcionalidade, ${math('k_f-k_g')}?`,a-b,[`k_f = ${fmt(a)} e k_g = ${fmt(b)}.`,`A diferença é ${fmt(a-b)}.`]);}
+ case 'grafico':{
+  a=pick(level===1?[1,2]:[-2,-1,1,2]);x=pick([-2,-1,1,2]);let v=ri(0,1);
+  return q(kind,v?`Observa o gráfico da função linear. Determina a constante de proporcionalidade direta.`:`Observa o gráfico da função linear. Determina a imagem do objeto ${math(String(x))}.`,v?a:a*x,[`A reta passa pela origem e pelo ponto (1;${a}).`,v?`Logo, k = ${a}.`:`f(${x}) = ${a} × (${x}) = ${a*x}.`],{diagram:{type:'line',a,b:0}});}
+ case 'geometria':{
+  // Triângulo OAB retângulo em A, OA=h, AB=w, B=(w,h)
+  let h=ri(2,6),w=ri(3,10),area=h*w/2,v=ri(0,2);
+  if(v===0)return q(kind,`Na figura, ${math('OAB')} é um triângulo retângulo em A, com ${math('A(0;'+h+')')}. A sua área é ${geometryStep(area)} unidades quadradas e B pertence ao gráfico de uma função linear f. Determina o coeficiente de x em ${math('f(x)=kx')}.`,h/w,[`OA = ${h} e a área é ${geometryStep(area)}.`,`AB = 2 × ${geometryStep(area)} / ${h} = ${w}.`,`B = (${w};${h}) e k = ${h}/${w} = ${geometryStep(h/w)}.`],{diagram:{type:'triangle',h,w},advanced:true});
+  if(v===1)return q(kind,`Na figura, ${math('OAB')} é um triângulo retângulo em A. Sabe-se que ${math('OA='+h)}, que ${math('AB='+w)} e que B pertence ao gráfico de uma função linear f. Determina a constante de proporcionalidade direta.`,h/w,[`B = (${w};${h}).`,`k = ${h}/${w} = ${geometryStep(h/w)}.`],{diagram:{type:'triangle',h,w},advanced:true});
+  return q(kind,`Na figura, ${math('OAB')} é um triângulo retângulo em A, com ${math('A(0;'+h+')')} e B pertencente ao gráfico de ${math('f(x)='+geometryStep(h/w)+'x')}. Determina a área do triângulo.`,area,[`A ordenada de B é ${h}.`,`Da função, a abcissa de B é ${w}.`,`Área = (${h} × ${w})/2 = ${geometryStep(area)}.`],{diagram:{type:'triangle',h,w},advanced:true});}
+ case 'geom_duas':{
+  // O=(0,0); B=(xb,y) on g(x)=bg*x; A=(xa,y) on f(x)=af*x.
+  let af=pick([0.5,1,1.5,2]),bg=pick([2,3,4]);while(bg<=af)bg=pick([2,3,4]);
+  let xb=pick([2,3,4]),y=bg*xb,xa=y/af,area=(xa-xb)*y/2;
+  let g={type:'two-lines',af,bg,xa,xb,y};
+  let v=ri(0,2);
+  if(v===0)return q(kind,`No referencial estão representadas as funções de proporcionalidade direta ${math('f(x)='+geometryStep(af)+'x')} e ${math('g(x)='+geometryStep(bg)+'x')}. O ponto B pertence ao gráfico de g e tem abcissa ${xb}. O ponto A pertence ao gráfico de f e tem a mesma ordenada de B. Determina a área do triângulo [OAB].`,area,[`A ordenada de B é g(${xb}) = ${geometryStep(y)}.`,`Como A pertence ao gráfico de f, ${geometryStep(af)} × x_A = ${geometryStep(y)}; logo, x_A = ${geometryStep(xa)}.`,`A base AB mede ${geometryStep(xa-xb)} e a altura é ${geometryStep(y)}.`,`Área = ${geometryStep(xa-xb)} × ${geometryStep(y)} / 2 = ${geometryStep(area)} unidades quadradas.`],{diagram:g,advanced:true});
+  if(v===1)return q(kind,`No gráfico, ${math('f(x)='+geometryStep(af)+'x')} e ${math('g(x)='+geometryStep(bg)+'x')}. O ponto B, de abcissa ${xb}, pertence a g; o ponto A pertence a f e tem a mesma ordenada de B. Determina a abcissa de A.`,xa,[`g(${xb}) = ${geometryStep(y)}.`,`f(x_A) = ${geometryStep(y)}; ${geometryStep(af)} × x_A = ${geometryStep(y)}.`,`x_A = ${geometryStep(xa)}.`],{diagram:g,advanced:true});
+  return q(kind,`Os pontos A e B pertencem aos gráficos de ${math('f(x)='+geometryStep(af)+'x')} e ${math('g(x)=kx')}, respetivamente, e têm a mesma ordenada. Sabe-se que B tem abcissa ${xb} e ordenada ${geometryStep(y)}. Determina a área do triângulo [OAB].`,area,[`Como B pertence a g, k = ${geometryStep(y)} / ${xb} = ${geometryStep(bg)}.`,`A pertence a f e tem ordenada ${geometryStep(y)}; a sua abcissa é ${geometryStep(y)} / ${geometryStep(af)} = ${geometryStep(xa)}.`,`A base AB mede ${geometryStep(xa-xb)} e a altura mede ${geometryStep(y)}.`,`A área é ${geometryStep(xa-xb)} × ${geometryStep(y)} / 2 = ${geometryStep(area)} unidades quadradas.`],{diagram:g,advanced:true});
+ }
+ case 'geom_base':{
+  // A and B on x-axis, C=(xc,yc) on f(x)=k*x. B-A=base.
+  let xa=pick([1,2,3]),base=pick([2,3,4,5]),xb=xa+base,xc=xb+pick([1,2,3]),k=pick([0.5,1,1.5,2,3]),yc=k*xc,area=base*yc/2;
+  let g={type:'base-triangle',xa,xb,xc,yc};let v=ri(0,2);
+  if(v===0)return q(kind,`No referencial, A(${xa};0), B(${xb};0) e C pertence ao gráfico de uma função de proporcionalidade direta f, tendo abcissa ${xc}. A área do triângulo [ABC] é ${geometryStep(area)} unidades quadradas. Determina a expressão algébrica de f.`,k,[`AB = ${base}.`,`A altura relativa à base AB é ${geometryStep(area)} × 2 / ${base} = ${fmt(yc)}.`,`C = (${xc};${fmt(yc)}).`,`Como f(x)=kx, k = ${fmt(yc)} / ${xc} = ${geometryStep(k)}.`,`Logo, f(x) = ${linearText(k)}.`],{diagram:g,answerType:'expression',advanced:true});
+  if(v===1)return q(kind,`Na figura, A(${xa};0), B(${xb};0) e C pertence ao gráfico de ${math('f(x)='+geometryStep(k)+'x')}, com abcissa ${xc}. Determina a área do triângulo [ABC].`,area,[`AB = ${base}.`,`A ordenada de C é f(${xc}) = ${fmt(yc)}.`,`Área = ${base} × ${fmt(yc)} / 2 = ${geometryStep(area)}.`],{diagram:g,advanced:true});
+  return q(kind,`No referencial, A(${xa};0), B(${xb};0) e C(${xc};${fmt(yc)}). A função f é de proporcionalidade direta e o seu gráfico passa por O e C. Determina a área do triângulo [ABC].`,area,[`A base AB mede ${base} unidades.`,`A altura relativa a AB é a ordenada de C: ${fmt(yc)}.`,`A área é ${base} × ${fmt(yc)} / 2 = ${geometryStep(area)} unidades quadradas.`],{diagram:g,advanced:true});
+ }
+ case 'geom_inverso':{
+  let h=pick([2,3,4,5,6]),w=pick([4,6,8,10]),area=h*w/2,k=h/w;
+  let v=ri(0,1);
+  if(v===0)return q(kind,`No referencial, o triângulo [OAB] é retângulo em A, com A(0;${h}) e B pertencente ao gráfico da função linear ${math('f(x)='+geometryStep(k)+'x')}. Determina a área do triângulo.`,area,[`A ordenada de B é ${h}.`,`Resolver ${geometryStep(k)} × x_B = ${h}, obtendo x_B = ${w}.`,`A área é ${h} × ${w} / 2 = ${geometryStep(area)}.`],{diagram:{type:'triangle',h,w},advanced:true});
+  return q(kind,`O triângulo [OAB] é retângulo em A, com A(0;${h}), área ${geometryStep(area)} e B pertencente ao gráfico de uma função linear f. Determina a constante de proporcionalidade direta de f.`,k,[`Área = OA × AB / 2; ${geometryStep(area)} = ${h} × AB / 2.`,`AB = ${w}, logo B = (${w};${h}).`,`k = ${h} / ${w} = ${geometryStep(k)}.`],{diagram:{type:'triangle',h,w},advanced:true});
+ }
+ case 'grafico_comparar':{
+  let k=pick([0.5,0.75,1,1.5,2]),x=pick([2,4,6,8]),y=k*x;
+  const directIndex=ri(0,1),correctLabel=`Gráfico ${directIndex+1}`;
+  return q(kind,`Observa os dois gráficos. Ambos passam pelo ponto P(${x};${fmt(y)}), mas apenas um representa uma função de proporcionalidade direta. Qual é o gráfico correto?`,correctLabel,[`Uma função de proporcionalidade direta tem gráfico numa reta que passa pela origem.`,`O ${correctLabel.toLowerCase()} passa pela origem e por P(${x};${fmt(y)}).`,`O outro gráfico tem ordenada na origem diferente de zero.`],{diagram:{type:'compare-graphs',x,y,directIndex,intercept:y*0.4},answerType:'choice',choices:['Gráfico 1','Gráfico 2']});
+ }
+ case 'funcao_finita':{
+  let k=pick([-2,-1,1,2]),xs=[-3,-2,-1,0,1,2,3],ys=xs.map(v=>k*v),target=pick(xs),v=ri(0,2);
+  let g={type:'discrete',xs,ys};
+  if(v===0)return q(kind,`O gráfico representa uma função f com domínio {−3; −2; −1; 0; 1; 2; 3}. Determina a imagem do objeto ${target}.`,k*target,[`Localizar o objeto ${target} no eixo horizontal.`,`A ordenada do ponto correspondente é ${fmt(k*target)}.`],{diagram:g});
+  if(v===1)return q(kind,`O gráfico representa uma função f com domínio {−3; −2; −1; 0; 1; 2; 3}. Quantos objetos têm imagem ${fmt(k*target)}?`,1,[`No gráfico, a ordenada ${fmt(k*target)} corresponde apenas ao objeto ${target}.`,`Há um objeto.`],{diagram:g});
+  return q(kind,`O gráfico representa uma função f de domínio {−3; −2; −1; 0; 1; 2; 3}. Determina a constante de proporcionalidade direta da função, sabendo que f(x)=kx.`,k,[`Escolher um ponto com abcissa não nula, por exemplo (1;${fmt(k)}).`,`k = f(1) / 1 = ${fmt(k)}.`],{diagram:g});
+ }
+ case 'contexto':{
+  const variant=ri(0,8),unit=pick([2,3,4,5,6]),n=ri(3,9),total=unit*n;
+  // A pergunta nunca deve repetir a quantidade temporal já fornecida.
+  const otherHours=differentFrom(n,[2,3,4,5,6,7,8,9,10,12]);
+  const otherPeople=differentFrom(n,[2,3,4,5,6,7,8,9,10,12]);
+  if(variant===0)return q(kind,`Numa papelaria, ${n} cadernos iguais custam ${total} €. Quanto custam ${otherHours} cadernos?`,unit*otherHours,[`Preço de um caderno: ${total} ÷ ${n} = ${unit} €.`,`Preço de ${otherHours} cadernos: ${unit} × ${otherHours} = ${unit*otherHours} €.`]);
+  if(variant===1){let times=pick([2,3,4,5,6]);return q(kind,`Um automóvel consome ${unit} litros de combustível por cada 100 km. Quantos quilómetros pode percorrer com ${unit*times} litros, mantendo o mesmo consumo?`,100*times,[`Com ${unit} litros percorre 100 km.`,`Com ${unit*times} litros percorre ${times} × 100 = ${100*times} km.`]);}
+  if(variant===2)return q(kind,`Um ciclista percorre ${total} km em ${n} horas, a velocidade constante. Que distância percorre em ${otherHours} horas?`,unit*otherHours,[`A velocidade é ${total} ÷ ${n} = ${unit} km/h.`,`Em ${otherHours} horas percorre ${unit} × ${otherHours} = ${unit*otherHours} km.`]);
+  if(variant===3){let times=pick([4,6,8,10,12,15]);return q(kind,`Uma torneira enche ${total} litros em ${n} minutos, a caudal constante. Quanto tempo demora a encher ${unit*times} litros?`,times,[`O caudal é ${total} ÷ ${n} = ${unit} litros por minuto.`,`Tempo: ${unit*times} ÷ ${unit} = ${times} minutos.`]);}
+  if(variant===4)return q(kind,`Uma receita para ${n} pessoas utiliza ${total*10} g de farinha. Quantos gramas são necessários para ${otherPeople} pessoas?`,unit*10*otherPeople,[`Por pessoa: ${total*10} ÷ ${n} = ${unit*10} g.`,`Para ${otherPeople} pessoas: ${unit*10} × ${otherPeople} = ${unit*10*otherPeople} g.`]);
+  if(variant===5)return q(kind,`Numa loja, ${n} metros de fita custam ${total} €. Qual é a expressão que dá o preço p(x), em euros, de x metros de fita?`,unit,[`Preço por metro: ${total} ÷ ${n} = ${unit}.`,`Logo, p(x) = ${unit}x.`],{answerType:'expression'});
+  if(variant===6)return q(kind,`Uma impressora produz ${total} páginas em ${n} minutos, a ritmo constante. Quantas páginas produz em ${otherHours} minutos?`,unit*otherHours,[`Produção por minuto: ${total} ÷ ${n} = ${unit}.`,`Em ${otherHours} minutos: ${unit} × ${otherHours} = ${unit*otherHours} páginas.`]);
+  if(variant===7)return q(kind,`Uma vela tem ${unit*10} cm de altura e diminui ${unit} cm por hora. A altura é diretamente proporcional ao tempo decorrido?`, 'Não',[`No instante inicial a altura não é zero.`,`A relação é decrescente e não tem a forma h(t)=kt.`],{answerType:'choice',choices:['Sim','Não']});
+  return q(kind,`Uma empresa cobra uma taxa fixa de ${unit} € e mais ${n} € por cada hora de serviço. O preço é diretamente proporcional ao número de horas?`,'Não',[`Para zero horas, o preço é ${unit} €, diferente de zero.`,`Logo, não existe proporcionalidade direta.`],{answerType:'choice',choices:['Sim','Não']});
+ }
+ case 'erro':{
+  a=pick([2,3,4,5]);x=pick([-3,-2,2,3]);let wrong=a+x;if(wrong===a*x)wrong=a*x+pick([-3,-2,-1,1,2,3]);
+  return q(kind,`Um aluno afirma que, para ${math('f(x)='+a+'x')}, se tem ${math('f('+x+')='+wrong)}. Determina o valor correto de ${math('f('+x+')')}.`,a*x,[`Calcula-se a imagem multiplicando ${a} por ${x}; a igualdade apresentada é falsa.`,`f(${x}) = ${a*x}.`]);}
+ case 'diagrama':{
+  let a=pick([-2,-1,1,2,3]),xs=[-2,0,2],ys=xs.map(v=>a*v),v=ri(0,1);
+  return q(kind,v?`O diagrama representa uma função. Quantos objetos têm imagem 0?`:`No diagrama de setas, determina a imagem do objeto 2.`,v?1:a*2,[v?'Apenas o objeto 0 tem imagem 0.':`A imagem de 2 é ${a*2}.`],{diagram:{type:'arrows',xs,ys}});}
+ case 'modelo_afim':{
+  const fixed=pick([2,3,4,5,7,8]),rate=pick([2,3,4,5]),hours=pick([2,3,4,5,6]);
+  const v=ri(0,3),value=fixed+rate*hours;
+  if(v===0)return q(kind,`Uma empresa cobra ${fixed} € de taxa fixa e ${rate} € por hora. Escreve a expressão algébrica da função que relaciona o preço p, em euros, com o número de horas h.`,fixed,[`A taxa fixa é ${fixed} € e cada hora acrescenta ${rate} €.`,`p(h)=${rate}h+${fixed}.`],{answerType:'affine',expressionText:`p(h)=${rate}h+${fixed}`,rate,fixed,advanced:true});
+  if(v===1)return q(kind,`Uma empresa cobra ${fixed} € de taxa fixa e ${rate} € por hora. Qual é o preço de ${hours} horas de serviço?`,value,[`p(h)=${rate}h+${fixed}.`,`p(${hours})=${rate}×${hours}+${fixed}=${value} €.`]);
+  if(v===2)return q(kind,`Uma empresa cobra ${fixed} € de taxa fixa e ${rate} € por hora. O preço é diretamente proporcional ao número de horas? Justifica.`, 'Não',[`Para h=0, o preço é ${fixed} €, não zero.`,`A expressão p(h)=${rate}h+${fixed} não tem a forma kh.`],{answerType:'choice',choices:['Sim','Não']});
+  return q(kind,`Duas empresas cobram, respetivamente, ${fixed} € de taxa fixa mais ${rate} € por hora, e ${rate+2} € por hora sem taxa fixa. Qual é a mais económica para ${hours} horas?`,(value< (rate+2)*hours?'Empresa A':value>(rate+2)*hours?'Empresa B':'Custam o mesmo'),[`Empresa A: ${fixed}+${rate}×${hours}=${value} €.`,`Empresa B: ${rate+2}×${hours}=${(rate+2)*hours} €.`,`Comparar os dois preços.`],{answerType:'choice',choices:['Empresa A','Empresa B','Custam o mesmo'],advanced:true});
+ }
+ case 'tabela_afim':{
+  const rate=pick([2,3,4]),fixed=pick([2,3,5,7]),xs=[0,1,2,3],ys=xs.map(x=>fixed+rate*x),v=ri(0,2);
+  if(v===0)return q(kind,`A tabela apresenta o custo de um serviço em função do número de horas. Existe proporcionalidade direta? Justifica.`, 'Não',[`Para 0 horas, o custo é ${fixed} €, não zero.`,`Há uma taxa fixa; não existe proporcionalidade direta.`],{table:table(xs,ys),answerType:'choice',choices:['Sim','Não']});
+  if(v===1)return q(kind,`A tabela apresenta o custo de um serviço em função do número de horas. Qual é o aumento do preço por cada hora adicional?`,rate,[`A diferença entre imagens consecutivas é ${rate}.`,`O preço aumenta ${rate} € por hora.`],{table:table(xs,ys)});
+  return q(kind,`A tabela apresenta o custo de um serviço em função do número de horas. Quanto custam 5 horas?`,fixed+5*rate,[`O preço inicial é ${fixed} € e aumenta ${rate} € por hora.`,`Para 5 horas: ${fixed}+5×${rate}=${fixed+5*rate} €.`],{table:table(xs,ys),advanced:true});
+ }
+ case 'interpretar_funcao':{
+  const fixed=pick([12,15,18,20,24,30]),rate=pick([2,3,4]);let hours=pick([2,3,4,5]);let v=ri(0,2);
+  if(v===1 && fixed-rate*hours<=0)hours=ri(1,Math.max(1,Math.ceil(fixed/rate)-1));
+  if(v===0)return q(kind,`A altura de uma vela, em centímetros, é dada por ${math('h(t)='+fixed+'-'+rate+'t')}, sendo t o tempo em horas. Qual é a altura inicial da vela?`,fixed,[`A altura inicial corresponde a t=0.`,`h(0)=${fixed} cm.`]);
+  if(v===1)return q(kind,`Uma vela tem inicialmente ${fixed} cm de altura e perde ${rate} cm por hora. Qual é a sua altura ao fim de ${hours} horas, enquanto permanece acesa?`,fixed-rate*hours,[`Substituir t por ${hours}.`,`h(${hours})=${fixed}-${rate}×${hours}=${fixed-rate*hours} cm.`]);
+  return q(kind,`A altura de uma vela, em centímetros, é dada por ${math('h(t)='+fixed+'-'+rate+'t')}. A altura é diretamente proporcional ao tempo?`, 'Não',[`No instante inicial, h(0)=${fixed} cm.`,`Uma função de proporcionalidade direta tem imagem zero para o objeto zero.`],{answerType:'choice',choices:['Sim','Não']});
+ }
+ case 'comparar_tabelas':{
+  const k=pick([2,3,4]),fixed=pick([2,3,5]),xs=[0,1,2,3],ys=xs.map(x=>k*x+fixed);
+  return q(kind,`A tabela apresenta os valores de uma função afim. Esta função é linear? Justifica.`, 'Não',[`A tabela mostra que f(0)=${fixed}, diferente de zero.`,`Uma função linear tem a forma f(x)=kx e verifica f(0)=0.`],{table:table(xs,ys),answerType:'choice',choices:['Sim','Não'],advanced:true});
+ }
+
+ case 'comparar_modelos':{
+  const a=pick([2,3,4,5]),b=pick([6,8,10,12]),t=pick([2,3,4,5,6]);
+  const p=a*t+b, q0=(a+2)*t, diff=p-q0;
+  const v=ri(0,2);
+  if(v===0)return q(kind,`Um serviço A cobra ${b} € de taxa fixa e ${a} € por hora; o serviço B cobra ${a+2} € por hora, sem taxa fixa. Para quantas horas os preços são iguais?`,b/2,[`Igualar os preços: ${b}+${a}h=(${a+2})h.`,`Assim, 2h=${b} e h=${b/2} horas.`],{advanced:true,skill:'igualar_modelos'});
+  if(v===1)return q(kind,`Duas empresas cobram A(h)=${a}h+${b} e B(h)=${a+2}h, com h em horas e preços em euros. Qual é a diferença A(${t})−B(${t}), em euros?`,diff,[`A(${t})=${p} € e B(${t})=${q0} €.`,`Diferença: ${p}−${q0}=${diff} €.`],{advanced:true,skill:'comparar_custos'});
+  return q(kind,`O preço de um serviço é p(h)=${a}h+${b}, com h em horas. Quantas horas de serviço correspondem a um preço de ${p} €?`,t,[`Resolver ${a}h+${b}=${p}.`,`Logo, ${a}h=${p-b} e h=${t}.`],{advanced:true,skill:'inverter_modelo'});
+ }
+ case 'decidir_modelo':{
+  const a=pick([2,3,4,5]),b=pick([3,4,6,8]),t=pick([2,3,4,5]);
+  const v=ri(0,2);
+  if(v===0)return q(kind,`Uma empresa cobra ${b} € de taxa fixa e ${a} € por hora. Um cliente afirma que, duplicando as horas, o preço duplica. A afirmação é verdadeira? Justifica.`, 'Não',[`Para ${t} horas: ${b}+${a}×${t}=${b+a*t} €.`,`Para ${2*t} horas: ${b}+${a}×${2*t}=${b+2*a*t} €, diferente do dobro de ${b+a*t} €.`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'contraexemplo'});
+  if(v===1)return q(kind,`Uma função afim tem f(0)=${b} e f(2)=${b+2*a}. Determina f(5).`,b+5*a,[`A variação por unidade é (${b+2*a}−${b})/2=${a}.`,`Assim, f(x)=${a}x+${b} e f(5)=${b+5*a}.`],{advanced:true,skill:'inferir_afim'});
+  return q(kind,`Uma função afim verifica f(1)=${b+a} e f(3)=${b+3*a}. Determina f(0).`,b,[`O acréscimo por unidade é (${b+3*a}−${b+a})/2=${a}.`,`Como f(1)=${b+a}, f(0)=${b+a}−${a}=${b}.`],{advanced:true,skill:'extrapolar_origem'});
+ }
+ case 'justificar':{
+  const a=pick([2,3,4,5]),b=pick([2,4,6,8]);let v=ri(0,2);
+  if(v===0)return q(kind,`Uma função f satisfaz f(2)=${2*a} e f(4)=${4*a}. Estes dois dados, por si só, permitem concluir que f é uma função linear?`, 'Não',[`Conhecer apenas duas imagens não garante que f(x)=kx para todos os objetos do domínio.`,`É necessário conhecer a regra ou informação adicional sobre a função.`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'insuficiencia_dados'});
+  if(v===1)return q(kind,`Uma tabela apresenta f(0)=${b} e f(1)=${b+a}. Pode representar uma função de proporcionalidade direta?`, 'Não',[`Numa proporcionalidade direta, f(0)=0.`,`Como f(0)=${b}≠0, não existe proporcionalidade direta.`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'refutar_proporcao'});
+  return q(kind,`Uma função afim é dada por f(x)=${a}x+${b}. É possível que o seu gráfico passe pela origem do referencial?`, 'Não',[`Na origem, x=0 e f(0)=${b}.`,`Como ${b}≠0, o gráfico não passa pela origem.`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'origem_afim'});
+ }
+ case 'quadrado':{
+  let n=ri(1,3),b=ri(-3,3),xs=[-3,-2,-1,0,1,2,3],target=n*n+b;
+  return q(kind,`Desafio de aprofundamento: a função ${math('f(x)=x^2'+sg(b))} tem domínio ${math('\\{-3;-2;-1;0;1;2;3\\}')}. Quantos objetos têm imagem ${math(String(target))}?`,2,[`Resolver x² = ${n*n}.`,`Os objetos são −${n} e ${n}.`,`Existem dois objetos.`],{extra:true});}
+ }
+}
+
+function getQ8(kind){
+ const L=level;
+ const a=pick(L===1?[1,2,3,-1,-2]:L===2?[-4,-3,-2,2,3,4]:[-5,-4,-3,-2,-1,1,2,3,4,5]);
+ const b=pick(L===1?[0,2,3,4,5]:L===2?[-6,-4,-2,0,2,3,5,7]:[-9,-7,-5,-3,-2,0,2,4,6,8]);
+ const x=pick(L===1?[0,1,2,3]:L===2?[-3,-2,-1,0,1,2,3,4]:[-5,-4,-3,-2,-1,0,1,2,3,4,5]);
+ const f=t=>a*t+b;
+ const expr=(m,n)=>`${linearText(m)}${n===0?'':sg(n)}`;
+ const aff=(m,n)=>`f(x)=${expr(m,n)}`;
+ const withFormula=(m,n)=>math('f(x)='+linearText(m)+(n?sg(n):''));
+ const T=(m,n)=>table([0,1,2,3],[n,n+m,n+2*m,n+3*m]);
+ const answerAffine=(m,n,steps,skill)=>q(kind,`Determina a expressão algébrica da função afim f, sabendo que ${steps[0]}.`,m,steps.slice(1),{answerType:'affine',rate:m,fixed:n,expressionText:aff(m,n),advanced:L>1,skill});
+ switch(kind){
+ case 'afim_expressao':{
+  const v=ri(0,2);
+  if(v===0)return q(kind,`Considera ${withFormula(a,b)}. Determina ${math('f('+x+')')}.`,f(x),[`Substituir x por ${x}: f(${x})=${a}×(${x})${b?sg(b):''}.`,`Logo, f(${x})=${f(x)}.`],{skill:'avaliar_afim'});
+  if(v===1)return q(kind,`A função ${withFormula(a,b)} está definida em ℝ. Determina a imagem de 0.`,b,[`f(0)=${a}×0${b?sg(b):''}=${b}.`,`O valor é a ordenada na origem.`],{skill:'ordenada_origem'});
+  return q(kind,`Para ${withFormula(a,b)}, determina a variação de f quando x aumenta uma unidade.`,a,[`Numa função afim, a variação por unidade é o coeficiente de x.`,`Assim, a variação é ${a}.`],{skill:'taxa_variacao'});
+ }
+ case 'afim_tabela':{
+  const v=ri(0,3),xs=[0,1,2,3],ys=xs.map(f);
+  if(v===3)return q(kind,`A tabela representa uma função afim. Determina a sua expressão algébrica.`,a,[`A diferença entre imagens consecutivas é ${a}, logo o declive é ${a}.`,`Como f(0)=${b}, a expressão é ${aff(a,b)}.`],{table:table(xs,ys),answerType:'affine',rate:a,fixed:b,expressionText:aff(a,b),advanced:L>1,skill:'tabela_expressao'});
+  if(v===0)return q(kind,`Observa a tabela de uma função afim. Determina f(5).`,f(5),[`A variação por unidade é ${a} e f(0)=${b}.`,`f(5)=${a}×5${b?sg(b):''}=${f(5)}.`],{table:table(xs,ys),advanced:L>1,skill:'tabela_prever'});
+  if(v===1)return q(kind,`Observa a tabela de uma função afim. Qual é a ordenada na origem?`,b,[`A ordenada na origem é f(0).`,`Pela tabela, f(0)=${b}.`],{table:table(xs,ys),skill:'tabela_ordenada'});
+  return q(kind,`Observa a tabela de uma função afim. Determina o declive da reta que representa f.`,a,[`Para um aumento de 1 em x, a imagem varia ${a}.`,`O declive é ${a}.`],{table:table(xs,ys),skill:'tabela_declive'});
+ }
+ case 'afim_pontos':{
+  const x1=L===1?0:pick([-3,-2,-1,0,1]),x2=x1+pick(L===3?[2,3,4]:[1,2]),y1=f(x1),y2=f(x2);
+  const v=ri(0,3);
+  if(v===3)return q(kind,`Uma função afim passa por A(${x1};${y1}) e B(${x2};${y2}). Determina a sua expressão algébrica.`,a,[`O declive é (${y2}−(${y1}))/(${x2}−(${x1}))=${a}.`,`Usando o ponto A, b=${y1}−(${a})×(${x1})=${b}.`,`Logo, ${aff(a,b)}.`],{answerType:'affine',rate:a,fixed:b,expressionText:aff(a,b),advanced:true,skill:'expressao_dois_pontos'});
+  if(v===0)return q(kind,`Uma função afim passa por A(${x1};${y1}) e B(${x2};${y2}). Determina o declive.`,a,[`a=(${y2}−(${y1}))/(${x2}−(${x1})).`,`Logo, a=${a}.`],{advanced:L>1,skill:'declive_dois_pontos'});
+  if(v===1)return q(kind,`Uma função afim passa por A(${x1};${y1}) e B(${x2};${y2}). Determina f(0).`,b,[`A variação por unidade é (${y2}−(${y1}))/(${x2}−(${x1}))=${a}.`,`De f(${x1})=${y1}, obtém-se b=${y1}−(${a})×(${x1})=${b}.`],{advanced:true,skill:'origem_dois_pontos'});
+  return q(kind,`A função afim f verifica f(${x1})=${y1} e f(${x2})=${y2}. Determina f(${x2+2}).`,f(x2+2),[`O declive é (${y2}−(${y1}))/(${x2}−(${x1}))=${a}.`,`f(${x2+2})=f(${x2})+2×(${a})=${f(x2+2)}.`],{advanced:true,skill:'prever_dois_pontos'});
+ }
+ case 'afim_grafico':{
+  const v=ri(0,2),g={type:'line',a,b};
+  if(v===0)return q(kind,`Observa o gráfico da função afim. Determina a ordenada na origem.`,b,[`A reta intersecta o eixo das ordenadas no ponto (0;${b}).`,`Logo, f(0)=${b}.`],{diagram:g,skill:'grafico_intercecao'});
+  if(v===1)return q(kind,`Observa o gráfico da função afim. Determina o declive da reta.`,a,[`Ao aumentar x uma unidade, y varia ${a}.`,`O declive é ${a}.`],{diagram:g,skill:'grafico_declive'});
+  return q(kind,`Observa o gráfico da função afim. Determina a imagem do objeto ${x}.`,f(x),[`O gráfico representa ${aff(a,b)}.`,`f(${x})=${a}×(${x})${b?sg(b):''}=${f(x)}.`],{diagram:g,skill:'grafico_imagem'});
+ }
+ case 'parametros':{
+  const d=pick([-3,-2,2,3]),v=ri(0,2);
+  if(v===0)return q(kind,`Considera f(x)=${expr(a,b)} e g(x)=${expr(a,b+d)}. Qual é a diferença g(0)−f(0)?`,d,[`f(0)=${b} e g(0)=${b+d}.`,`A diferença é ${d}; as retas são paralelas.`],{advanced:L>1,skill:'variar_b'});
+  if(v===1)return q(kind,`Considera f(x)=${expr(a,b)} e g(x)=${expr(a+d,b)}. Qual é a diferença g(2)−f(2)?`,2*d,[`O termo independente é igual; os declives diferem ${d}.`,`Em x=2, a diferença é 2×(${d})=${2*d}.`],{advanced:L>1,skill:'variar_a'});
+  return q(kind,`A reta de f(x)=${expr(a,b)} é deslocada verticalmente ${Math.abs(d)} unidades ${d>0?'para cima':'para baixo'}. Qual passa a ser a ordenada na origem?`,b+d,[`A ordenada na origem inicial é ${b}.`,`A nova ordenada é ${b}${sg(d)}=${b+d}.`],{skill:'translacao_vertical'});
+ }
+ case 'classificar':{
+  const v=ri(0,2);
+  if(v===0)return q(kind,`A função ${withFormula(a,b)} é uma função de proporcionalidade direta?`,b===0?'Sim':'Não',[`Uma função linear tem a forma f(x)=kx e passa pela origem.`,`Como f(0)=${b}, ${b===0?'é':'não é'} de proporcionalidade direta.`],{answerType:'choice',choices:['Sim','Não'],skill:'classificar_proporcao'});
+  if(v===1)return q(kind,`A função constante f(x)=${b||3} é um caso particular de função afim?`,'Sim',[`Uma função afim tem a forma f(x)=ax+b.`,`Para a=0, obtém-se uma função constante.`],{answerType:'choice',choices:['Sim','Não'],skill:'classificar_constante'});
+  return q(kind,`Uma função afim com declive ${a} é ${a>0?'crescente':'decrescente'}?`,'Sim',[`O declive é ${a}.`,`Um declive ${a>0?'positivo':'negativo'} corresponde a uma função ${a>0?'crescente':'decrescente'}.`],{answerType:'choice',choices:['Sim','Não'],skill:'classificar_monotonia'});
+ }
+ case 'modelacao':{
+  const fixed=pick([3,5,7,9,12]),rate=pick([2,3,4,5]),hours=pick([2,3,4,6]);const v=ri(0,2);
+  if(v===0)return q(kind,`Um serviço cobra ${fixed} € de taxa fixa e ${rate} € por hora. Qual é o preço de ${hours} horas?`,fixed+rate*hours,[`p(h)=${rate}h+${fixed}.`,`p(${hours})=${rate}×${hours}+${fixed}=${fixed+rate*hours} €.`],{skill:'modelar_preco'});
+  if(v===1)return q(kind,`Uma vela tem ${rate*8} cm de altura e diminui ${rate} cm por hora. Qual é a altura ao fim de ${hours} horas?`,rate*(8-hours),[`h(t)=${rate*8}−${rate}t, para 0≤t≤8.`,`h(${hours})=${rate*8}−${rate}×${hours}=${rate*(8-hours)} cm.`],{skill:'modelar_vela'});
+  return q(kind,`Uma empresa cobra ${fixed} € de taxa fixa e ${rate} € por hora. Se um cliente pagar ${fixed+rate*hours} €, quantas horas utilizou o serviço?`,hours,[`Resolver ${rate}h+${fixed}=${fixed+rate*hours}.`,`h=${hours} horas.`],{advanced:true,skill:'modelar_inverter'});
+ }
+ case 'comparar_custos':{
+  const fixed=pick([4,6,8,10,12]),rate=pick([2,3,4,5]),delta=pick([2,3]),t=pick([2,3,4,5,6]);
+  const v=ri(0,2),pa=fixed+rate*t,pb=(rate+delta)*t;
+  if(v===0)return q(kind,`O serviço A cobra ${fixed} € de taxa fixa e ${rate} €/h; B cobra ${rate+delta} €/h sem taxa fixa. Para quantas horas custam o mesmo?`,fixed/delta,[`Igualar: ${fixed}+${rate}h=(${rate+delta})h.`,`Assim, ${delta}h=${fixed} e h=${exactFraction(fixed/delta)}.`],{advanced:true,skill:'comparar_equilibrio'});
+  if(v===1)return q(kind,`O serviço A cobra ${fixed} € de taxa fixa e ${rate} €/h; B cobra ${rate+delta} €/h sem taxa fixa. Qual é a diferença A(${t})−B(${t}) em euros?`,pa-pb,[`A(${t})=${pa} € e B(${t})=${pb} €.`,`A diferença é ${pa}−${pb}=${pa-pb} €.`],{advanced:true,skill:'comparar_diferenca'});
+  return q(kind,`Uma empresa A cobra ${fixed} € de taxa fixa e ${rate} €/h; a B cobra ${rate+delta} €/h. Para ${t} horas, qual é a mais económica?`,pa<pb?'A':pa>pb?'B':'Igual',[`A: ${fixed}+${rate}×${t}=${pa} €.`,`B: ${rate+delta}×${t}=${pb} €.`],{answerType:'choice',choices:['A','B','Igual'],advanced:true,skill:'comparar_decidir'});
+ }
+ case 'inverter':{
+  const y=f(x),v=ri(0,1);
+  if(v===0)return q(kind,`Na função ${withFormula(a,b)}, determina o objeto cuja imagem é ${y}.`,x,[`Resolver ${a}x${b?sg(b):''}=${y}.`,`x=(${y}−(${b}))/(${a})=${x}.`],{advanced:L>1,skill:'inverter_afim'});
+  const r=pick([2,3,4,5]),fix=pick([2,3,4,6]);return q(kind,`Um serviço tem preço p(h)=${r}h+${fix} euros. Quantas horas correspondem a ${fix+3*r} €?`,3,[`Resolver ${r}h+${fix}=${fix+3*r}.`,`h=3 horas.`],{skill:'inverter_contexto'});
+ }
+ case 'justificar_afim':{
+  const v=ri(0,2),fix=pick([2,3,5,7]),r=pick([2,3,4]);
+  if(v===0)return q(kind,`Uma empresa cobra ${fix} € de taxa fixa e ${r} €/h. Se duplicar o número de horas, o preço também duplica?`,'Não',[`p(h)=${r}h+${fix} e p(2h)=${2*r}h+${fix}.`,`2p(h)=${2*r}h+${2*fix}, que é diferente de p(2h).`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'refutar_duplicacao'});
+  if(v===1)return q(kind,`Duas funções afins f(x)=${expr(a,b)} e g(x)=${expr(a,b+fix)} têm gráficos paralelos?`,'Sim',[`As duas funções têm o mesmo declive ${a}.`,`As retas têm a mesma direção e ordenadas na origem diferentes.`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'retas_paralelas'});
+  return q(kind,`Conhecendo apenas f(1)=${r+fix} e f(2)=${2*r+fix}, podemos afirmar que uma função qualquer f é afim?`,'Não',[`Duas imagens não garantem que a regra seja f(x)=ax+b em todo o domínio.`,`Seria necessário conhecer a natureza da função ou outros dados.`],{answerType:'choice',choices:['Sim','Não'],advanced:true,skill:'dados_insuficientes'});
+ }
+ case 'erro_afim':{
+  const wrong=a*x-b,correct=f(x),v=ri(0,1);
+  if(v===0 && b!==0)return q(kind,`Um aluno calculou f(${x})=${wrong} para f(x)=${expr(a,b)}, trocando o sinal do termo independente. Determina o valor correto.`,correct,[`É necessário adicionar ${b}, e não ${-b}.`,`f(${x})=${a}×(${x})${sg(b)}=${correct}.`],{skill:'erro_sinal'});
+  return q(kind,`Um aluno afirma que f(x)=${expr(a,b)} tem declive ${b} e ordenada na origem ${a}. Qual é o declive correto?`,a,[`Em f(x)=ax+b, o declive é o coeficiente de x.`,`Logo, o declive é ${a}.`],{skill:'erro_parametros'});
+ }
+ case 'triangulo_afim':{
+  // Duas retas não paralelas, pontos A,D no eixo Oy e interseção B no semiplano x>0.
+  const m=pick([-1,-2,-3]),n=pick([1,2,3]),xb=pick([2,3,4]);
+  const yd=pick([-5,-4,-3,-2]),ya=yd+(n-m)*xb;
+  if(ya>8)return getQ8(kind);
+  const yb=m*xb+ya,area=(ya-yd)*xb/2;
+  const prompt=`No referencial estão representadas as funções ${math('f(x)='+linearText(m)+sg(ya))} e ${math('g(x)='+linearText(n)+sg(yd))}. A e D são as interseções com o eixo das ordenadas e B é o ponto de interseção das duas retas. Determina a área do triângulo [ABD].`;
+  return q(kind,prompt,area,[`A=(0;${ya}) e D=(0;${yd}), pelo que AD=${ya-yd}.`,`Igualando as expressões: ${linearText(m)}${sg(ya)}=${linearText(n)}${sg(yd)}, obtém-se x=${xb}.`,`B=(${xb};${yb}); a distância de B ao eixo Oy é ${xb}.`,`Área = (${ya-yd}×${xb})/2 = ${exactFraction(area)} unidades quadradas.`],{diagram:{type:'affine-triangle',m,n,ya,yd,xb,yb},advanced:true,skill:'geometria_area_duas_afins'});
+ }
+ case 'intersecao_afim':{
+  const x0=pick([-3,-2,-1,1,2,3]),m=pick([-3,-2,-1,1,2,3]),n=pick([-3,-2,-1,1,2,3].filter(v=>v!==m));
+  const c=pick([-3,-2,-1,0,1,2,3]),d=c+(m-n)*x0,y0=m*x0+c;
+  const v=ri(0,1);
+  if(v===0)return q(kind,`As retas ${math('f(x)='+linearText(m)+(c?sg(c):''))} e ${math('g(x)='+linearText(n)+(d?sg(d):''))} intersetam-se no ponto P. Determina a abcissa de P.`,x0,[`No ponto de interseção, f(x)=g(x).`,`Resolver ${linearText(m)}${c?sg(c):''}=${linearText(n)}${d?sg(d):''}.`,`Logo, x=${x0} e P=(${x0};${y0}).`],{diagram:{type:'affine-pair',m,n,c,d,x0,y0},advanced:true,skill:'intersecao_abcissa'});
+  return q(kind,`Os gráficos de ${math('f(x)='+linearText(m)+(c?sg(c):''))} e ${math('g(x)='+linearText(n)+(d?sg(d):''))} têm um ponto comum P. Determina a ordenada de P.`,y0,[`Igualar f(x)=g(x) e resolver: x=${x0}.`,`Substituir: f(${x0})=${m}×(${x0})${c?sg(c):''}=${y0}.`,`Portanto, P=(${x0};${y0}).`],{diagram:{type:'affine-pair',m,n,c,d,x0,y0},advanced:true,skill:'intersecao_ordenada'});
+ }
+ case 'paralelas_afim':{
+  const slope=pick([-4,-3,-2,-1,1,2,3,4]),xx=pick([-3,-2,-1,1,2,3]),yy=pick([-6,-4,-2,1,3,5]),intercept=yy-slope*xx;
+  const v=ri(0,1);
+  if(v===0)return q(kind,`A reta s é paralela à reta r, definida por ${math('y='+linearText(slope)+sg(pick([2,3,4])))}. Sabendo que s passa pelo ponto P(${xx};${yy}), determina a ordenada na origem de s.`,intercept,[`As retas paralelas têm o mesmo declive: a=${slope}.`,`Como P pertence a s, ${yy}=${slope}×(${xx})+b.`,`Assim, b=${intercept}.`],{advanced:true,skill:'paralelismo_ordenada'});
+  return q(kind,`A função afim g tem gráfico paralelo ao de ${math('f(x)='+linearText(slope)+sg(2))} e verifica g(${xx})=${yy}. Determina g(0).`,intercept,[`O declive de g é ${slope}.`,`De g(${xx})=${yy}, resulta ${slope}×(${xx})+b=${yy}.`,`Logo, g(0)=b=${intercept}.`],{advanced:true,skill:'paralelismo_valor_inicial'});
+ }
+ case 'variacao':{
+  const d=pick([2,3,4]),v=ri(0,2);
+  if(v===0)return q(kind,`Para a função ${withFormula(a,b)}, calcula f(${x+d})−f(${x}).`,a*d,[`Numa função afim, a variação da imagem é o declive vezes a variação de x.`,`f(${x+d})−f(${x})=${a}×${d}=${a*d}.`],{advanced:L>1,skill:'variacao_intervalo'});
+  if(v===1)return q(kind,`A função afim f tem declive ${a} e f(${x})=${f(x)}. Determina f(${x+d}).`,f(x+d),[`Ao aumentar x em ${d}, f varia ${a*d}.`,`f(${x+d})=${f(x)}${sg(a*d)}=${f(x+d)}.`],{advanced:true,skill:'variacao_projecao'});
+  return q(kind,`A reta de uma função afim passa pelos pontos A(0;${b}) e B(2;${f(2)}). Qual é a variação da imagem quando x passa de 0 para 2?`,2*a,[`A variação é f(2)−f(0).`,`(${f(2)})−(${b})=${2*a}.`],{skill:'variacao_pontos'});
+ }
+ }
+ return getQ(kind);
+}
+
+function eligible(){const all=modes[mode].slice();if(level===1){const basics=['afim_expressao','afim_tabela','afim_grafico','classificar','modelacao','erro_afim'];const filtered=all.filter(k=>basics.includes(k));return filtered.length?filtered:all;}return all;}
+function validQuestion(item,lvl){
+ if(!item||!item.prompt||!Array.isArray(item.steps)||!item.steps.length)return false;
+ if(typeof item.answer==='number'&&!Number.isFinite(item.answer))return false;
+ if(item.kind==='interpretar_funcao' && typeof item.answer==='number' && item.prompt.includes('vela') && item.prompt.includes('ao fim') && item.answer<=0)return false;
+ if(item.kind==='contexto' && /receita para (\d+) pessoas[\s\S]*necessários para (\d+) pessoas/.test(item.prompt)){
+  const m=item.prompt.match(/receita para (\d+) pessoas[\s\S]*necessários para (\d+) pessoas/);if(m&&m[1]===m[2])return false;
+ }
+ if(lvl===3 && item.kind==='dominio')return false;
+ return true;
+}
+function generateOne(kind){for(let i=0;i<100;i++){const item=getQ8(kind);if(validQuestion(item,level))return item;}throw Error('Não foi possível gerar uma questão válida: '+kind)}
+function batch(n){
+ const kinds=eligible(),out=[],seen=new Set(),counts={};
+ for(let i=0;i<n;i++){
+  let sorted=[...kinds].sort((a,b)=>(counts[a]||0)-(counts[b]||0));
+  let low=counts[sorted[0]]||0,candidates=sorted.filter(k=>(counts[k]||0)===low);
+  let item,kind;
+  for(let attempt=0;attempt<100;attempt++){kind=pick(candidates);item=generateOne(kind);if(!seen.has(item.key)&&!history.includes(item.key))break}
+  counts[kind]=(counts[kind]||0)+1;seen.add(item.key);out.push(item);
+ }
+ history.push(...out.map(v=>v.key));history=history.slice(-90);
+ return out;
+}
+function graphSvg(g){
+ if(g.type==='affine-triangle'||g.type==='affine-pair'){
+  const W=520,H=330,ox=240,oy=165,sc=19;
+  const X=v=>ox+v*sc,Y=v=>oy-v*sc;
+  let s=`<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de duas funções afins com interseção e eixos cartesianos"><defs><clipPath id="clipAff"><rect x="20" y="12" width="480" height="300"/></clipPath></defs>`;
+  for(let i=-10;i<=10;i+=2)s+=`<line x1="${X(i)}" y1="12" x2="${X(i)}" y2="312" stroke="#edf0f5"/><line x1="20" y1="${Y(i)}" x2="500" y2="${Y(i)}" stroke="#edf0f5"/>`;
+  s+=`<line x1="20" y1="${oy}" x2="500" y2="${oy}" stroke="#334155" stroke-width="1.5"/><line x1="${ox}" y1="312" x2="${ox}" y2="12" stroke="#334155" stroke-width="1.5"/><text x="490" y="${oy+17}">x</text><text x="${ox+9}" y="22">y</text><text x="${ox-15}" y="${oy+17}">O</text>`;
+  const m=g.type==='affine-triangle'?g.m:g.m,n=g.n,c=g.type==='affine-triangle'?g.ya:g.c,d=g.type==='affine-triangle'?g.yd:g.d;
+  if(g.type==='affine-triangle')s+=`<polygon points="${X(0)},${Y(c)} ${X(g.xb)},${Y(g.yb)} ${X(0)},${Y(d)}" fill="#f8c980" fill-opacity=".55" stroke="#d09a40" stroke-width="1.4"/>`;
+  s+=`<g clip-path="url(#clipAff)"><line x1="${X(-11)}" y1="${Y(m*(-11)+c)}" x2="${X(11)}" y2="${Y(m*11+c)}" stroke="#315ee7" stroke-width="2.7"/><line x1="${X(-11)}" y1="${Y(n*(-11)+d)}" x2="${X(11)}" y2="${Y(n*11+d)}" stroke="#d3544a" stroke-width="2.7"/></g>`;
+  const xx=g.type==='affine-triangle'?g.xb:g.x0,yy=g.type==='affine-triangle'?g.yb:g.y0;
+  if(g.type==='affine-triangle')for(const [name,y] of [['A',c],['D',d]])s+=`<circle cx="${X(0)}" cy="${Y(y)}" r="4" fill="#263f9e"/><text x="${X(0)-20}" y="${Y(y)-7}" font-size="15">${name}</text>`;
+  s+=`<circle cx="${X(xx)}" cy="${Y(yy)}" r="4.5" fill="#263f9e"/><text x="${X(xx)+8}" y="${Y(yy)-7}" font-size="15">${g.type==='affine-triangle'?'B':'P'}</text><text x="${X(0)+8}" y="${Y(c)-12}" fill="#315ee7">f</text><text x="${X(0)+8}" y="${Y(d)+19}" fill="#d3544a">g</text></svg>`;
+  return s;
+ }
+ const width=520,height=300,cx=245,cy=250,scale=23;
+ if(g.type==='triangle'){
+  const X=62,Y=252,unit=Math.min(340/g.w,175/g.h),base=g.w*unit,top=g.h*unit,xx=X+base,yy=Y-top;
+  return `<svg class="graph" viewBox="0 0 520 310" role="img" aria-label="Triângulo OAB retângulo em A e reta de uma função linear">
+  <defs><marker id="arrowaxis" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#334155"/></marker></defs>
+  <line x1="35" y1="${Y}" x2="485" y2="${Y}" stroke="#334155" stroke-width="1.5" marker-end="url(#arrowaxis)"/><line x1="${X}" y1="275" x2="${X}" y2="30" stroke="#334155" stroke-width="1.5" marker-end="url(#arrowaxis)"/>
+  <polygon points="${X},${Y} ${X},${yy} ${xx},${yy}" fill="#dcebd2" opacity=".85"/><line x1="${X}" y1="${yy}" x2="${xx}" y2="${yy}" stroke="#4caf67" stroke-width="2"/><line x1="${X}" y1="${Y}" x2="${Math.min(470,X+base*(Y-35)/top)}" y2="${Y-(Math.min(470,X+base*(Y-35)/top)-X)*top/base}" stroke="#4caf67" stroke-width="2.5"/><line x1="${xx}" y1="${yy}" x2="${xx}" y2="${Y}" stroke="#aab4c4" stroke-dasharray="5 4"/><path d="M${X+13},${yy} v13 h-13" fill="none" stroke="#65758b"/>
+  <text x="${X-15}" y="${Y+16}" font-size="15">O</text><text x="${X-16}" y="${yy-7}" font-size="15">A</text><text x="${xx+7}" y="${yy-7}" font-size="15">B</text><text x="480" y="${Y+16}" font-size="14">x</text><text x="${X-17}" y="26" font-size="14">y</text><text x="456" y="${Y-(456-X)*top/base-12}" fill="#399451" font-size="15">f</text></svg>`;
+ }
+ if(['two-lines','base-triangle','compare-graphs','discrete'].includes(g.type)){
+  const W=520,H=315,top=27,right=492;let ox=64,oy=265;
+  let xmax=10,ymax=10;
+  if(g.type==='two-lines'){xmax=Math.max(g.xa,g.xb)*1.17;ymax=g.y*1.35}
+  if(g.type==='base-triangle'){xmax=g.xc*1.2;ymax=g.yc*1.4}
+  if(g.type==='compare-graphs'){
+    let pieces='';
+    for(let i=0;i<2;i++){
+      const dx=i*255+12,ox2=dx+44,oy2=239;
+      const scaleX=144/(g.x*1.2),scaleY=140/(Math.max(1,g.y)*1.35);
+      const xx=v=>ox2+v*scaleX,yy=v=>oy2-v*scaleY;
+      const intercept=i===g.directIndex?0:g.intercept;
+      const slope=(g.y-intercept)/g.x;
+      pieces+=`<line x1="${dx+15}" y1="${oy2}" x2="${dx+233}" y2="${oy2}" stroke="#344054"/><line x1="${ox2}" y1="${oy2+12}" x2="${ox2}" y2="34" stroke="#344054"/><path d="M${xx(0)},${yy(intercept)} L${xx(g.x*1.2)},${yy(intercept+slope*g.x*1.2)}" stroke="#315ee7" stroke-width="2.6"/><circle cx="${xx(g.x)}" cy="${yy(g.y)}" r="4" fill="#c13e58"/><text x="${xx(g.x)+5}" y="${yy(g.y)-7}">P</text><text x="${dx+90}" y="282" font-size="15">Gráfico ${i+1}</text>`;
+    }
+    return `<svg class="graph" viewBox="0 0 520 300" role="img" aria-label="Comparação de dois gráficos, um passa pela origem">${pieces}</svg>`;
+  }
+  if(g.type==='discrete'){ox=260;xmax=4;ymax=Math.max(4,...g.ys.map(Math.abs))*1.3}
+  let sx=(right-ox)/xmax,sy=(oy-top)/ymax;
+  if(g.type==='discrete'){ox=260; sx=43; sy=Math.min(29,103/Math.max(1,...g.ys.map(Math.abs)));}
+  if(g.type==='discrete')oy=156;
+  const X=v=>ox+v*sx,Y=v=>oy-v*sy;
+  let s=`<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="Representação gráfica de funções e geometria"><defs><marker id="matharrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="none" stroke="#334155"/></marker></defs>`;
+  if(g.type==='discrete'){
+    for(let i=-3;i<=3;i++)s+=`<line x1="${X(i)}" y1="${Y(-ymax)}" x2="${X(i)}" y2="${Y(ymax)}" stroke="#e0e7ef"/>`;
+    for(let j=-Math.ceil(ymax);j<=Math.ceil(ymax);j++)s+=`<line x1="${X(-4)}" y1="${Y(j)}" x2="${X(4)}" y2="${Y(j)}" stroke="#e0e7ef"/>`;
+  }
+  s+=`<line x1="${g.type==='discrete'?X(-4):32}" y1="${Y(0)}" x2="${right}" y2="${Y(0)}" stroke="#344054" stroke-width="1.8" marker-end="url(#matharrow)"/><line x1="${ox}" y1="${g.type==='discrete'?286:286}" x2="${ox}" y2="20" stroke="#344054" stroke-width="1.8" marker-end="url(#matharrow)"/><text x="${right-8}" y="${Y(0)+18}">x</text><text x="${ox-18}" y="20">y</text><text x="${ox-16}" y="${oy+17}">O</text>`;
+  if(g.type==='two-lines'){
+    const {af,bg,xa,xb,y}=g;
+    s+=`<polygon points="${X(0)},${Y(0)} ${X(xb)},${Y(y)} ${X(xa)},${Y(y)}" fill="#9c90da" fill-opacity=".42" stroke="#6155ac" stroke-width="1.4"/>`;
+    s+=`<path d="M${X(0)},${Y(0)} L${X(Math.min(xmax,ymax/af))},${Y(Math.min(af*xmax,ymax))}" stroke="#d64d50" stroke-width="2.5"/><path d="M${X(0)},${Y(0)} L${X(Math.min(xmax,ymax/bg))},${Y(Math.min(bg*xmax,ymax))}" stroke="#29936a" stroke-width="2.5"/>`;
+    s+=`<line x1="${X(xb)}" y1="${Y(y)}" x2="${X(xb)}" y2="${Y(0)}" stroke="#64748b" stroke-dasharray="4 4"/><text x="${X(xb)+3}" y="${Y(y)-9}">B</text><text x="${X(xa)+5}" y="${Y(y)+6}">A</text><text x="${X(xb)-5}" y="${Y(0)+18}">${xb}</text><text x="${X(Math.min(xmax*.9,ymax/af*.9))-12}" y="${Y(af*Math.min(xmax*.9,ymax/af*.9))-8}" fill="#d64d50">f</text><text x="${X(Math.min(xmax*.9,ymax/bg*.9))-12}" y="${Y(bg*Math.min(xmax*.9,ymax/bg*.9))-8}" fill="#29936a">g</text>`;
+  }
+  if(g.type==='base-triangle'){
+    const {xa,xb,xc,yc}=g;
+    s+=`<polygon points="${X(xa)},${Y(0)} ${X(xb)},${Y(0)} ${X(xc)},${Y(yc)}" fill="#ffb66c" fill-opacity=".55" stroke="#d97706" stroke-width="2"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(xmax)}" y2="${Y(yc/xc*xmax)}" stroke="#3264d6" stroke-width="2.5"/><line x1="${X(xc)}" y1="${Y(yc)}" x2="${X(xc)}" y2="${Y(0)}" stroke="#64748b" stroke-dasharray="4 4"/><text x="${X(xa)-7}" y="${Y(0)+18}">A</text><text x="${X(xb)-7}" y="${Y(0)+18}">B</text><text x="${X(xc)-5}" y="${Y(yc)-9}">C</text><text x="${X(xmax)-18}" y="${Y(yc/xc*xmax)-8}">f</text>`;
+  }
+  if(g.type==='compare-graphs'){
+    // two separate mini-graphs: same marked point, different y-intercept
+    let pieces='';for(let i=0;i<2;i++){
+      let dx=i*255+30,ox2=dx+36,oy2=230,scaleX=165/(g.x*1.4),scaleY=140/(g.y*1.5),yy=v=>oy2-v*scaleY,xx=v=>ox2+v*scaleX;
+      let intercept=i===0?Math.max(1,g.y/3):0;
+      pieces+=`<line x1="${dx}" y1="${oy2}" x2="${dx+220}" y2="${oy2}" stroke="#344054"/><line x1="${ox2}" y1="${oy2+15}" x2="${ox2}" y2="45" stroke="#344054"/><path d="M${xx(0)},${yy(intercept)} L${xx(g.x*1.25)},${yy(g.y+(g.y-intercept)*.25)}" stroke="#315ee7" stroke-width="2.6"/><circle cx="${xx(g.x)}" cy="${yy(g.y)}" r="4" fill="#c13e58"/><text x="${xx(g.x)+5}" y="${yy(g.y)-7}">P</text><text x="${dx+80}" y="275" font-size="15">Gráfico ${i+1}</text>`;
+    }return `<svg class="graph" viewBox="0 0 520 300" role="img" aria-label="Comparação de dois gráficos, um passa pela origem">${pieces}</svg>`;
+  }
+  if(g.type==='discrete'){
+    g.xs.forEach((v,i)=>s+=`<circle cx="${X(v)}" cy="${Y(g.ys[i])}" r="4.7" fill="#2449b0"/>`);
+    for(let j=-Math.floor(ymax);j<=Math.floor(ymax);j+=2){if(j!==0)s+=`<text x="${ox-9}" y="${Y(j)+4}" text-anchor="end" font-size="10">${j}</text>`;}
+    for(let i=-3;i<=3;i++)if(i)s+=`<text x="${X(i)}" y="${Y(0)+17}" text-anchor="middle" font-size="11">${i}</text>`;
+  }
+  return s+'</svg>';
+ }
+ if(g.type==='arrows'){
+  let s='<svg class="graph" viewBox="0 0 520 245" role="img" aria-label="Diagrama de setas de uma função"><ellipse cx="135" cy="122" rx="85" ry="110" fill="#edf3ff" stroke="#7192d4" stroke-width="2"/><ellipse cx="390" cy="122" rx="85" ry="110" fill="#f0f7ed" stroke="#70aa72" stroke-width="2"/>';
+  let uniq=[...new Set(g.ys)],yy=v=>45+uniq.indexOf(v)*Math.min(62,155/Math.max(1,uniq.length-1));
+  g.xs.forEach((v,i)=>{let y=45+i*75;s+=`<text x="130" y="${y+5}" font-size="18" text-anchor="middle">${v}</text><path d="M155,${y} Q255,${y} 370,${yy(g.ys[i])}" fill="none" stroke="#34435b" stroke-width="1.7"/><path d="M363,${yy(g.ys[i])-4} L370,${yy(g.ys[i])} L362,${yy(g.ys[i])+4}" fill="none" stroke="#34435b"/>`});
+  uniq.forEach(v=>s+=`<text x="400" y="${yy(v)+5}" font-size="18" text-anchor="middle">${v}</text>`);return s+'</svg>';
+ }
+ let a=g.a,b=g.b,s=`<svg class="graph" viewBox="0 0 ${width} ${height}" role="img" aria-label="Referencial cartesiano com gráfico de função">`;
+ for(let i=-10;i<=10;i++)s+=`<line x1="${cx+i*scale}" y1="12" x2="${cx+i*scale}" y2="290" stroke="#e8edf5"/>`;
+ for(let i=-10;i<=10;i++)s+=`<line x1="15" y1="${cy-i*scale}" x2="505" y2="${cy-i*scale}" stroke="#e8edf5"/>`;
+ s+=`<line x1="15" y1="${cy}" x2="505" y2="${cy}" stroke="#475569" stroke-width="1.6"/><line x1="${cx}" y1="12" x2="${cx}" y2="290" stroke="#475569" stroke-width="1.6"/><text x="495" y="${cy-8}">x</text><text x="${cx+7}" y="23">y</text>`;
+ for(let i=-8;i<=8;i+=2){if(i)s+=`<text x="${cx+i*scale}" y="${cy+17}" text-anchor="middle" font-size="10">${i}</text>`}
+ for(let i=-1;i<=9;i+=2){if(i)s+=`<text x="${cx-8}" y="${cy-i*scale+4}" text-anchor="end" font-size="10">${i}</text>`}
+ s+=`<defs><clipPath id="plotClip"><rect x="15" y="12" width="490" height="278"/></clipPath></defs><g clip-path="url(#plotClip)"><line x1="15" y1="${cy-(a*((15-cx)/scale)+b)*scale}" x2="505" y2="${cy-(a*((505-cx)/scale)+b)*scale}" stroke="#315ee7" stroke-width="3"/></g></svg>`;
+ return s;
+}
+function tableHtml(t,print=false){return `<table class="function-table"><tr><th>${math("x")}</th>${t.xs.map(v=>`<td>${fmt(v)}</td>`).join('')}</tr><tr><th>${math("f(x)")}</th>${t.ys.map((v,i)=>`<td class="${t.hide?.includes(i)?'missing':''}">${t.hide?.includes(i)?(print?'________':'?'):fmt(v)}</td>`).join('')}</tr></table>`}
+function visual(item,print=false){return (item.diagram?graphSvg(item.diagram):'')+(item.table?tableHtml(item.table,print):'')}
+// Tipografia matemática uniforme: converter apenas fragmentos algébricos em texto
+// sem alterar HTML, SVG, campos de resposta ou expressões já delimitadas por MathJax.
+function mathifyPlainText(root){
+ if(!root)return;
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+ const nodes=[];
+ while(walker.nextNode()){
+  const node=walker.currentNode,parent=node.parentElement;
+  if(!parent||parent.closest('script,style,svg,textarea,input,mjx-container,.MathJax,.MathJax_Preview'))continue;
+  if(!node.nodeValue.trim()||!/[A-Za-z]\(|\bx\b|\bk\b/.test(node.nodeValue))continue;
+  nodes.push(node);
+ }
+ const token=/(?:\b[fgph]\(\s*(?:x|[-+]?\d+(?:[.,]\d+)?)\s*\)(?:\s*=\s*(?:[-+]?\d+(?:[.,]\d+)?\s*[x]?|[-+]?\d+\s*×\s*[-+]?\d+(?:\s*[-+]\s*\d+)?))?|\b[ABCDOPQ]\(\s*-?\d+(?:[.,]\d+)?\s*;\s*-?\d+(?:[.,]\d+)?\s*\)|\b[xyk]\b)/g;
+ for(const node of nodes){
+  const text=node.nodeValue;
+  // Existing TeX fragments are left untouched, including the text between delimiters.
+  const pieces=text.split(/(\\\([\s\S]*?\\\))/g);
+  let changed=false;
+  const out=pieces.map((piece,i)=>{
+   if(i%2)return piece;
+   const replaced=piece.replace(token,match=>{
+    changed=true;
+    let latex=match.replace(/,/g,'{,}').replace(/;/g,';\\,').replace(/×/g,'\\times ');
+    return '\\('+latex+'\\)';
+   });
+   return replaced;
+  }).join('');
+  if(changed)node.nodeValue=out.replace(/(\\\))(?=[\p{L}])/gu,'$1 ');
+ }
+}
+function typeset(el){
+ mathifyPlainText(el);
+ if(window.MathJax?.typesetPromise){window.MathJax.typesetPromise([el]).catch(()=>{});}
+ else if(window.MathJax?.startup?.promise){window.MathJax.startup.promise.then(()=>window.MathJax.typesetPromise([el])).catch(()=>{});}
+}
+function inputHtml(item,id){if(item.answerType==='choice')return `<div class="options">${item.choices.map((v,i)=>`<label class="test-choice"><input type="radio" name="${id}" value="${v}" class="visually-hidden"><span class="letter">${String.fromCharCode(65+i)}</span><span>${v}</span></label>`).join('')}</div>`;return `<label for="${id}">${['expression','affine'].includes(item.answerType)?'Expressão algébrica:':'Resposta numérica:'} <input id="${id}" type="text" autocomplete="off" placeholder="${['expression','affine'].includes(item.answerType)?'Ex.: f(x)=3x+5':'Escreve a resposta'}"></label>`}
+function response(item,id){if(item.answerType==='choice')return document.querySelector(`input[name="${id}"]:checked`)?.value||'';return $('#'+id)?.value?.trim()||''}
+function parseExpression(v){let s=v.toLowerCase().replace(/\s/g,'').replace(/,/g,'.').replace(/−/g,'-');s=s.replace(/^(?:f\(x\)|p\(x\))=/,'').replace(/^y=/,'').replace(/\\frac\{(-?\d+)\}\{(\d+)\}x$/,'$1/$2x');if(!s.endsWith('x'))return NaN;s=s.slice(0,-1);if(s===''||s==='+')return 1;if(s==='-')return -1;if(s.includes('/')){let [a,b]=s.split('/').map(Number);return b? a/b:NaN}return Number(s)}
+function parseAffineAnswer(raw){
+ let t=String(raw).toLowerCase().replace(/\s/g,'').replace(/,/g,'.').replace(/−/g,'-').replace(/^(?:f\(x\)|g\(x\)|p\(h\)|y)=/,'');
+ t=t.replace(/\*/g,'');
+ const parts=t.match(/[+-]?[^+-]+/g)||[];let a=0,b=0,seenX=false;
+ for(const part of parts){if(part.includes('x')||part.includes('h')){
+   if(seenX||!/[xh]$/.test(part))return null;
+   let c=part.slice(0,-1);if(c===''||c==='+')c='1';if(c==='-')c='-1';
+   const val=num(c);if(!Number.isFinite(val))return null;a=val;seenX=true;
+ }else{const val=num(part);if(!Number.isFinite(val))return null;b+=val;}}
+ return parts.length?{a,b}:null;
+}
+function correct(item,v){
+ if(item.answerType==='affine'){const parsed=parseAffineAnswer(v);return !!parsed&&eq(parsed.a,item.rate)&&eq(parsed.b,item.fixed)}
+ if(item.answerType==='choice')return String(v).toLowerCase()===String(item.answer).toLowerCase();
+ if(!v)return false;
+ return eq(item.answerType==='expression'?parseExpression(v):num(v),item.answer);
+}
+function polishMathSpacing(html){return String(html).replace(/(\\\))(?=[\p{L}])/gu,'$1 ').replace(/(\d)(é\b)/gu,'$1 $2').replace(/(\d)(e\s+um\b)/gu,'$1 $2');}
+function nextQ(){current=batch(1)[0];$('#qtag').textContent='Treino · '+levels[level];$('#familytag').textContent=current.kind+(current.extra?' · Aprofundamento':'');$('#question').innerHTML=polishMathSpacing(current.prompt);$('#graphbox').innerHTML=visual(current);$('#response').innerHTML=inputHtml(current,'ans');$('#feedback').className='hidden feedback';$('#feedback').innerHTML='';typeset($('#train'))}
+function showSolution(){let e=$('#feedback');e.className='feedback';e.innerHTML='<span>Resolução</span><ol>'+current.steps.map(x=>'<li>'+formatSolutionStep(x)+'</li>').join('')+'</ol>';typeset(e)}
+$('#check').onclick=()=>{let v=response(current,'ans'),ok=correct(current,v),e=$('#feedback');e.className='feedback'+(ok?'':' bad');e.textContent=ok?'Correto! Muito bem.':'Ainda não está correto. Revê o raciocínio ou consulta a resolução.'};
+$('#solution').onclick=showSolution;$('#next').onclick=nextQ;
+$$('#levels .choice').forEach(b=>b.onclick=()=>{level=+b.dataset.level;$$('#levels .choice').forEach(x=>x.classList.toggle('active',x===b));$('#extra').disabled=level!==3;if(level!==3)$('#extra').checked=false;nextQ()});
+$$('#families .choice').forEach(b=>b.onclick=()=>{mode=b.dataset.family;$$('#families .choice').forEach(x=>x.classList.toggle('active',x===b));nextQ()});
+$('#extra').disabled=true;$('#extra').onchange=nextQ;
+$$('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;$$('.tabs button').forEach(x=>x.classList.toggle('active',x===b));$('#train').classList.toggle('hidden',tab!=='treino');$('#test').classList.toggle('hidden',tab!=='teste');$('#sheet').classList.toggle('hidden',tab!=='ficha');$('#worksheet').classList.toggle('hidden',tab!=='ficha'||$('#sheetpreview').classList.contains('hidden'))});
+
+const sheetGroups=[
+ {id:'calculo',name:'Conceitos e cálculo',desc:'Função afim, declive e ordenada na origem.',items:[
+ ['conceitos','Função afim e classificação',['afim_expressao','classificar','parametros']],
+ ['tabelas','Tabelas e variação',['afim_tabela','variacao']],
+ ['expressoes','Determinar expressões e parâmetros',['afim_pontos','inverter','erro_afim']] ]},
+ {id:'representacoes',name:'Gráficos e representações',desc:'Representações e parâmetros.',items:[
+ ['graficos','Leitura e interpretação de gráficos',['afim_grafico','intersecao_afim','paralelas_afim']],
+ ['diagramas','Tabelas e gráficos',['afim_tabela','afim_grafico']],
+ ['geometria','Geometria e interseções de retas',['triangulo_afim','intersecao_afim','paralelas_afim']] ]},
+ {id:'aplicacoes',name:'Problemas e aplicações',desc:'Modelação, comparação e argumentação.',items:[
+ ['problemas','Modelação de situações reais',['modelacao']],
+ ['comparacoes','Comparação de modelos reais',['comparar_custos','intersecao_afim']],
+ ['analise','Análise de erros e justificação',['justificar_afim','erro_afim']] ]}
+];
+let activeGroups=new Set(['calculo','representacoes','aplicacoes']),sheetCounts={conceitos:0,tabelas:0,expressoes:0,graficos:0,diagramas:0,geometria:0,problemas:0,comparacoes:0,analise:0},showSheetSolutions=false;
+function sheetEligible(kind){return kind!=='geometria'||+$('#sheetlevel').value>=2}
+function sheetTotal(){return sheetGroups.reduce((n,g)=>n+(activeGroups.has(g.id)?g.items.reduce((z,it)=>z+(sheetEligible(it[0])?(sheetCounts[it[0]]||0):0),0):0),0)}
+function chooseSheetFamily(kinds,seen){
+ const eligible=kinds.filter(k=>k!=='triangulo_afim'||+$('#sheetlevel').value===3);
+ const pool=eligible.length?eligible:kinds;
+ const min=Math.min(...pool.map(k=>seen.get(k)||0));
+ const least=pool.filter(k=>(seen.get(k)||0)===min);
+ const chosen=least[ri(0,least.length-1)];
+ seen.set(chosen,(seen.get(chosen)||0)+1);
+ return chosen;
+}
+function renderSheetConfig(){
+ $('#sheetgroups').innerHTML=sheetGroups.map(g=>`<label class="sheet-group ${activeGroups.has(g.id)?'active':''}"><input type="checkbox" data-group="${g.id}" ${activeGroups.has(g.id)?'checked':''}><span>${g.name}<small>${g.desc}</small></span></label>`).join('');
+ $('#sheetgroups').querySelectorAll('input').forEach(i=>i.onchange=()=>{if(i.checked)activeGroups.add(i.dataset.group);else activeGroups.delete(i.dataset.group);renderSheetConfig()});
+ $('#sheetcounts').innerHTML=sheetGroups.filter(g=>activeGroups.has(g.id)).map(g=>`<div><h3>${g.name}</h3>${g.items.filter(it=>sheetEligible(it[0])).map(it=>`<div class="sheet-count-row"><span>${it[1]}</span><div class="counter"><button data-minus="${it[0]}" aria-label="Diminuir">−</button><input type="number" min="0" max="30" value="${sheetCounts[it[0]]||0}" data-number="${it[0]}" aria-label="Número de questões: ${it[1]}"><button data-plus="${it[0]}" aria-label="Aumentar">+</button></div></div>`).join('')}</div>`).join('');
+ $('#sheetcounts').querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{sheetCounts[b.dataset.minus]=Math.max(0,(sheetCounts[b.dataset.minus]||0)-1);renderSheetConfig()});
+ $('#sheetcounts').querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{sheetCounts[b.dataset.plus]=Math.min(30,(sheetCounts[b.dataset.plus]||0)+1);renderSheetConfig()});
+ $('#sheetcounts').querySelectorAll('[data-number]').forEach(i=>i.onchange=()=>{sheetCounts[i.dataset.number]=Math.max(0,Math.min(30,Number(i.value)||0));renderSheetConfig()});
+ $('#sheettotal').textContent='Total: '+sheetTotal()+' questões';
+ $('#make').disabled=sheetTotal()===0;
+}
+$('#sheetlevel').onchange=renderSheetConfig;
+// V13: selection by mathematical family, question structure and exact content.
+// Each topic has at most three visible options; diversity is enforced across the whole sheet.
+function structureKey(item){
+ const text=item.prompt.replace(/<[^>]*>/g,' ').replace(/\\\([^)]*\\\)/g,' MATH ')
+  .replace(/[-+]?\d+(?:[.,]\d+)?/g,'#').replace(/\s+/g,' ').trim().toLowerCase();
+ return item.skill||item.kind+'|'+text.slice(0,220);
+}
+function normalizedQuestion(item){
+ return item.prompt.replace(/\s+/g,' ').trim()+'|'+JSON.stringify(item.table||{})+'|'+JSON.stringify(item.diagram||{});
+}
+function structureCountLimit(fingerprint,structures,levelNow){return (structures.get(fingerprint)||0)>=(levelNow===3?2:2)}
+function selectBalancedQuestion(kinds,used,structures,families,recent,levelNow){
+ const geom=['geometria','geom_duas','geom_base','geom_inverso'];
+ let pool=kinds.slice();
+  if(levelNow===2)pool=pool.filter(k=>k!=='triangulo_afim');
+  if(levelNow===1){const simple=['afim_expressao','afim_tabela','afim_grafico','classificar','modelacao','erro_afim'];const filtered=pool.filter(k=>simple.includes(k));if(filtered.length)pool=filtered;}
+  if(false&&levelNow===1)pool=pool.filter(k=>!['modelo_afim','tabela_afim','comparar_tabelas','comparar_modelos','decidir_modelo','justificar'].includes(k));
+  if(levelNow===3){const demanding=pool.filter(k=>['afim_pontos','parametros','comparar_custos','justificar_afim','variacao','inverter','modelacao','triangulo_afim','intersecao_afim','paralelas_afim'].includes(k));if(demanding.length)pool=demanding;}
+ if(!pool.length && levelNow===1)pool=['afim_expressao','afim_tabela'];
+ if(!pool.length)pool=['afim_expressao','modelacao'];
+ const advanced=['expr_dois_pontos','expr_tabela','comparar','modelo_afim','tabela_afim','interpretar_funcao','comparar_tabelas','proporcao','grafico_comparar','geom_duas','geom_base','geom_inverso','geometria'];
+ let best=null,score=-Infinity;
+ for(const family of [...new Set(pool)]){
+  for(let attempt=0;attempt<65;attempt++){
+   const item=generateOne(family);if(!item)continue;
+   const signature=normalizedQuestion(item), fingerprint=structureKey(item);
+   if(used.has(signature))continue;
+   // Repetições penalizadas; nunca eliminar exercícios pedidos por falta de famílias.
+   if(!validQuestion(item,levelNow))continue;
+   // Estruturas repetidas são fortemente penalizadas, sem perder questões solicitadas.
+   const familyCount=families.get(family)||0,structureCount=structures.get(fingerprint)||0;
+   let penalty=familyCount*1900+structureCount*3600+(structureCount>=2?9000*(structureCount-1):0);
+   if(levelNow===3 && !item.advanced && !['geom_duas','geom_base','geom_inverso','geometria'].includes(family))penalty+=3000;
+   if(recent.slice(-5).includes(family))penalty+=1400;
+   if(levelNow===3 && !['afim_pontos','parametros','comparar_custos','justificar_afim','variacao','inverter','triangulo_afim','intersecao_afim','paralelas_afim'].includes(family))penalty+=1100;
+   // Prefer genuinely multi-step specialist work, without excluding requested subtopics.
+   if(levelNow===3 && item.steps.length<2)penalty+=700;
+   const candidateScore=-penalty+Math.random()*8;
+   if(candidateScore>score){best={item,family,fingerprint,signature};score=candidateScore;}
+  }
+ }
+ return best;
+}
+function generateSheet(){
+ const oldLevel=level;level=+$('#sheetlevel').value;
+ const groups=sheetGroups.filter(g=>activeGroups.has(g.id)),arr=[];
+ const used=new Set(),structures=new Map(),globalFamily=new Map(),recentFamilies=[];
+ // Round-robin topics within each section: avoid blocks of near-identical questions.
+ for(const g of groups){
+  const tasks=g.items.filter(([topic])=>sheetEligible(topic)).map(([topic,,kinds])=>({kinds,left:sheetCounts[topic]||0}));
+  while(tasks.some(t=>t.left>0)){
+   for(const task of tasks){
+    if(task.left<=0)continue;
+    task.left--;
+    const best=selectBalancedQuestion(task.kinds,used,structures,globalFamily,recentFamilies,level);
+    if(!best)continue;
+    globalFamily.set(best.family,(globalFamily.get(best.family)||0)+1);
+    structures.set(best.fingerprint,(structures.get(best.fingerprint)||0)+1);
+    used.add(best.signature);recentFamilies.push(best.family);
+    arr.push({...best.item,group:g.name});
+   }
+  }
+ }
+ level=oldLevel;
+ if($('#sheetorder').value==='mix'){for(let i=arr.length-1;i>0;i--){let j=ri(0,i);[arr[i],arr[j]]=[arr[j],arr[i]]}}
+ sheet=arr;showSheetSolutions=$('#withanswers').checked;renderWorksheet();$('#sheetconfig').classList.add('hidden');$('#sheetpreview').classList.remove('hidden');$('#worksheet').classList.remove('hidden');$('#togglesolutions').textContent=showSheetSolutions?'Ocultar soluções':'Ver soluções';$('#worksheet').scrollIntoView({behavior:'smooth'});
+}
+function formatSolutionStep(step){
+ // Convert the mathematical part of a solution to TeX before inserting HTML.
+ // Existing MathJax fragments are preserved. No equation is evaluated here.
+ const escapeHTML=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ const texExpr=raw=>{
+   let t=String(raw).trim().replace(/[−–]/g,'-').replace(/×/g,'\\times ').replace(/÷/g,'\\div ');
+   // Quotients of parenthesised expressions and ordinary numeric fractions.
+   t=t.replace(/\(\s*([-+\d\s()]+)\s*\)\s*\/\s*\(\s*([-+\d\s()]+)\s*\)/g,'\\frac{$1}{$2}');
+   t=t.replace(/\(\s*([-+\d\s()]+)\s*\)\s*\/\s*(-?\d+)\b/g,'\\frac{$1}{$2}');
+   t=t.replace(/(?<![\w}])(-?\d+)\s*\/\s*(-?\d+)\b/g,'\\frac{$1}{$2}');
+   t=t.replace(/\b([a-zA-Z])\s*\^\s*2\b/g,'$1^{2}');
+   t=t.replace(/(?<!\\)\b([a-z])_(\w+)\b/g,'$1_{$2}');
+   return t.replace(/(?<!\\)(\d),(\d)/g,'$1{,}$2');
+ };
+ const wrap=t=>'\\('+texExpr(t)+'\\)';
+ let t=String(step).trim();
+ if(!t)return '';
+ // Preserve steps which already use explicit TeX, without nesting delimiters.
+ if(t.includes('\\(')||t.includes('\\['))return escapeHTML(t);
+ // Common instructional prefixes, with the full equation typeset together.
+ let m=t.match(/^(Resolver|Calculando|Calcular|Obtém-se|Obtemos|Assim|Portanto|Logo|Então|Temos|Daí|Como)\s*[:,]?\s*(.+)$/i);
+ if(m){
+   const prefix=m[1],tail=m[2].replace(/[.]$/,'');
+   if(/[=<>]/.test(tail) && /[xyhkfgp]|\d/.test(tail))return escapeHTML(prefix)+': '+wrap(tail)+'.';
+ }
+ // A stand-alone algebraic equality or a chain of equalities.
+ if(/^[\s\dxyhkfgpABCDOPQ(){}+\-−×÷*/=.,;^_]+$/.test(t.replace(/\\frac\{[^}]+\}\{[^}]+\}/g,'1'))&&/[=]/.test(t))return wrap(t.replace(/[.]$/,''))+'.';
+ // Split at punctuation to keep prose readable and typeset embedded equalities.
+ let escaped=escapeHTML(t);
+ escaped=escaped.replace(/\b([fgph])\(\s*(x|-?\d+)\s*\)\s*=\s*([-+\dxyhk()/*×−\s]+?)(?=\s*(?:[,;.]|\s+e\s+|\s+quando\s+|$))/g,
+   (_,fn,arg,rhs)=>wrap(fn+'('+arg+')='+rhs.trim()));
+ escaped=escaped.replace(/\b([xyhk])\s*=\s*([-+\d()/*×−\s]+?)(?=\s*(?:[,;.]|\s+e\s+|\s+quando\s+|$))/g,
+   (_,v,rhs)=>wrap(v+'='+rhs.trim()));
+ return escaped;
+}
+
+function renderWorksheet(){
+ let grouped=$('#sheetorder').value==='group',last='';
+ let sections=sheet.map((v,i)=>{let heading=grouped&&v.group!==last?`<div class="section-title">${v.group}</div>`:'';last=v.group;return `${heading}<div class="item"><span class="itemnum">${i+1}.</span>${polishMathSpacing(v.prompt)}${visual(v,true)}<div class="blank"></div></div>`}).join('');
+ let solutions=`<div class="sheet-solutions ${showSheetSolutions?'':'hidden-print'}"><h2>Soluções</h2>${sheet.map((v,i)=>`<div class="solution-item"><p>${i+1}. ${v.answerType==='affine'?math(v.expressionText):v.answerType==='expression'?math((v.kind==='contexto'?'p':'f')+'(x)='+linearText(v.answer)):typeof v.answer==='number'?exactMath(v.answer):v.answer}</p><ol>${v.steps.map(step=>`<li>${formatSolutionStep(step)}</li>`).join('')}</ol></div>`).join('')}</div>`;
+ $('#worksheet').innerHTML=`<header><h2>Ficha de trabalho — Funções</h2><p>8.º ano · ${levels[+$('#sheetlevel').value]}</p></header><div class="meta"><span>Nome: __________________________</span><span>Turma: ______</span><span>Data: ____ / ____ / ______</span></div>${sections}${solutions}<footer>© 2026 — Nuno Araújo · MathLab 7–9</footer>`;
+ typeset($('#worksheet'));
+}
+$('#make').onclick=generateSheet;$('#regenerate').onclick=generateSheet;
+$('#reconfigure').onclick=()=>{$('#sheetconfig').classList.remove('hidden');$('#sheetpreview').classList.add('hidden');$('#worksheet').classList.add('hidden')};
+$('#togglesolutions').onclick=()=>{showSheetSolutions=!showSheetSolutions;$('#togglesolutions').textContent=showSheetSolutions?'Ocultar soluções':'Ver soluções';renderWorksheet()};
+$('#print').onclick=()=>{window.print()};
+let testState='intro',errorPractice=[],testLevel=2,testMode='misto';
+ $('#testlevel').onchange=()=>{$('#testextra').disabled=$('#testlevel').value!=='3';if($('#testextra').disabled)$('#testextra').value='no'};
+function renderTest(){
+ if(testState==='intro'){$('#testintro').classList.remove('hidden');$('#testarea').innerHTML='';return}
+ $('#testintro').classList.add('hidden');
+ if(testState==='result'){
+  const score=test.filter((v,i)=>correct(v,answers[i]||'')).length;
+  $('#testarea').innerHTML=`<h2>Resultado do teste</h2><div class="result"><div class="score">${score}/10</div><p>${score===10?'Excelente trabalho!':'Revê os procedimentos e treina os erros identificados.'}</p></div><div class="result-buttons"><button id="review">Rever respostas</button><button id="errors">Treinar os meus erros</button><button id="restart">Novo teste</button></div>`;
+  $('#review').onclick=()=>{testState='review';renderTest()};
+  $('#errors').onclick=()=>{errorPractice=test.filter((v,i)=>!correct(v,answers[i]||''));if(!errorPractice.length){alert('Não há respostas erradas para treinar.');return}testState='errors';ti=0;renderTest()};
+  $('#restart').onclick=startTest;return;
+ }
+ if(testState==='review'){
+  $('#testarea').innerHTML=`<h2>Revisão das respostas</h2>`+test.map((v,i)=>{let ok=correct(v,answers[i]||'');return `<div class="review-card ${ok?'ok':''}"><div>Questão ${i+1} · ${v.kind}</div><div class="statement">${v.prompt}</div>${visual(v)}<div class="review-answer">A tua resposta: ${answers[i]||'Sem resposta'}</div><div>${ok?'Resposta correta.':'Confirma os procedimentos e verifica o resultado.'}</div><div class="review-correct">Resposta correta: ${v.expressionText|| (v.answerType==='expression'?'f(x)='+exactFraction(v.answer)+'x':typeof v.answer==='number'?exactFraction(v.answer):v.answer)}</div><ol class="review-steps">${v.steps.map(x=>`<li>${formatSolutionStep(x)}</li>`).join('')}</ol></div>`}).join('')+`<div class="actions"><button id="backresult">Voltar ao resultado</button></div>`;
+  $('#backresult').onclick=()=>{testState='result';renderTest()};typeset($('#testarea'));return;
+ }
+ if(testState==='errors'){
+  let v=errorPractice[ti];
+  $('#testarea').innerHTML=`<div class="test-head"><span class="pill">Treinar os meus erros</span><span>Exercício ${ti+1} de ${errorPractice.length}</span></div><div class="test-body"><p class="statement">${polishMathSpacing(v.prompt)}</p>${visual(v)}${inputHtml(v,'errorans')}</div><div id="errorfeedback"></div><div class="test-actions"><button id="errorcheck">Verificar</button><button id="errorsolution">Ver resolução</button><button id="errornext" class="primary">${ti===errorPractice.length-1?'Concluir':'Seguinte'}</button></div>`;
+  $('#errorcheck').onclick=()=>{$('#errorfeedback').textContent=correct(v,response(v,'errorans'))?'Correto!':'Ainda não está correto.'};
+  $('#errorsolution').onclick=()=>{$('#errorfeedback').innerHTML='<ol>'+v.steps.map(x=>'<li>'+formatSolutionStep(x)+'</li>').join('')+'</ol>'};
+  $('#errornext').onclick=()=>{ti++;if(ti>=errorPractice.length)testState='result';renderTest()};typeset($('#testarea'));return;
+ }
+ let v=test[ti],answered=answers.filter(x=>String(x||'').trim()).length;
+ $('#testarea').innerHTML=`<div class="test-head"><span class="pill">8.º ano · ${levels[testLevel]} · ${testMode==='misto'?'Todos os conteúdos':testMode==='conceitos'?'Conceitos e Cálculo':'Gráficos e Aplicações'}</span><span>Questão ${ti+1} de 10</span></div><div class="progress"><div style="width:${(ti+1)*10}%"></div></div><div class="test-body"><p class="statement">${polishMathSpacing(v.prompt)}</p>${visual(v)}${inputHtml(v,'testans')}</div><div class="test-nav">${test.map((x,i)=>`<button class="${i===ti?'active':''} ${answers[i]?'answered':''}" data-jump="${i}" aria-label="Ir para a questão ${i+1}">${i+1}</button>`).join('')}</div><div class="test-actions"><button id="testprev" ${ti===0?'disabled':''}>Anterior</button><button id="testnext" ${ti===9?'disabled':''}>Seguinte</button><button class="primary" id="testfinish">Terminar teste</button></div>`;
+ if(v.answerType==='choice'){let selected=answers[ti]||'';$$('#testarea input[name=testans]').forEach(el=>{el.checked=el.value===selected;el.closest('label').classList.toggle('selected',el.checked);el.onchange=()=>{$$('#testarea input[name=testans]').forEach(x=>x.closest('label').classList.toggle('selected',x.checked))}})}
+ else $('#testans').value=answers[ti]||'';
+ const save=()=>{answers[ti]=response(v,'testans')};
+ $('#testprev').onclick=()=>{save();ti--;renderTest()};
+ $('#testnext').onclick=()=>{save();ti++;renderTest()};
+ $$('[data-jump]').forEach(b=>b.onclick=()=>{save();ti=+b.dataset.jump;renderTest()});
+ $('#testfinish').onclick=()=>{save();let empty=answers.filter(v=>!String(v||'').trim()).length;if(empty&&!confirm(`Tens ${empty} questão(ões) sem resposta. Queres terminar o teste?`))return;testState='result';renderTest()};
+ typeset($('#testarea'));
+}
+function startTest(){
+ testLevel=+$('#testlevel').value;testMode=$('#testmode').value;
+ const savedLevel=level,savedMode=mode,savedExtra=$('#extra').checked;
+ level=testLevel;mode=testMode;$('#extra').checked=testLevel===3&&$('#testextra').value==='yes';
+ test=batch(10);
+ level=savedLevel;mode=savedMode;$('#extra').checked=savedExtra;
+ ti=0;answers=Array(10).fill('');testState='running';renderTest();
+}
+$('#teststart').onclick=startTest;
+renderSheetConfig();
+nextQ();
+</script></body></html>
