@@ -1,0 +1,18 @@
+MathLab 7–9 — Inequações do 1.º grau — versão de desenvolvimento corrigida
+
+1. Extrai todos os ficheiros deste ZIP para a mesma pasta.
+2. Abre inequacoes-unificado-dev.html no navegador.
+3. Testa Treino livre, Criar ficha e Modo teste.
+
+Correções desta versão:
+- Corrigido erro JavaScript que impedia a inicialização completa da interface (painel de pistas ausente).
+- Corrigido o botão «Gerar ficha» e confirmada a geração de 10 questões na configuração inicial.
+- Separados comandos matemáticos de desigualdade de variáveis adjacentes para evitar apresentar \\leqx e \\geqx.
+- Corrigida a explicação de texto no item verdadeiro/falso da revisão do teste.
+- Tornado mais robusto o acesso ao armazenamento local no alternar dos modos.
+
+Validação: sintaxe JavaScript; testes de interação automatizados em Chromium com conteúdo local injetado, sem acesso ao CDN MathJax; geração de ficha, soluções, início de teste, conclusão e revisão.
+
+Limitações: não foram ainda validados a composição MathJax via CDN nem os resultados impressos A4 em ambiente real. Não publicar ainda sem revisão visual e matemática.
+
+Não foi alterado o index.html nem efetuada publicação no GitHub.
