@@ -659,7 +659,7 @@ function incompleteDiverseV141(level,id){
  const {A,B,C,type}=diverseIncCanonical(level),sol=diverseSolution(A,B,C);
  const t=nz(-4,4),u=nz(-3,3),d=pick([2,3,4]),e=pick([2,3,5]);
  let shape,statement;
- const modes=id==='direct'?['direct']:id==='parentheses'?(level===1?['binomial','square']:['binomial','square','product']):level===1?['fraction-single','fraction-mixed']:['fraction-mixed','fraction-product','fraction-sides','fraction-distributed','fraction-square'];
+ const modes=id==='direct'?['direct']:id==='parentheses'?(level===1?['binomial','square']:['binomial','square','product']):level===1?['fraction-single']:level===2?['fraction-single','fraction-sides']:['fraction-mixed','fraction-product','fraction-sides','fraction-distributed','fraction-square'];
  shape=pick(modes);
  if(shape==='direct')statement=`${diversePoly(A,B,C)}=0`;
  if(shape==='sides')statement=`${diversePoly(A+u,B+t,C+t)}=${diversePoly(u,t,t)}`;
