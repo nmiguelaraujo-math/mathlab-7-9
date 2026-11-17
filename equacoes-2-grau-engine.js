@@ -175,9 +175,43 @@ function mlProblem(statement,steps,answer,family,svg,help='Identifica a incógni
  const z=textQ(statement,steps,answer,[help,'Resolve a equação e verifica se a solução é admissível no contexto.'],`ml-problema-${family}`);z.diagram=svg||'';z.structureKey=`ml-problema-${family}`;z.solutionKey=`${family}:${answer}`;return z;
 }
 function mlCompleteEquation(a,b,c,first,final){const z=formula(a,b,c,2);return [first,`${poly(a,b,c)}=0`,...z.steps.slice(1),final]}
-// Rotação das famílias: evita repetições imediatas ao gerar várias questões.
-const mlRecentFamilies=[];
-function mlPickFamily(pool){const available=pool.filter(k=>!mlRecentFamilies.slice(-Math.min(6,Math.floor(pool.length/2))).includes(k));const f=pick(available.length?available:pool);mlRecentFamilies.push(f);if(mlRecentFamilies.length>30)mlRecentFamilies.shift();return f;}
+// Rotação global dos modelos visuais (Treino livre e Criar ficha).
+// Só se repete um modelo quando todos os modelos elegíveis para a seleção
+// já foram apresentados. Famílias que partilham o mesmo desenho contam
+// como um único modelo visual; os parâmetros variam a cada utilização.
+const mlVisualModel={
+ rectangle:'rect',garden:'rect','equal-areas':'rect','square-area':'rect','rectangle-ratio':'rect',
+ triangle:'triangle',pythagoras:'triangle','right-triangle':'triangle','triangle-area':'triangle',
+ 'pythagoras-ratio':'triangle','triangle-same-area':'triangle',isosceles:'triangle',
+ trapezoid:'trapezoid','trapezoid-equal':'trapezoid',
+ sequence:'sequence-blocks','flower-sequence':'sequence-grid',
+ 'flower-pattern':'sequence-flowers','tile-pattern':'sequence-tiles',
+ 'two-squares':'nested-squares','equal-squares':'nested-squares','frame-square':'nested-squares',
+ 'square-border':'nested-squares','square-cut':'nested-squares',
+ 'nested-rect':'nested-rect','border-path':'nested-rect',
+ 'corner-cut':'corner-cut','equal-triangle':'equal-triangle',
+ 'square-strips':'square-strips','square-window':'square-window',
+ 'square-diagonal':'square-diagonal','prism':'prism',
+ 'double-square':'double-square'
+};
+const mlVisualUsed=new Set();
+const mlFamilyUsedByModel=new Map();
+function mlVisualKey(f){return mlVisualModel[f]||f;}
+function mlPickFamily(pool){
+ const unique=[...new Set(pool)];
+ const models=[...new Set(unique.map(mlVisualKey))];
+ let available=models.filter(m=>!mlVisualUsed.has(m));
+ if(!available.length){for(const m of models)mlVisualUsed.delete(m);available=models;}
+ const model=pick(available);
+ const choices=unique.filter(f=>mlVisualKey(f)===model);
+ let history=mlFamilyUsedByModel.get(model);
+ if(!history){history=new Set();mlFamilyUsedByModel.set(model,history);}
+ let families=choices.filter(f=>!history.has(f));
+ if(!families.length){history.clear();families=choices;}
+ const family=pick(families);
+ history.add(family);mlVisualUsed.add(model);
+ return family;
+}
 function mlDiagramComposite(type,labels){
  const [a,b,c]=labels;
  if(type==='nested')return mlSvg(`<rect x="58" y="22" width="205" height="142" fill="#f7d7e4" stroke="#ba4d7a" stroke-width="2"/><rect x="115" y="62" width="91" height="63" fill="white" stroke="#ba4d7a" stroke-width="2"/>`+mlText(160,186,a)+mlText(160,55,b)+mlText(35,98,c||''));
@@ -654,6 +688,13 @@ function solutionSignature(z){
  return 'roots:'+ (z.solutionKey||z.answer||'');
 }
 function balancedTopicQuestion(kind,lev,id,used,families){
+ if(id==='problems'){
+  // Uma ficha consome um único modelo por exercício, não 140 candidatos
+  // descartados. Assim a rotação é efetivamente comum aos dois modos.
+  const z=mlProblemBank(kind,lev);
+  if(z){used.add(questionKey(z));const f=sheetFamily(z);families.set(f,(families.get(f)||0)+1);}
+  return z;
+ }
  let best=null,bestScore=Infinity;
  for(let attempt=0;attempt<140;attempt++){
   const previous={...state};state.kind=kind;state.level=lev;let z;
