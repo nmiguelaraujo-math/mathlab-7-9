@@ -1,0 +1,24 @@
+MathLab 7–9 — Intervalos de Números Reais
+Revisão pedagógica de 20/11/2026 — diversidade e rotação de exercícios
+
+INSTALAÇÃO
+Extrair TODOS os ficheiros do ZIP para a pasta onde está o módulo, mantendo os nomes. Substituir os ficheiros anteriores. Abrir intervalos-numeros-reais.html ou atualizar a página publicada com Ctrl+F5.
+
+FICHEIROS
+intervalos-numeros-reais.html — página principal
+intervalos.css — interface e impressão
+intervalos-ampliacao.js — ampliações anteriores preservadas
+intervalos-diversidade.js — novas famílias e escalonador de exercícios
+intervalos-ui.js — Treino livre e Criar ficha
+modo-teste-intervalos.js — Modo teste e Treinar os meus erros
+
+ALTERAÇÕES
+• Mantidos os três grupos e os três níveis; preservados os geradores originais.
+• Alternância entre famílias de raciocínio no Treino livre, por grupo e nível.
+• Histórico por sessão que rejeita enunciados/soluções repetidos; se se esgotarem variantes, é apresentada uma mensagem em vez de repetir silenciosamente.
+• Novas variantes: representações equivalentes, leitura de retas, reunião/interseção em representações diferentes, operações combinadas, análise de afirmações, problemas inversos, parâmetros, quadrados perfeitos, radicais e contextos aplicados.
+• O Criar ficha usa o mesmo escalonador de diversidade e evita repetir exercícios da sessão.
+• O Modo teste evita duplicações textuais no mesmo teste; Treinar os meus erros gera novas questões das famílias erradas.
+
+VALIDAÇÃO
+Verificação sintática dos ficheiros JS e teste automatizado de 270 exercícios (30 por combinação dos 3 grupos e 3 níveis), sem duplicações na amostra. A impressão e os controlos no navegador devem ser validados antes da publicação.
